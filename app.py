@@ -2,11 +2,11 @@ from flask import Flask, url_for, request, redirect
 import datetime
 app = Flask(__name__)
 
+
 @app.errorhandler(404)
 def not_found(err):
     return "нет такой страницы", 404
 
-@app.route("/")
 @app.route("/web")
 def web():
     return """<!doctype html> 
@@ -15,7 +15,11 @@ def web():
                <h1>web-сервер на flask</h1> 
                <a href="/author">author</a>
            </body> 
-        </html>"""
+        </html>""", 200, {
+            'X-Server': 'sample',
+            'Content-Type': 'text/plain; charset=utf-8'
+        }
+
 
 @app.route("/author")
 def author():
