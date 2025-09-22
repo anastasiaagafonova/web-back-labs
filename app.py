@@ -3,9 +3,27 @@ import datetime
 app = Flask(__name__)
 
 
+
+
+@app.route("/")
+def index():
+    return '''
+<!doctype html> 
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Главная страница</title>
+</head>
+<body> 
+    <h1>Главная страница</h1>
+    <p>Добро пожаловать!</p>
+</body> 
+</html>
+'''
+
 @app.errorhandler(404)
 def not_found(err):
-    return "нет такой страницы", 404
+    return "Нет такой страницы", 404
 
 @app.route("/web")
 def web():
@@ -39,13 +57,21 @@ def author():
 
 @app.route("/image")
 def image():
-    path = url_for("static", filename="oak.jpg")
-    return '''
+    # Получаем пути правильно
+    css_path = url_for("static", filename="lab1.css")
+    image_path = url_for("static", filename="oak.jpg")
+    
+    return f'''
 <!doctype html> 
 <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Дуб</title>
+        <link rel="stylesheet" href="{css_path}">
+    </head>
     <body> 
         <h1>Дуб</h1> 
-        <img src="''' + path + '''">
+        <img src="{image_path}" alt="Дуб">
     </body> 
 </html>
 '''
@@ -58,16 +84,43 @@ def counter():
     time = datetime.datetime.today()
     url = request.url
     client_ip = request.remote_addr
+    timestamp = datetime.datetime.now().timestamp()
 
     return '''
 <!doctype html> 
 <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Счетчик</title>
+    </head>
     <body> 
-        Сколько раз вы сюда заходили: ''' + str(count) + '''
+        <h2>Счетчик посещений</h2>
+        <p>Сколько раз вы сюда заходили: <strong>''' + str(count) + '''</strong></p>
         <hr>
-        Дата и время: ''' + str(time) + '''<br>
-        Запрошенный адрес: ''' + str(url) + '''<br>
-        Ваш IP-адрес: ''' + str(client_ip) + '''<br>
+        <p>Дата и время: ''' + str(time) + '''</p>
+        <p>Запрошенный адрес: ''' + str(url) + '''</p>
+        <p>Ваш IP-адрес: ''' + str(client_ip) + '''</p>
+        <br>
+        <a href="/reset?t={timestamp}">Сбросить счетчик</a>
+    </body> 
+</html>
+'''
+
+@app.route("/reset")
+def reset_counter():
+    global count
+    count = 0
+    return '''
+<!doctype html> 
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Сброс счетчика</title>
+    </head>
+    <body> 
+        <h2>Счетчик сброшен!</h2>
+        <p>Текущее значение счетчика: <strong>''' + str(count) + '''</strong></p>
+        <a href="/counter">Вернуться к счетчику</a>
     </body> 
 </html>
 '''
@@ -78,12 +131,11 @@ def info():
 
 @app.route("/lab1/created")
 def created():
-    return '''
-<!doctype html> 
-<html>
-    <body> 
-        <h1>Создано успешно</h1> 
-        <div><i>что-то создано...</i></div>
-    </body> 
-</html>
-''',201
+    return ''' <!doctype html> 
+        <html>
+            <body> 
+                <h1>Создано успешно</h1> 
+                <div><i>что-то создано...</i></div>
+            </body> 
+        </html>
+        ''',201
