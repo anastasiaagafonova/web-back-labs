@@ -1,0 +1,12 @@
+img {
+    width: 300px; /* Ширина изображения */
+    height: 200px; /* Высота изображения */
+    border-radius: 10px; /* Скругленные углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень */
+}
+
+body {
+    background-color: #8393ee; /* Цвет фона */
+    color: #000000; /* Цвет текста */
+    font-family: Arial, sans-serif; /* Шрифт */
+}
