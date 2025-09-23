@@ -88,6 +88,97 @@ def index():
 def not_found(err):
     return "Нет такой страницы", 404
 
+@app.route("/lab1")
+def lab1_index():
+    return '''
+<!doctype html> 
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Лабораторная 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: gray;
+            color: black;
+            padding: 20px;
+            text-align: left;
+            width: 100%;
+        }
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .description {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-left: 4px solid #003366;
+            margin: 20px 0;
+        }
+        footer {
+            background-color: gray;
+            font-family: Arial, sans-serif;
+            color: black;
+            padding: 15px;
+            text-align: right;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+    </style>
+</head>
+<body> 
+    <header>
+        <h1>Лабораторная работа 1</h1>
+    </header>
+
+    <main>
+        <div class="description">
+            <p><strong>Flask</strong> — фреймворк для создания веб-приложений на языке программирования Python, 
+            использующий набор инструментов Werkzeug, а также шаблонизатор Jinja2. Относится к категории так 
+            называемых микрофреймворков — минималистичных каркасов веб-приложений, сознательно предоставляющих 
+            лишь самые базовые возможности.</p>
+        </div>
+
+        <h2>Разделы лабораторной работы:</h2>
+        <ul>
+            <li><a href="/lab1/web">Web</a></li>
+            <li><a href="/lab1/author">Author</a></li>
+            <li><a href="/lab1/image">Image</a></li>
+            <li><a href="/lab1/counter">Counter</a></li>
+            <li><a href="/lab1/created">Created</a></li>
+            <li><a href="/lab1/info">Info</a></li>
+        </ul>
+        
+        <br>
+        <a href="/">Вернуться на главную страницу</a>
+    </main>
+
+    <footer>
+        <p>Агафонова Анастасия, ФБИ-32, 3 курс, 2025</p>
+    </footer>
+</body> 
+</html>
+'''
+
 @app.route("/lab1/web")
 def web():
     return """<!doctype html> 
