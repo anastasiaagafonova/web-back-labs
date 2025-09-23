@@ -187,6 +187,7 @@ def lab1_index():
             <li><a href="/lab1/created">Created</a></li>
             <li><a href="/lab1/info">Info</a></li>
             <li><a href="/errors">Errors</a></li>
+            <li><a href="/test-errors">505</a></li>
         </ul>
         
         <br>
@@ -261,7 +262,6 @@ def counter():
     return ''' <!doctype html> 
 <html>
 <head>
-    
     <title>Счетчик</title>
 </head>
 <body> 
@@ -473,3 +473,88 @@ def errors_list():
 </html>
 '''
 
+@app.route("/cause-error")
+def cause_error():
+    error_type = request.args.get('type', 'division')
+    
+    if error_type == 'division':
+        # Деление на ноль
+        result = 10 / 0
+    elif error_type == 'concatenation':
+        # Конкатенация числа и строки
+        result = 10 + "строка"
+    else error_type == 'undefined':
+        # Обращение к неопределенной переменной
+        result = undefined_variable
+    
+
+@app.route("/test-errors")
+def test_errors():
+    return ''' <!doctype html> 
+<html>
+<head>
+    <title>Тестирование ошибок сервера</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .error-type { 
+            display: block; 
+            margin: 10px 0; 
+            padding: 15px; 
+            background-color: #f8f9fa; 
+            border-left: 4px solid #dc3545;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+        .error-type:hover { 
+            background-color: #e9ecef; 
+            text-decoration: none;
+        }
+        .warning { 
+            background-color: #fff3cd; 
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body> 
+    <h1>Тестирование ошибок сервера (500)</h1>
+    
+    <a href="/cause-error?type=division" class="error-type">
+        <strong>Деление на ноль</strong><br>
+        <small>result = 10 / 0</small>
+    </a>
+    
+    <a href="/cause-error?type=concatenation" class="error-type">
+        <strong>Конкатенация числа и строки</strong><br>
+        <small>result = 10 + "строка"</small>
+    </a>
+    
+    <a href="/cause-error?type=undefined" class="error-type">
+        <strong>Неопределенная переменная</strong><br>
+        <small>result = undefined_variable</small>
+    </a>
+    <br>
+    <a href="/">На главную</a>
+</body> 
+</html>
+'''
+
+@app.errorhandler(500)
+def internal_server_error(err):
+    return '''<!doctype html> 
+<html>
+<head>
+    <title>500 - Ошибка сервера</title>
+</head>
+<body> 
+    <center>
+        <h1 style="color:red;font-size:60px;">500</h1>
+        <h2>Ошибка сервера</h2>
+        <p>На сервере произошла ошибка</p>
+        <p><a href="/test-errors">Назад</a></p>
+    </center>
+</body> 
+</html>
+''', 500
