@@ -1,9 +1,9 @@
 from flask import Flask, url_for, request, redirect
-import datetime
+from datetime import datetime
+import os
 app = Flask(__name__)
 
-
-
+LOG_FILE = os.path.join(os.path.dirname(__file__), '404_log.txt')  
 
 @app.route("/")
 @app.route("/index")
@@ -71,7 +71,7 @@ def index():
     
     <body>
         <ul>
-            <li><a href="/lab1">Первая лабораторная работа</a></li>
+            <li><a href="/lab1">Лабораторная работа №1</a></li>
         </ul>
     </body>
     
@@ -84,31 +84,51 @@ def index():
 
 @app.errorhandler(404)
 def not_found(err):
-    image_path = url_for("static", filename="404.jpg")
-    return f'''<!doctype html> 
+    user_ip = request.remote_addr
+    access_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    requested_url = request.url
+
+    log_entry = f"{access_date} - IP: {user_ip} - URL: {requested_url}\n"
+    try:
+        with open(LOG_FILE, 'a', encoding='utf-8') as f:
+            f.write(log_entry)
+    except IOError as e:
+        print(f"Log error: {e}")
+    try:
+        with open(LOG_FILE, 'r', encoding='utf-8') as f:
+            full_log = f.read()
+    except FileNotFoundError:
+        full_log = "No logs yet."
+    except IOError:
+        full_log = "Error reading log."
+    root_link = '/'
+
+    image_path = url_for("static", filename="404.jpg")  
+
+    return f'''<!doctype html>
 <html>
 <head>
+    <title>404</title>
     <style>
-        body {{
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-        }}
-        img {{
-            max-width: 90%;
-            max-height: 80vh;
-        }}
+        body {{ font-family: monospace; margin: 20px; background: #f0f0f0; }}
+        pre {{ background: white; padding: 10px; border: 1px solid #ccc; }}
+        a {{ color: blue; text-decoration: none; }}
+        img {{ max-width: 90%; max-height: 50vh; margin: 20px 0; border-radius: 8px; }}
     </style>
 </head>
-<body> 
-    <img src="{image_path}" alt="404">
-</body> 
-</html>
-'''
+<body>
+    <h1>404 - Not Found</h1>
+    <p>IP: {user_ip}</p>
+    <p>Date: {access_date}</p>
+    <p>Requested: {requested_url}</p>
+    <p><a href="{root_link}">На главную</a></p>
+
+    <img src="{image_path}" alt="404 Error">
+    
+    <h3>Журнал:</h3>
+    <pre>{full_log}</pre>
+</body>
+</html>'''
 
 @app.route("/lab1")
 def lab1_index():
@@ -188,6 +208,7 @@ def lab1_index():
             <li><a href="/lab1/info">Info</a></li>
             <li><a href="/errors">Errors</a></li>
             <li><a href="/test-errors">505</a></li>
+            <li><a href="/404">404</a></li>
         </ul>
         
         <br>
@@ -260,7 +281,7 @@ count = 0
 def counter():
     global count
     count += 1
-    time = datetime.datetime.today()
+    time = datetime.today()
     url = request.url
     client_ip = request.remote_addr
 
@@ -302,7 +323,7 @@ def reset_counter():
 
 @app.route("/lab1/info")
 def info():
-    return redirect ("/author")
+    return redirect ("/lab1/author")
 
 @app.route("/lab1/created")
 def created():
