@@ -8,11 +8,9 @@ app = Flask(__name__)
 # Главная страница на корневом адресе
 @app.route("/")
 def index():
-    return '''
-<!doctype html> 
-<html lang="ru">
+    return '''<!doctype html> 
+<html>
 <head>
-    <meta charset="utf-8">
     <title>НГТУ, ФБ, Лабораторные работы</title>
     <style>
         body {
@@ -86,15 +84,37 @@ def index():
 
 @app.errorhandler(404)
 def not_found(err):
-    return "Нет такой страницы", 404
+    image_path = url_for("static", filename="404.jpg")
+    return f'''<!doctype html> 
+<html>
+<head>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }}
+        img {{
+            max-width: 90%;
+            max-height: 80vh;
+        }}
+    </style>
+</head>
+<body> 
+    <img src="{image_path}" alt="404">
+</body> 
+</html>
+'''
 
 @app.route("/lab1")
 def lab1_index():
-    return '''
-<!doctype html> 
-<html lang="ru">
+    return '''<!doctype html> 
+<html>
 <head>
-    <meta charset="utf-8">
     <title>Лабораторная 1</title>
     <style>
         * {
@@ -216,8 +236,7 @@ def image():
     css_path = url_for("static", filename="lab1.css")
     image_path = url_for("static", filename="oak.jpg")
     
-    return f'''
-<!doctype html> 
+    return f'''<!doctype html> 
 <html>
     <head>
         <title>Дуб</title>
@@ -239,23 +258,22 @@ def counter():
     url = request.url
     client_ip = request.remote_addr
 
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Счетчик</title>
-    </head>
-    <body> 
-        <h2>Счетчик посещений</h2>
-        <p>Сколько раз вы сюда заходили: <strong>''' + str(count) + '''</strong></p>
-        <hr>
-        <p>Дата и время: ''' + str(time) + '''</p>
-        <p>Запрошенный адрес: ''' + str(url) + '''</p>
-        <p>Ваш IP-адрес: ''' + str(client_ip) + '''</p>
-        <br>
-        <a href="/lab1/reset">Сбросить счетчик</a>
-    </body> 
+<head>
+    
+    <title>Счетчик</title>
+</head>
+<body> 
+    <h2>Счетчик посещений</h2>
+    <p>Сколько раз вы сюда заходили: <strong>''' + str(count) + '''</strong></p>
+    <hr>
+    <p>Дата и время: ''' + str(time) + '''</p>
+    <p>Запрошенный адрес: ''' + str(url) + '''</p>
+    <p>Ваш IP-адрес: ''' + str(client_ip) + '''</p>
+    <br>
+    <a href="/lab1/reset">Сбросить счетчик</a>
+</body> 
 </html>
 '''
 
@@ -263,18 +281,17 @@ def counter():
 def reset_counter():
     global count
     count = 0
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Сброс счетчика</title>
-    </head>
-    <body> 
-        <h2>Счетчик сброшен!</h2>
-        <p>Текущее значение счетчика: <strong>''' + str(count) + '''</strong></p>
-        <a href="/lab1/counter">Вернуться к счетчику</a>
-    </body> 
+<head>
+    <meta charset="utf-8">
+    <title>Сброс счетчика</title>
+</head>
+<body> 
+    <h2>Счетчик сброшен!</h2>
+    <p>Текущее значение счетчика: <strong>''' + str(count) + '''</strong></p>
+    <a href="/lab1/counter">Вернуться к счетчику</a>
+</body> 
 </html>
 '''
 
@@ -295,8 +312,7 @@ def created():
 
 @app.route("/400")
 def bad_request():
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <head>
     <title>400 Bad Request</title>
     <style>
@@ -317,8 +333,7 @@ def bad_request():
 
 @app.route("/401")
 def unauthorized():
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <head>
     <title>401 Unauthorized</title>
     <style>
@@ -339,8 +354,7 @@ def unauthorized():
 
 @app.route("/402")
 def payment_required():
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <html>
 <head>
     <title>402 Payment Required</title>
@@ -362,8 +376,7 @@ def payment_required():
 
 @app.route("/403")
 def forbidden():
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <html>
 <head>
     <title>403 Forbidden</title>
@@ -385,8 +398,7 @@ def forbidden():
 
 @app.route("/405")
 def method_not_allowed():
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <html>
 <head>
     <title>405 Method Not Allowed</title>
@@ -408,8 +420,7 @@ def method_not_allowed():
 
 @app.route("/418")
 def teapot():
-    return '''
-<!doctype html> 
+    return ''' <!doctype html> 
 <html>
 <head>
     <title>418 I'm a teapot</title>
@@ -433,9 +444,7 @@ def teapot():
 
 @app.route("/errors")
 def errors_list():
-    return '''
-<!doctype html> 
-<html lang="ru">
+    return ''' <!doctype html> 
 <head>
     <title>HTTP Error Codes</title>
     <style>
@@ -459,12 +468,8 @@ def errors_list():
         <li><a href="/418">418 I'm a teapot</a> - Я - чайник! (шуточный код)</li>
     </ul>
     
-    <p>Для просмотра кода ответа откройте инструменты разработчика (F12) → вкладка "Network"</p>
-    
     <a href="/">На главную</a>
 </body> 
 </html>
 '''
 
-if __name__ == "__main__":
-    app.run(debug=True)
