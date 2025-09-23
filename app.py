@@ -18,14 +18,15 @@ def index():
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding-botton: 80px;
             line-height: 1.6;
         }
         header {
-            background-color: #003366;
-            color: white;
+            background-color: gray;
+            color: black;
             padding: 20px;
-            text-align: center;
+            text-align: left;
+            left: 0;
         }
         nav {
             background-color: #f0f0f0;
@@ -47,12 +48,20 @@ def index():
         nav a:hover {
             color: #0066cc;
         }
+        main {
+            flex: 1;
+            padding: 20px;
+        }
         footer {
-            background-color: #003366;
-            color: white;
+            background-color: gray;
+            font-family: Arial, sans-serif;
+            color: black;
             padding: 15px;
-            text-align: center;
-            margin-top: auto;
+            text-align: right;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 1000;
             width: 100%;
         }
     </style>
@@ -64,12 +73,12 @@ def index():
     
     <body>
         <ul>
-            <li><a href="/lab1">Первая лабораторная</a></li>
+            <li><a href="/lab1">Первая лабораторная работа</a></li>
         </ul>
     </body>
     
     <footer>
-        <p>Агафонова Анастасия, ФБИ-24, 3 курс, 2025</p>
+        <p>Агафонова Анастасия, ФБИ-32, 3 курс, 2025</p>
     </footer>
 </body> 
 </html>
