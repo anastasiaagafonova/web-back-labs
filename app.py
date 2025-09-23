@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 
 
-# Главная страница на корневом адресе
 @app.route("/")
+@app.route("/index")
 def index():
     return '''<!doctype html> 
 <html>
@@ -233,22 +233,27 @@ def author():
 
 @app.route("/lab1/image")
 def image():
-    # Получаем пути правильно
     css_path = url_for("static", filename="lab1.css")
     image_path = url_for("static", filename="oak.jpg")
-    
-    return f'''<!doctype html> 
+    headers = {
+        'Content-Language': 'en-EN',
+        'X-Custom-Header-1': 'Oak',
+        'X-Custom-Header-2': 'Flask'
+    }
+    return f'''
+<!doctype html>
 <html>
     <head>
-        <title>Дуб</title>
         <link rel="stylesheet" href="{css_path}">
     </head>
-    <body> 
-        <h1>Дуб</h1> 
-        <img src="{image_path}" alt="Дуб">
-    </body> 
+    <body>
+        <div class="container">
+            <h1>Дуб</h1>
+            <img src="{image_path}">
+        </div>
+    </body>
 </html>
-'''
+''', 200, headers
 
 count = 0
 @app.route("/lab1/counter")
@@ -483,7 +488,7 @@ def cause_error():
     elif error_type == 'concatenation':
         # Конкатенация числа и строки
         result = 10 + "строка"
-    else error_type == 'undefined':
+    elif error_type == 'undefined':
         # Обращение к неопределенной переменной
         result = undefined_variable
     
