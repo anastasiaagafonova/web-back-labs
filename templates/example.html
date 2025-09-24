@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Агафонова Анастасия. Лабораторная работа 2</title>
+    <title>{% if name %}Агафонова Анастасия.{% endif %} Лабораторная работа 2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css')}}">
 </head>
 <body>
     <header>
-         WEB-программирование, часть 2. Лабораторная работа 2
+         WEB-программирование, часть 2. {% if number %}Лабораторная работа 2{% endif %}
     </header>
 
     <main>
@@ -19,7 +20,24 @@
     </main>
 
     <footer>
-        &copy; {{ name }}, ФБИ-32, 3 курс, 2025
+        &copy; 
+        {% if name %}
+            {{ name }}, 
+        {% else %}
+            Анонимус,
+        {% endif %}
+
+        {% if group %}
+            {{ group }}, 
+        {% else %}
+            0,
+        {% endif %}
+
+        {% if cours %}
+            {{ cours }}, 
+        {% else %}
+            0,
+        {% endif %}
     </footer>
 </body>
 </html>
