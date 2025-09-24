@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, redirect
+from flask import Flask, url_for, request, redirect, abort
 from datetime import datetime
 import os
 app = Flask(__name__)
@@ -93,7 +93,7 @@ def not_found(err):
         with open(LOG_FILE, 'a', encoding='utf-8') as f:
             f.write(log_entry)
     except IOError as e:
-        print(f"Log error: {e}")
+        print(f"Log error: {e}")      
     try:
         with open(LOG_FILE, 'r', encoding='utf-8') as f:
             full_log = f.read()
@@ -588,3 +588,11 @@ def internal_server_error(err):
 @app.route('/lab2/a/')
 def a():
     return 'ok'
+
+flower_list = ('роза', 'тюльпан', 'незабудка', 'ромашка')
+@app.route('/lab2/flowers/<int:flower_id>')
+def flowers(flower_id):
+    if flower_id >= len(flower_list):
+        abort(404)
+    else:
+        return "цветок: " + flower_list[flower_id]
