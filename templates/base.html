@@ -8,10 +8,11 @@
 </head>
 <body>
     <header>
-        WEB-программирование, часть 2. лабораторная работа 2
+        WEB-программирование, часть 2. {{ self.lab() }}
     </header>
 
     <main>
+        {% block main %}{% endblock %}
     </main>
 
     <footer>
