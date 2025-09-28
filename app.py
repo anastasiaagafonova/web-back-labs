@@ -591,6 +591,7 @@ def a():
     return 'ok'
 
 flower_list = ('роза', 'тюльпан', 'незабудка', 'ромашка')
+
 @app.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
     if flower_id >= len(flower_list):
@@ -598,6 +599,10 @@ def flowers(flower_id):
     else:
         return "цветок: " + flower_list[flower_id]
 
+@app.route('/lab2/add/_flower/')
+def add_flower_no_name():
+        return "вы не задали имя цветка", 400
+    
 @app.route('/lab2/add/_flower/<name>')
 def add_flower(name):
     flower_list.append(name)
@@ -627,3 +632,11 @@ def example():
     ]
     return render_template('example.html', name=name, group=group, number=number, cours=cours, fruits=fruits  )
     
+@app.route('/lab2/')
+def lab2():
+    return render_template('lab2.html')
+
+@app.route('/lab2/filters')
+def filters():
+    phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
+    return render_template('filter.html', phrase = phrase)
