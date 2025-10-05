@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 2{% endblock %}
+
+{% block main %}
+    <h1>Автомобили</h1>
+    
+    <div class="cars-container" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        {% for car in cars %}
+        <div class="car-card" style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; width: 280px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <img src="{{ url_for('static', filename='images/cars/' + car.image) }}" 
+                 alt="{{ car.name }}" 
+                 style="width: 250px; height: 175px; object-fit: cover; border-radius: 5px;">
+            <h3 style="color: #2c3e50; margin: 10px 0;">{{ car.name }}</h3>
+            <p style="color: #666; font-size: 14px; line-height: 1.4;">{{ car.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/lab2/">Назад к лабораторной 2</a>
+    </div>
+{% endblock %}
