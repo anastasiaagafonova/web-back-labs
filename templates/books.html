@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 2{% endblock %}
+
+{% block main %}
+    <h1>Список книг</h1>
+
+    <div>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr style="background-color: #a3f7fb;">
+                    <th>№</th>
+                    <th>Автор</th>
+                    <th>Название книги</th>
+                    <th>Жанр</th>
+                    <th>Страниц</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td style="text-align: center;">{{ loop.index }}</td>
+                    <td><strong>{{ book.author }}</strong></td>
+                    <td><strong><i>{{ book.title }}</i></strong></td>
+                    <td>{{ book.genre }}</td>
+                    <td style="text-align: center;">{{ book.pages }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <a href="/lab2/">Назад к лабораторной 2</a>
+    </div>
+{% endblock %}
