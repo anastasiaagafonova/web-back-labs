@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 2{% endblock %}
+
+{% block main %}
+    <h1>Выражения</h1>
+    
+    <div>
+        <p>{{ a }} + {{ b }} = <strong>{{ operations.sum }}</strong></p>
+        <p>{{ a }} - {{ b }} = <strong>{{ operations.subtract }}</strong></p>
+        <p>{{ a }} × {{ b }} = <strong>{{ operations.multiply }}</strong></p>
+        <p>{{ a }} / {{ b }} = <strong>{{ operations.divide }}</strong></p>
+        <p>{{ a }}<sup>{{ b }}</sup> = <strong>{{ operations.power }}</strong></p>
+    </div>
+
+    <div>
+        <h3>Примеры для тестирования:</h3>
+        <ul>
+            <li><a href="/lab2/calc/6/8">6 и 8</a></li>
+            <li><a href="/lab2/calc/5/3">5 и 3</a></li>
+            <li><a href="/lab2/calc/7/0">7 и 0</a></li>
+            <li><a href="/lab2/calc/20">20 и 1</a></li>
+            <li><a href="/lab2/calc/">Без значений</a></li>
+        </ul>
+    </div>
+
+    <div>
+        <a href="/lab2/">Назад к лабораторной 2</a>
+    </div>
+{% endblock %}
