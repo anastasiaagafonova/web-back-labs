@@ -363,6 +363,28 @@ def errors_list():
 '''
 
 
+@lab1.route("/400")
+def bad_request():
+    return ''' <!doctype html> 
+<head>
+    <title>400 Bad Request</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .error { color: #d63384; background-color: #f8f9fa; padding: 20px; border-left: 4px solid #d63384; }
+    </style>
+</head>
+<body> 
+    <h1>400 Bad Request</h1>
+    <div class="error">
+        <p><strong>Ошибка 400:</strong> Сервер не может обработать запрос из-за синтаксической ошибки клиента.</p>
+        <p>Возможные причины: неверный синтаксис запроса, неверный размер запроса, неверный заголовок и т.д.</p>
+    </div>
+    <a href="/errors">Назад</a>
+</body> 
+</html>
+''', 400
+
+
 @lab1.route("/cause-error")
 def cause_error():
     error_type = request.args.get('type', 'division')

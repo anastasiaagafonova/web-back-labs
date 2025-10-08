@@ -1,6 +1,5 @@
-
-
-
+from flask import Blueprint, redirect, url_for, render_template
+lab2 = Blueprint('lab2', __name__)
 
 
 flower_list = [
@@ -10,18 +9,18 @@ flower_list = [
     {'name': 'ромашка', 'price': 3}
 ]
 
-@app.route('/lab2/a/')
+@lab2.route('/lab2/a/')
 def a():
     return 'ok'
 
-@app.route('/lab2/flowers/<int:flower_id>')
+@lab2.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
     if flower_id >= len(flower_list) or flower_id < 0:
         abort(404)
     flower = flower_list[flower_id]
     return render_template('flower.html', flower=flower, flower_id=flower_id)
 
-@app.route('/lab2/add/flower/', methods=['POST'])
+@lab2.route('/lab2/add/flower/', methods=['POST'])
 def add_flower():
     name = request.form.get('name', '').strip()
     price_str = request.form.get('price', '').strip()
@@ -33,19 +32,19 @@ def add_flower():
             return "Цена не может быть отрицательной!", 400
     except ValueError:
         return "Цена должна быть числом!", 400
-    flower_list.append({'name': name, 'price': price})
+    flower_list.lab2end({'name': name, 'price': price})
     return redirect(url_for('all_flowers_html'))
 
-@app.route('/lab2/flowers_html')
+@lab2.route('/lab2/flowers_html')
 def all_flowers_html():
     return render_template('all_flowers.html', flowers=flower_list, count=len(flower_list))
 
-@app.route('/lab2/clear_flowers')
+@lab2.route('/lab2/clear_flowers')
 def clear_flowers():
     flower_list.clear()
     return redirect(url_for('all_flowers_html'))
 
-@app.route('/lab2/flowers/<int:flower_id>/delete')
+@lab2.route('/lab2/flowers/<int:flower_id>/delete')
 def delete_flower(flower_id):
     if flower_id >= len(flower_list) or flower_id < 0:
         abort(404)
@@ -53,7 +52,7 @@ def delete_flower(flower_id):
     return redirect(url_for('all_flowers_html'))
 
 
-@app.route('/lab2/example')
+@lab2.route('/lab2/example')
 def example():
     name = 'Анастасия Агафонова'
     group = 'ФБИ-32'
@@ -68,16 +67,16 @@ def example():
     ]
     return render_template('example.html', name=name, group=group, number=number, cours=cours, fruits=fruits  )
     
-@app.route('/lab2/')
-def lab2():
+@lab2.route('/lab2/')
+def lab():
     return render_template('lab2.html')
 
-@app.route('/lab2/filters')
+@lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
     return render_template('filter.html', phrase = phrase)
 
-@app.route('/lab2/calc/<int:a>/<int:b>')
+@lab2.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
     try:
         divide_result = a / b
@@ -93,11 +92,11 @@ def calc(a, b):
     }
     return render_template('calc.html', a=a, b=b, operations=operations)
 
-@app.route('/lab2/calc/')
+@lab2.route('/lab2/calc/')
 def calc_default():
     return redirect('/lab2/calc/1/1')
 
-@app.route('/lab2/calc/<int:a>')
+@lab2.route('/lab2/calc/<int:a>')
 def calc_single(a):
     return redirect(f'/lab2/calc/{a}/1')
 
@@ -116,7 +115,7 @@ books_list= [
     {'author': 'Джек Лондон', 'title': 'Белый Клык', 'genre': 'Приключения', 'pages': 272}
 ]
 
-@app.route('/lab2/books')
+@lab2.route('/lab2/books')
 def show_books():
     return render_template('books.html', books=books_list)
 
@@ -213,11 +212,11 @@ cars_list = [
     }
 ]
 
-@app.route('/lab2/cars')
+@lab2.route('/lab2/cars')
 def show_cars():
     return render_template('cars.html', cars=cars_list)
 
-@app.route('/lab2/test-images')
+@lab2.route('/lab2/test-images')
 def test_images():
     return '''
     <h1>Тест статических файлов</h1>

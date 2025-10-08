@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 2{% endblock %}
+
+{% block main %}
+
+    {% if user %}
+
+    <h1>Привет, {{ user }}!</h1>
+    <h2>Добро пожаловать на наш сайт!</h2>
+
+    {% else %}
+
+    <h1>Пользователь</h1>
+
+    <form>
+        <label>Введите имя:</label>
+        <div>
+            <input type="text" placeholder="как вас зовут?" name="user">
+        </div>
+        <div>
+            <button type="submit">Отправить</button>
+        </div>
+    </form>
+
+    {% endif %}
+{% endblock %}
