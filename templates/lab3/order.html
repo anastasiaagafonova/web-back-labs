@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <h1>Заказ напитка</h1>
+
+    <form action="/lab3/pay" class="order-form">
+        <div class="form-section">
+            <div class="section-title">Напиток:</div>
+            <label class="option">
+                <input type="radio" value="cofee" name="drink" checked>
+                кофе
+            </label>
+            <label class="option">
+                <input type="radio" value="black-tea" name="drink">
+                чёрный чай
+            </label>
+            <label class="option">
+                <input type="radio" value="green-tea" name="drink">
+                зелёный чай
+            </label>
+        </div>
+        
+        <div class="form-section">
+            <div class="section-title">Добавки:</div>
+            <label class="option">
+                <input type="checkbox" name="milk">
+                молоко
+            </label>
+            <label class="option">
+                <input type="checkbox" name="sugar">
+                сахар
+            </label>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit">Заказать</button>
+        </div>
+    </form>
+
+    <style>
+        .order-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .option {
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .form-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .form-actions button {
+            padding: 14px 40px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .form-actions button:hover {
+            background: #0056b3;
+        }
+    </style>
+{% endblock %}
