@@ -5,8 +5,25 @@
 {% block main %}
     <h1>Формы, cookie</h1>
     <div>
-        Привет, <span style="color: {{name_color}}">{{ name }}</span>!
+        Привет, 
+        {% if name %}
+            <span style="color: {{ name_color or '#000000' }}">{{ name }}</span>!
+        {% else %}
+            <span>Аноним</span>!
+        {% endif %}
+        {% if age %}
+            <div>Ваш возраст: {{ age }}</div>
+        {% endif %}
     </div>
+
+    <!-- Форма для установки имени и возраста -->
+    <form action="/lab3/set_user_info" method="POST">
+        <div>
+            <label>Ваш возраст:</label>
+            <input type="number" name="age" value="{{ request.cookies.get('age') or '' }}" placeholder="Введите возраст">
+        </div>
+        <button type="submit">Сохранить</button>
+    </form>
 
     <div>Список сделанных страниц:</div>
     <ol>
