@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <h1>Поиск смартфонов</h1>
+    
+    <form>
+        <div>
+            <label>Мин. цена:</label>
+            <input type="number" name="min_price" value="{{ min_price }}" placeholder="24990">
+        </div>
+        
+        <div>
+            <label>Макс. цена:</label>
+            <input type="number" name="max_price" value="{{ max_price }}" placeholder="99990">
+        </div>
+        
+        <div>
+            <button type="submit">Искать</button>
+            <a href="/lab3/products_reset" class="reset-btn">Сброс</a>
+        </div>
+    </form>
+    
+    <div style="margin: 20px 0;">
+        <strong>Найдено товаров: {{ count }}</strong>
+    </div>
+    
+    {% if count == 0 %}
+        <div style="color: #666; text-align: center; padding: 40px;">
+            Не найдено ни одного товара
+        </div>
+    {% else %}
+        <div class="products-grid">
+            {% for product in filtered_products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                             alt="{{ product.name }}" 
+                             onerror="this.src='{{ url_for('static', filename='images/no-image.jpg') }}'">
+                    </div>
+                    <h3>{{ product.name }}</h3>
+                    <div class="product-price">{{ product.price }} руб.</div>
+                    <div class="product-details">
+                        <div><strong>Бренд:</strong> {{ product.brand }}</div>
+                        <div><strong>Цвет:</strong> {{ product.color }}</div>
+                        <div><strong>Память:</strong> {{ product.storage }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <style>
+        div { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { 
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            width: 200px; 
+        }
+        button { 
+            padding: 10px 20px; 
+            margin-right: 10px;
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .reset-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-image {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e91e63;
+            margin: 10px 0;
+        }
+        .product-details {
+            text-align: left;
+            font-size: 14px;
+        }
+        .product-details div {
+            margin-bottom: 8px;
+        }
+    </style>
+    <div>
+        <a href="/lab3/">Назад к лабораторной 3</a>
+    </div>
+{% endblock %}

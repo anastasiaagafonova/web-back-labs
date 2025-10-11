@@ -18,7 +18,7 @@ def flowers(flower_id):
     if flower_id >= len(flower_list) or flower_id < 0:
         abort(404)
     flower = flower_list[flower_id]
-    return render_template('flower.html', flower=flower, flower_id=flower_id)
+    return render_template('lab2/flower.html', flower=flower, flower_id=flower_id)
 
 @lab2.route('/lab2/add/flower/', methods=['POST'])
 def add_flower():
@@ -37,12 +37,12 @@ def add_flower():
 
 @lab2.route('/lab2/flowers_html')
 def all_flowers_html():
-    return render_template('all_flowers.html', flowers=flower_list, count=len(flower_list))
+    return render_template('lab2/all_flowers.html', flowers=flower_list, count=len(flower_list))
 
 @lab2.route('/lab2/clear_flowers')
 def clear_flowers():
     flower_list.clear()
-    return redirect(url_for('all_flowers_html'))
+    return redirect(url_for('lab2/all_flowers_html'))
 
 @lab2.route('/lab2/flowers/<int:flower_id>/delete')
 def delete_flower(flower_id):
@@ -65,16 +65,16 @@ def example():
         {'name': 'мандарины', 'price': 195},
         {'name': 'манго', 'price': 321}
     ]
-    return render_template('example.html', name=name, group=group, number=number, cours=cours, fruits=fruits  )
+    return render_template('lab2/example.html', name=name, group=group, number=number, cours=cours, fruits=fruits  )
     
 @lab2.route('/lab2/')
 def lab():
-    return render_template('lab2.html')
+    return render_template('lab2/lab2.html')
 
 @lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase = phrase)
+    return render_template('lab2/filter.html', phrase = phrase)
 
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
@@ -90,7 +90,7 @@ def calc(a, b):
         'divide': divide_result,
         'power': a ** b
     }
-    return render_template('calc.html', a=a, b=b, operations=operations)
+    return render_template('lab2/calc.html', a=a, b=b, operations=operations)
 
 @lab2.route('/lab2/calc/')
 def calc_default():
@@ -117,7 +117,7 @@ books_list= [
 
 @lab2.route('/lab2/books')
 def show_books():
-    return render_template('books.html', books=books_list)
+    return render_template('lab2/books.html', books=books_list)
 
 cars_list = [
     {
@@ -214,7 +214,7 @@ cars_list = [
 
 @lab2.route('/lab2/cars')
 def show_cars():
-    return render_template('cars.html', cars=cars_list)
+    return render_template('lab2/cars.html', cars=cars_list)
 
 @lab2.route('/lab2/test-images')
 def test_images():

@@ -129,8 +129,8 @@ def author():
 
 @lab1.route("/lab1/image")
 def image():
-    css_path = url_for("static", filename="lab1.css")
-    image_path = url_for("static", filename="oak.jpg")
+    css_path = url_for("static", filename="lab1/lab1.css")
+    image_path = url_for("static", filename="lab1/oak.jpg")
     headers = {
         'Content-Language': 'en-EN',
         'X-Custom-Header-1': 'Oak',
@@ -140,12 +140,12 @@ def image():
 <!doctype html>
 <html>
     <head>
-        <link rel="stylesheet" href="{css_path}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lab1/lab1.css') }}">
     </head>
     <body>
         <div class="container">
             <h1>Дуб</h1>
-            <img src="{image_path}">
+            <img src="{{ url_for('static', filename='lab1/oak.jpg') }}">
         </div>
     </body>
 </html>
