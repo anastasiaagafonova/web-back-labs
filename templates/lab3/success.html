@@ -2,43 +2,46 @@
 {% block lab %}Лабораторная работа 3{% endblock %}
 
 {% block main %}
-<div class="success-container">
-    <div class="success-icon">✓</div>
-    <h1>Спасибо!</h1>
-    <p class="success-message">Ваш заказ оплачен на сумму <strong>{{ price }} ₽</strong></p>
-    <p class="delivery-info">Ожидайте доставку</p>
-    <a href="/lab3/order" class="back-link">← Сделать новый заказ</a>
-</div>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1>Спасибо!</h1>
+        <p class="success-message">Ваш заказ оплачен на сумму <strong>{{ price }} ₽</strong></p>
+        <p class="delivery-info">Ожидайте доставку</p>
+        <a href="/lab3/order" class="back-link">← Сделать новый заказ</a>
+    </div>
 
-<style>
-.success-container {
-    text-align: center;
-    padding: 3rem 1rem;
-}
+    <style>
+    .success-container {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
 
-.success-icon {
-    font-size: 4rem;
-    color: #28a745;
-    margin-bottom: 1rem;
-}
+    .success-icon {
+        font-size: 4rem;
+        color: #28a745;
+        margin-bottom: 1rem;
+    }
 
-.success-message {
-    font-size: 1.2rem;
-    margin: 1rem 0;
-}
+    .success-message {
+        font-size: 1.2rem;
+        margin: 1rem 0;
+    }
 
-.delivery-info {
-    color: #666;
-    margin-bottom: 2rem;
-}
+    .delivery-info {
+        color: #666;
+        margin-bottom: 2rem;
+    }
 
-.back-link {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-}
-</style>
+    .back-link {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    </style>
+    <div>
+        <a href="/lab3/">Назад к лабораторной 3</a>
+    </div>
 {% endblock %}

@@ -4,86 +4,57 @@
 
 {% block main %}
     <h1>Настройки оформления</h1>
+    
     <form>
-        <div class="form-group">
-            <label for="color">Цвет текста:</label>
-            <input type="color" id="color" name="color" value="{{ color or '#000000' }}">
+        <div>
+            <label>Цвет текста:</label>
+            <input type="color" name="color" value="{{ color or '#000000' }}">
         </div>
 
-        <div class="form-group">
-            <label for="bg_color">Цвет фона:</label>
-            <input type="color" id="bg_color" name="bg_color" value="{{ bg_color or '#ffffff' }}">
+        <div>
+            <label>Цвет фона:</label>
+            <input type="color" name="bg_color" value="{{ bg_color or '#ffffff' }}">
         </div>
 
-        <div class="form-group">
-            <label for="font_size">Размер шрифта:</label>
-            <select id="font_size" name="font_size">
-                <option value="14px" {% if font_size == '14px' %}selected{% endif %}>Маленький (14px)</option>
-                <option value="16px" {% if font_size == '16px' or not font_size %}selected{% endif %}>Средний (16px)</option>
-                <option value="18px" {% if font_size == '18px' %}selected{% endif %}>Большой (18px)</option>
-                <option value="20px" {% if font_size == '20px' %}selected{% endif %}>Очень большой (20px)</option>
+        <div>
+            <label>Размер шрифта:</label>
+            <select name="font_size">
+                <option value="14px" {% if font_size == '14px' %}selected{% endif %}>14px</option>
+                <option value="16px" {% if font_size == '16px' or not font_size %}selected{% endif %}>16px</option>
+                <option value="18px" {% if font_size == '18px' %}selected{% endif %}>18px</option>
+                <option value="20px" {% if font_size == '20px' %}selected{% endif %}>20px</option>
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="font_family">Шрифт:</label>
-            <select id="font_family" name="font_family">
+        <div>
+            <label>Шрифт:</label>
+            <select name="font_family">
                 <option value="Arial, sans-serif" {% if font_family == 'Arial, sans-serif' or not font_family %}selected{% endif %}>Arial</option>
                 <option value="'Times New Roman', serif" {% if font_family == "'Times New Roman', serif" %}selected{% endif %}>Times New Roman</option>
                 <option value="'Courier New', monospace" {% if font_family == "'Courier New', monospace" %}selected{% endif %}>Courier New</option>
-                <option value="Georgia, serif" {% if font_family == 'Georgia, serif' %}selected{% endif %}>Georgia</option>
             </select>
         </div>
 
-        <div class="form-actions">
-            <button type="submit">Применить</button>
+        <div>
+            <button type="submit">OK</button>
+            <a href="/lab3/clearsettings">Сброс</a>
         </div>
     </form>
 
     <style>
-        .form-group {
-            margin-bottom: 20px;
+        div { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        button, a { 
+            padding: 10px 20px; 
+            margin-right: 10px;
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
         }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            width: 200px;
-        }
-
-        .form-group input[type="color"] {
-            height: 45px;
-            padding: 5px;
-        }
-
-        .form-actions {
-            margin-top: 25px;
-        }
-
-        button {
-            padding: 12px 30px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
+        a { background: #b9dfed; }
     </style>
     <div>
         <a href="/lab3/">Назад к лабораторной 3</a>
