@@ -8,6 +8,17 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='favicon-16x16.png') }}" type="image/png" sizes="16x16">
     <link rel="icon" href="{{ url_for('static', filename='favicon-32x32.png') }}" type="image/png" sizes="32x32">
+    <style>
+        body {
+            color: {{ request.cookies.get('color', '#000000') }};
+            background-color: {{ request.cookies.get('bg_color', '#ffffff') }};
+            font-size: {{ request.cookies.get('font_size', '16px') }};
+            font-family: {{ request.cookies.get('font_family', 'Arial, sans-serif') }};
+            margin: 0;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body>
     <header>
