@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <h1>Ваш железнодорожный билет</h1>
+    
+    <div class="ticket" style="border: 2px solid #333; padding: 20px; max-width: 600px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2>ЖЕЛЕЗНОДОРОЖНЫЙ БИЛЕТ</h2>
+            <div style="color: #666; font-size: 18px;">{{ ticket_type }}</div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div><strong>Пассажир:</strong></div>
+            <div>{{ fio }}</div>
+            
+            <div><strong>Возраст:</strong></div>
+            <div>{{ age }} лет</div>
+            
+            <div><strong>Маршрут:</strong></div>
+            <div>{{ departure }} → {{ destination }}</div>
+            
+            <div><strong>Дата:</strong></div>
+            <div>{{ date }}</div>
+            
+            <div><strong>Полка:</strong></div>
+            <div>{{ shelf }}</div>
+            
+            <div><strong>Бельё:</strong></div>
+            <div>{{ bedding }}</div>
+            
+            <div><strong>Багаж:</strong></div>
+            <div>{{ luggage }}</div>
+            
+            <div><strong>Страховка:</strong></div>
+            <div>{{ insurance }}</div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+            <div style="font-size: 24px; font-weight: bold; color: #e91e63;">
+                ИТОГО: {{ total_price }} руб.
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/lab3/ticket">Оформить новый билет</a> | 
+        <a href="/lab3/">Назад к списку</a>
+    </div>
+
+    <style>
+        .ticket div {
+            padding: 5px 0;
+        }
+    </style>
+{% endblock %}

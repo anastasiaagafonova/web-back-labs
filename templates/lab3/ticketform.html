@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <h1>Железнодорожный билет</h1>
+    
+    <form method="POST" action="/lab3/ticketresult">
+        <div class="form-group">
+            <label>ФИО пассажира:</label>
+            <input type="text" name="fio" value="{{ fio or '' }}" placeholder="Иванов Иван Иванович">
+            {% if errors.fio %}
+                <div class="error">{{ errors.fio }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Полка:</label>
+            <select name="shelf">
+                <option value="">-- Выберите полку --</option>
+                <option value="нижняя" {% if shelf == 'нижняя' %}selected{% endif %}>Нижняя</option>
+                <option value="верхняя" {% if shelf == 'верхняя' %}selected{% endif %}>Верхняя</option>
+                <option value="верхняя боковая" {% if shelf == 'верхняя боковая' %}selected{% endif %}>Верхняя боковая</option>
+                <option value="нижняя боковая" {% if shelf == 'нижняя боковая' %}selected{% endif %}>Нижняя боковая</option>
+            </select>
+            {% if errors.shelf %}
+                <div class="error">{{ errors.shelf }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>С бельём:</label>
+            <select name="bedding">
+                <option value="">-- Выберите --</option>
+                <option value="да" {% if bedding == 'да' %}selected{% endif %}>Да</option>
+                <option value="нет" {% if bedding == 'нет' %}selected{% endif %}>Нет</option>
+            </select>
+            {% if errors.bedding %}
+                <div class="error">{{ errors.bedding }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>С багажом:</label>
+            <select name="luggage">
+                <option value="">-- Выберите --</option>
+                <option value="да" {% if luggage == 'да' %}selected{% endif %}>Да</option>
+                <option value="нет" {% if luggage == 'нет' %}selected{% endif %}>Нет</option>
+            </select>
+            {% if errors.luggage %}
+                <div class="error">{{ errors.luggage }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Возраст:</label>
+            <input type="number" name="age" value="{{ age or '' }}" min="1" max="120" placeholder="18">
+            {% if errors.age %}
+                <div class="error">{{ errors.age }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Пункт выезда:</label>
+            <input type="text" name="departure" value="{{ departure or '' }}" placeholder="Москва">
+            {% if errors.departure %}
+                <div class="error">{{ errors.departure }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Пункт назначения:</label>
+            <input type="text" name="destination" value="{{ destination or '' }}" placeholder="Санкт-Петербург">
+            {% if errors.destination %}
+                <div class="error">{{ errors.destination }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Дата поездки:</label>
+            <input type="date" name="date" value="{{ date or '' }}">
+            {% if errors.date %}
+                <div class="error">{{ errors.date }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Страховка:</label>
+            <select name="insurance">
+                <option value="">-- Выберите --</option>
+                <option value="да" {% if insurance == 'да' %}selected{% endif %}>Да</option>
+                <option value="нет" {% if insurance == 'нет' %}selected{% endif %}>Нет</option>
+            </select>
+            {% if errors.insurance %}
+                <div class="error">{{ errors.insurance }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit">Оформить билет</button>
+    </form>
+
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
