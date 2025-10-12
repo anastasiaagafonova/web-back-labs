@@ -239,11 +239,11 @@ products = [
     {"name": "Xiaomi Poco X6", "price": 27990, "brand": "Xiaomi", "color": "желтый", "storage": "128GB", "image": "13.jpg"},
     {"name": "Google Pixel 7a", "price": 44990, "brand": "Google", "color": "синий", "storage": "128GB", "image": "14.jpg"},
     {"name": "OnePlus Nord 3", "price": 37990, "brand": "OnePlus", "color": "серый", "storage": "256GB", "image": "15.jpg"},
-    {"name": "iPhone SE", "price": 44990, "brand": "Apple", "color": "белый", "storage": "64GB", "image": "16.jpg"},
+    {"name": "iPhone SE", "price": 15990, "brand": "Apple", "color": "белый", "storage": "64GB", "image": "16.jpg"},
     {"name": "Samsung Galaxy M54", "price": 29990, "brand": "Samsung", "color": "синий", "storage": "128GB", "image": "17.jpg"},
-    {"name": "Xiaomi 13T", "price": 49990, "brand": "Xiaomi", "color": "черный", "storage": "256GB", "image": "18.jpg"},
+    {"name": "Xiaomi 13T", "price": 49990, "brand": "Xiaomi", "color": "черный", "storage": "256GB", "image": "18.jfif"},
     {"name": "Realme GT 2", "price": 39990, "brand": "Realme", "color": "стальной", "storage": "128GB", "image": "19.jpg"},
-    {"name": "Nothing Phone 1", "price": 32990, "brand": "Nothing", "color": "черный", "storage": "128GB", "image": "20.jpg"}
+    {"name": "iPhone 15 pro", "price": 89990, "brand": "Apple", "color": "натуральный титан", "storage": "256GB", "image": "20.jpg"}
 ]
 
 @lab3.route('/lab3/products')

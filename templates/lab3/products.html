@@ -8,7 +8,7 @@
     <form>
         <div>
             <label>Мин. цена:</label>
-            <input type="number" name="min_price" value="{{ min_price }}" placeholder="24990">
+            <input type="number" name="min_price" value="{{ min_price }}" placeholder="15990">
         </div>
         
         <div>
@@ -35,9 +35,9 @@
             {% for product in filtered_products %}
                 <div class="product-card">
                     <div class="product-image">
-                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
-                             alt="{{ product.name }}" 
-                             onerror="this.src='{{ url_for('static', filename='images/no-image.jpg') }}'">
+                        <img src="{{ url_for('static', filename='lab3/' + product.image) }}" 
+                        alt="{{ product.name }}" 
+                        onerror="this.src='{{ url_for('static', filename='lab3/no-image.jpg') }}'">
                     </div>
                     <h3>{{ product.name }}</h3>
                     <div class="product-price">{{ product.price }} руб.</div>
