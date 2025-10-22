@@ -99,8 +99,9 @@ def settings():
     bg_color = request.args.get('bg_color')
     font_size = request.args.get('font_size')
     font_family = request.args.get('font_family')
+    margin = request.args.get('margin')
     
-    if any([color, bg_color, font_size, font_family]):
+    if any([color, bg_color, font_size, font_family, margin]):
         resp = make_response(redirect('/lab3/settings'))
         if color:
             resp.set_cookie('color', color)
@@ -110,18 +111,22 @@ def settings():
             resp.set_cookie('font_size', font_size)
         if font_family:
             resp.set_cookie('font_family', font_family)
+        if margin:
+            resp.set_cookie('margin', margin)
         return resp
     
     color = request.cookies.get('color')
     bg_color = request.cookies.get('bg_color')
     font_size = request.cookies.get('font_size')
     font_family = request.cookies.get('font_family')
+    margin = request.cookies.get('margin')
     
     resp = make_response(render_template('lab3/settings.html', 
                                        color=color, 
                                        bg_color=bg_color, 
                                        font_size=font_size, 
-                                       font_family=font_family))
+                                       font_family=font_family,
+                                       margin=margin))
     return resp
 
 
