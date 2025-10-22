@@ -30,15 +30,21 @@
             <label>Шрифт:</label>
             <select name="font_family">
                 <option value="Arial, sans-serif" {% if font_family == 'Arial, sans-serif' or not font_family %}selected{% endif %}>Arial</option>
-                <option value="'Times New Roman', serif" {% if font_family == "'Times New Roman', serif" %}selected{% endif %}>Times New Roman</option>
-                <option value="'Courier New', monospace" {% if font_family == "'Courier New', monospace" %}selected{% endif %}>Courier New</option>
+                <option value="'Times New Roman', serif" {% if font_family == "'Times New Roman', serif'" %}selected{% endif %}>Times New Roman</option>
+                <option value="'Courier New', monospace" {% if font_family == "'Courier New', monospace'" %}selected{% endif %}>Courier New</option>
             </select>
         </div>
+
+        <div>
+            <label>Отступ:</label>
+            <option value="100px">100px</option>
+
 
         <div>
             <button type="submit">OK</button>
             <a href="/lab3/clearsettings">Сброс</a>
         </div>
+
     </form>
 
     <style>
