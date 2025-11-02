@@ -8,6 +8,7 @@ import os
 from collections import Counter
 
 app = Flask(__name__)
+app.secret_key = 'секретно-секретный секрет'  # Добавьте эту строку
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
