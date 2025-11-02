@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block lab %}Нравится/не нравится{% endblock %}
+
+{% block main %}
+<div class="tree-container">
+    <h1 class="tree-title">Посадка деревьев</h1>
+    
+    <div class="tree-counter">
+        Посажено деревьев: {{ tree_count }}
+    </div>
+    
+    <form method="post" class="tree-form">
+        <div class="tree-buttons">
+            <button type="submit" name="operation" value="plant" 
+                    class="tree-button tree-button-plant" 
+                    {% if tree_count >= max_trees %}disabled{% endif %}>
+                 Посадить дерево
+            </button>
+            <button type="submit" name="operation" value="cut" 
+                    class="tree-button tree-button-cut" 
+                    {% if tree_count <= 0 %}disabled{% endif %}>
+                 Срубить дерево
+            </button>
+        </div>
+    </form>
+    
+    {% if tree_count >= max_trees %}
+    <div class="tree-warning">
+        Достигнуто максимальное количество деревьев!
+    </div>
+    {% elif tree_count <= 0 %}
+    <div class="tree-warning">
+        Нельзя срубить дерево - их нет!
+    </div>
+    {% endif %}
+    
+    <div style="text-align: center;">
+        <a href="/lab4/">Назад к лабораторной 4</a>
+    </div>
+</div>
+{% endblock %}
