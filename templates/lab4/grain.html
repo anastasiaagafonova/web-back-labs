@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block lab %}Заказ зерна{% endblock %}
+
+{% block main %}
+    <h1>Заказ зерна</h1>
+    
+    <form method="post">
+        <div>
+            <label for="grain_type">Тип зерна:</label>
+            <select id="grain_type" name="grain_type">
+                <option value="">-- Выберите зерно --</option>
+                <option value="barley" {% if selected_grain == 'barley' %}selected{% endif %}>Ячмень (12 000 руб/т)</option>
+                <option value="oats" {% if selected_grain == 'oats' %}selected{% endif %}>Овёс (8 500 руб/т)</option>
+                <option value="wheat" {% if selected_grain == 'wheat' %}selected{% endif %}>Пшеница (9 000 руб/т)</option>
+                <option value="rye" {% if selected_grain == 'rye' %}selected{% endif %}>Рожь (15 000 руб/т)</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="weight">Вес (тонн):</label>
+            <input type="number" id="weight" name="weight" step="0.1" min="0.1" value="{{ entered_weight }}">
+        </div>
+        
+        {% if error %}
+            <div style="color: red; font-weight: bold; margin: 10px 0;">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if success %}
+            <div style="color: green; font-weight: bold; margin: 10px 0; padding: 10px; background-color: #f0fff0; border: 1px solid green;">
+                <strong>Заказ успешно сформирован.</strong><br>
+                Вы заказали: <strong>{{ grain_name }}</strong><br>
+                Вес: <strong>{{ weight }} т</strong><br>
+                {% if discount_applied %}
+                    <span style="color: #d63384;">
+                        💰 Применена скидка 10% за большой объём<br>
+                        Размер скидки: <strong>{{ "%.2f"|format(discount) }} руб</strong><br>
+                        Сумма без скидки: <del>{{ "%.2f"|format(total_without_discount) }} руб</del>
+                    </span>
+                {% endif %}
+                <br>
+                Сумма к оплате: <strong style="font-size: 1.2em;">{{ "%.2f"|format(total) }} руб</strong>
+            </div>
+        {% endif %}
+        
+        <div>
+            <button type="submit">Оформить заказ</button>
+        </div>
+    </form>
+    
+    <div style="margin-top: 20px;">
+        <a href="/lab4/">Назад к лабораторной 4</a>
+    </div>
+{% endblock %}
