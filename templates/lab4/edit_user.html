@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block lab %}Редактирование{% endblock %}
+
+{% block main %}
+    <h1>Редактирование пользователя</h1>
+    
+    <form method="post">
+        <div><input type="text" name="login" value="{{ user.login }}" placeholder="Логин" required></div>
+        <div><input type="text" name="name" value="{{ user.name }}" placeholder="Имя" required></div>
+        <div>
+            <select name="gender">
+                <option value="мужской" {% if user.gender == 'мужской' %}selected{% endif %}>Мужской</option>
+                <option value="женский" {% if user.gender == 'женский' %}selected{% endif %}>Женский</option>
+            </select>
+        </div>
+        <div><input type="password" name="password" placeholder="Новый пароль (оставьте пустым чтобы не менять)"></div>
+        <div><input type="password" name="confirm_password" placeholder="Подтвердите новый пароль"></div>
+        
+        {% if error %}<div style="color: red;">{{ error }}</div>{% endif %}
+        
+        <div>
+            <button type="submit">Сохранить</button>
+            <a href="/lab4/users"><button type="button">Отмена</button></a>
+        </div>
+    </form>
+{% endblock %}
