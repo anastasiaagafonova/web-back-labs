@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block lab %}Вычитание чисел{% endblock %}
+
+{% block main %}
+    <h1>Вычитание чисел</h1>
+    
+    {% if error %}
+        {{ error }}
+    {% else %}
+        {{ x1 }} - {{ x2 }} = {{ result }}
+    {% endif %}
+    
+    <div>
+        <a href="{{ url_for('lab4.sub_form') }}">Вернуться к вычитанию</a>
+    </div>
+{% endblock %}

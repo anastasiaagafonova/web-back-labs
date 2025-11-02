@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block lab %}Умножение чисел{% endblock %}
+
+{% block main %}
+    <form method="post" action="/lab4/mul">
+        <h1>Умножение чисел</h1>
+        <input type="number" name="x1"> × <input type="number" name="x2">
+        <input type="submit" value="=">
+        <div>!Пустые поля считаются как 1</div>
+    </form>
+    <div>
+        <a href="/lab4/">Назад к лабораторной 4</a>
+    </div>
+{% endblock %}
