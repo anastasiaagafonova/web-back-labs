@@ -3,16 +3,18 @@ from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
 from lab4 import lab4
+from lab5 import lab5
 from datetime import datetime
 import os
 from collections import Counter
 
 app = Flask(__name__)
-app.secret_key = 'секретно-секретный секрет'  # Добавьте эту строку
+app.secret_key = 'секретно-секретный секрет'  
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
 app.register_blueprint(lab4)
+app.register_blueprint(lab5)
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), '404_log.txt')  
 
@@ -92,6 +94,9 @@ def index():
         </ul>
         <ul>
             <li><a href="/lab4">Лабораторная работа №4</a></li>
+        </ul>
+         <ul>
+            <li><a href="/lab5">Лабораторная работа №5</a></li>
         </ul>
     </body>
     

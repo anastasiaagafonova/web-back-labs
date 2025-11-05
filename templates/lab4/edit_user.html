@@ -14,7 +14,7 @@
                 <option value="женский" {% if user.gender == 'женский' %}selected{% endif %}>Женский</option>
             </select>
         </div>
-        <div><input type="password" name="password" placeholder="Новый пароль (оставьте пустым чтобы не менять)"></div>
+        <div><input type="password" name="password" placeholder="Новый пароль"></div>
         <div><input type="password" name="confirm_password" placeholder="Подтвердите новый пароль"></div>
         
         {% if error %}<div style="color: red;">{{ error }}</div>{% endif %}
