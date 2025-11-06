@@ -7,18 +7,36 @@
     <div>
         Flask и бд
     </div>
-    <ol>
-        <li>
-            <a href="/lab5/login">Деление</a>
-        </li>
-        <li>
-            <a href="/lab5/register">Суммирование</a>
-        </li>
-        <li>
-            <a href="/lab5/list">Умножение</a>
-        </li>
-        <li>
-            <a href="/lab5/create">Вычитание</a>
-        </li>
-    </ol>
+    <div class="button-container">
+        <a href="/lab5/login" class="button">Деление</a>
+        <a href="/lab5/register" class="button">Суммирование</a>
+        <a href="/lab5/list" class="button">Умножение</a>
+        <a href="/lab5/create" class="button">Вычитание</a>
+    </div>
+    <style>
+    .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        transition: background-color 0.3s;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+    </style>
 {% endblock %}
