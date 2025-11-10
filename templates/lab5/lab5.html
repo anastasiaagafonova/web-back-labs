@@ -1,42 +1,192 @@
 {% extends "base.html" %}
 
-{% block lab %}{% endblock %}
+{% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
-    <h1>Лабораторная работа 5</h1>
-    <div>
-        Flask и бд
-    </div>
-    <div class="button-container">
-        <a href="/lab5/login" class="button">Деление</a>
-        <a href="/lab5/register" class="button">Суммирование</a>
-        <a href="/lab5/list" class="button">Умножение</a>
-        <a href="/lab5/create" class="button">Вычитание</a>
-    </div>
-    <style>
-    .button-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+<style>
+    .lab5-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
     }
 
-    .button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #007bff;
+    .lab5-header {
+        text-align: center;
+        margin-bottom: 0;
+        background: rgb(86, 14, 97);
+        color: white;
+        padding: 40px 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .lab5-header h1 {
+        font-size: 2.8em;
+        margin-bottom: 15px;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .lab5-header .subtitle {
+        font-size: 1.3em;
+        opacity: 0.95;
+        font-weight: 300;
+    }
+
+    .navigation-menu {
+        background: #452c50;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .nav-links {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .nav-links li {
+        margin: 0;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .nav-links a {
         color: white;
         text-decoration: none;
-        border-radius: 5px;
+        padding: 25px 20px;
+        display: block;
+        transition: all 0.3s ease;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        font-weight: 500;
         text-align: center;
-        transition: background-color 0.3s;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
+        font-size: 1.1em;
+        background: #60676c;
     }
 
-    .button:hover {
-        background-color: #0056b3;
+    .nav-links a:hover {
+        background: #a634db;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
-    </style>
+
+    .nav-links li:last-child a {
+        border-right: none;
+    }
+
+    .user-info {
+        background: #1f2122;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.1em;
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .welcome-section {
+        background: white;
+        padding: 50px 20px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin: 0;
+        width: 100%;
+    }
+
+    .welcome-section h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        font-weight: 300;
+        font-size: 2.2em;
+    }
+
+    .welcome-section p {
+        color: #5d6d7e;
+        font-size: 1.2em;
+        max-width: 800px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+    }
+
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    @media (max-width: 1024px) {
+        .nav-links li {
+            flex: 1 1 50%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .lab5-header h1 {
+            font-size: 2.2em;
+        }
+        
+        .lab5-header .subtitle {
+            font-size: 1.1em;
+        }
+        
+        .nav-links {
+            flex-direction: column;
+        }
+        
+        .nav-links li {
+            flex: 1 1 100%;
+        }
+        
+        .nav-links a {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+        
+        .nav-links li:last-child a {
+            border-bottom: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .lab5-header {
+            padding: 30px 15px;
+        }
+        
+        .lab5-header h1 {
+            font-size: 1.8em;
+        }
+    }
+</style>
+
+<div class="lab5-container">
+    <div class="lab5-header">
+        <div class="subtitle">Лабораторная работа 5 - База знаний</div>
+    </div>
+
+    <div class="navigation-menu">
+        <ul class="nav-links">
+            <li><a href="/lab5/list">Список статей</a></li>
+            <li><a href="/lab5/create">Создать статью</a></li>
+            <li><a href="/lab5/login">Войти</a></li>
+            <li><a href="/lab5/register">Регистрация</a></li>
+        </ul>
+        <div class="user-info">
+            Текущий пользователь: <strong style="color: #8e2aaf;">Anonymous</strong>
+        </div>
+    </div>
+</div>
 {% endblock %}
