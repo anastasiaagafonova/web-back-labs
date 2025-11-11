@@ -1,0 +1,156 @@
+.create-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+    background: rgb(86, 14, 97);
+    color: white;
+    padding: 30px 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.page-header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    font-weight: 300;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.create-form {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #a634db;
+    box-shadow: 0 0 0 3px rgba(166, 52, 219, 0.1);
+}
+
+.form-group textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.lab5-btn {
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    display: inline-block;
+    text-align: center;
+}
+
+.save-btn {
+    background: #a634db;
+    color: white;
+}
+
+.save-btn:hover {
+    background: #8e2aaf;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-btn {
+    background: #95a5a6;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.back-nav {
+    text-align: center;
+}
+
+.back-nav .lab5-btn {
+    background: #60676c;
+    color: white;
+    padding: 12px 25px;
+}
+
+.back-nav .lab5-btn:hover {
+    background: #5d6d7e;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .create-container {
+        padding: 15px;
+    }
+
+    .create-form {
+        padding: 25px;
+    }
+
+    .page-header h1 {
+        font-size: 2em;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .lab5-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 20px 15px;
+    }
+
+    .page-header h1 {
+        font-size: 1.6em;
+    }
+}
