@@ -183,9 +183,17 @@
             <li><a href="/lab5/create">Создать статью</a></li>
             <li><a href="/lab5/login">Войти</a></li>
             <li><a href="/lab5/register">Регистрация</a></li>
+            <li><a href="/lab5/logout">Выйти</a></li>
         </ul>
         <div class="user-info">
-            Текущий пользователь: <strong style="color: #8e2aaf;">Anonymous</strong>
+            Текущий пользователь: 
+            <strong style="color: #8e2aaf;">
+                {% if login %}
+                    {{ login }}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </strong>
         </div>
     </div>
 </div>
