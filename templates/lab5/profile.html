@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='lab5/profile.css')}}">
+{% endblock %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+<div class="auth-container">
+    <h1>Редактирование профиля</h1>
+
+    {% if errors %}
+        {% for error in errors %}
+            <div class="error">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if request.args.get('success') %}
+        <div class="success">Профиль успешно обновлен!</div>
+    {% endif %}
+    
+    <form method="post" class="profile-form">
+        <div class="form-group">
+            <label>
+                Логин:
+                <input type="text" value="{{ user['login'] }}" disabled>
+            </label>
+            <small>Логин нельзя изменить</small>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Реальное имя:
+                <input type="text" name="real_name" value="{{ user['real_name'] or '' }}" maxlength="100">
+            </label>
+        </div>
+
+        <h3>Смена пароля</h3>
+        
+        <div class="form-group">
+            <label>
+                Текущий пароль:
+                <input type="password" name="current_password">
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Новый пароль:
+                <input type="password" name="new_password">
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Подтверждение пароля:
+                <input type="password" name="confirm_password">
+            </label>
+        </div>
+
+        <div>
+            <button type="submit" class="btn">Сохранить изменения</button>
+        </div>
+    </form>
+    
+    <div class="auth-links">
+        <a href="/lab5/">Назад к лабораторной 5</a>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .auth-container h1 {
+        text-align: center;
+        color: #561e61;
+        margin-bottom: 30px;
+    }
+    
+    .auth-container h3 {
+        color: #561e61;
+        margin: 25px 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+    
+    .form-group input:focus {
+        border-color: #561e61;
+        outline: none;
+    }
+    
+    .form-group input:disabled {
+        background-color: #f5f5f5;
+        color: #666;
+        cursor: not-allowed;
+    }
+    
+    .form-group small {
+        display: block;
+        margin-top: 5px;
+        color: #666;
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        background: #561e61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.3s ease;
+    }
+    
+    .btn:hover {
+        background: #452c50;
+    }
+    
+    .error {
+        background: #ffeaa7;
+        color: #d63031;
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #d63031;
+    }
+    
+    .success {
+        background: #a7ffae;
+        color: #2d7034;
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #2d7034;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+    
+    .auth-links a {
+        color: #561e61;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 16px;
+        border: 1px solid #561e61;
+        border-radius: 5px;
+    }
+    
+    .auth-links a:hover {
+        color: white;
+        background: #561e61;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}

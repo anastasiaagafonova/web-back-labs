@@ -1,38 +1,217 @@
 {% extends "base.html" %}
 
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='lab5/articles.css')}}">
-{% endblock %}
-
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
-    <div class="page-header">
-        <h1>Статьи</h1>
-        <a href="/lab5/create" class="create-btn">+ Создать новую статью</a>
+<div class="auth-container">
+    <h1>Мои статьи</h1>
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <a href="/lab5/create" class="btn">+ Создать новую статью</a>
     </div>
 
     {% if articles %}
-        {% for article in articles %}
-            <div class="article-item">
-                <h2>{{ article['title'] }}</h2>
-                <blockquote>{{ article['article_text'] }}</blockquote>
-                <div class="article-actions">
-                    <a href="/lab5/edit/{{ article['id'] }}" class="lab5-btn edit-btn">Редактировать</a>
-                    <a href="/lab5/delete/{{ article['id'] }}" class="lab5-btn delete-btn" onclick="return confirm('Удалить статью?')">Удалить</a>
+        <div class="articles-container">
+            {% for article in articles %}
+                <div class="article-item {% if article['is_favorite'] %}favorite{% endif %}">
+                    <h2>{{ article['title'] }}</h2>
+                    <div class="badges-container">
+                        {% if article['is_favorite'] %}
+                            <div class="favorite-badge">★ Избранная</div>
+                        {% endif %}
+                        {% if article['is_public'] %}
+                            <div class="public-badge">🌐 Публичная</div>
+                        {% endif %}
+                    </div>
+                    <div class="article-content">{{ article['article_text'] }}</div>
+                    <div class="article-actions">
+                        <a href="/lab5/edit/{{ article['id'] }}" class="action-btn edit-btn">Редактировать</a>
+                        <a href="/lab5/delete/{{ article['id'] }}" class="action-btn delete-btn" onclick="return confirm('Удалить статью?')">Удалить</a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     {% else %}
         <div class="no-articles">
-            <h2>У вас пока нет статей :-(</h2>
-            <p>Начните делиться своими знаниями!</p>
-            <a href="/lab5/create">Создайте свою первую статью!</a>
+            <p>У вас пока нет статей.</p>
+            <a href="/lab5/create" class="btn">Создать первую статью!</a>
         </div>
     {% endif %}
     
-    <div class="back-nav">
-        <a href="/lab5/" class="lab5-btn">← Меню лабораторной</a>
+     <div class="navigation-links">
+        <a href="/lab5/" class="back-link">Назад к лабораторной 5</a>
     </div>
 </div>
+
+<style>
+    .auth-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .auth-container h1 {
+        text-align: center;
+        color: #561e61;
+        margin-bottom: 30px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #561e61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+    
+    .btn:hover {
+        background: #452c50;
+    }
+    
+    .articles-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .article-item {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        border-left: 4px solid #561e61;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .article-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .article-item.favorite {
+        order: -1;
+        border-left: 5px solid #FFD700;
+        background: linear-gradient(135deg, #ffffff, #FFF9C4);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    }
+    
+    .article-item:not(.favorite) {
+        order: 0;
+    }
+    
+    .article-item h2 {
+        color: #561e61;
+        margin: 0 0 15px 0;
+        font-size: 1.4rem;
+    }
+    
+    .badges-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .favorite-badge {
+        display: inline-block;
+        background: #FFD700;
+        color: #333;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .public-badge {
+        display: inline-block;
+        background: #4CAF50;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .article-content {
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+        border-left: 3px solid #ddd;
+    }
+    
+    .article-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+    
+    .action-btn {
+        padding: 8px 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .edit-btn {
+        background: #561e61;
+        color: white;
+    }
+    
+    .edit-btn:hover {
+        background: #452c50;
+    }
+    
+    .delete-btn {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .delete-btn:hover {
+        background: #c82333;
+    }
+    
+    .no-articles {
+        text-align: center;
+        padding: 40px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+    
+    .no-articles p {
+        margin-bottom: 15px;
+        color: #666;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 30px;
+    }
+    
+    .auth-links a {
+        color: #561e61;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 16px;
+        border: 1px solid #561e61;
+        border-radius: 5px;
+    }
+    
+    .auth-links a:hover {
+        color: white;
+        background: #561e61;
+        text-decoration: none;
+    }
+</style>
 {% endblock %}

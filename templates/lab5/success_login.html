@@ -3,11 +3,137 @@
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
+<div class="auth-container">
     <h1>Вход выполнен успешно!</h1>
     
-    <p>Добро пожаловать, <strong>{{ login }}</strong>!</p>
-    
-    <div>
-        <a href="/lab5/">Назад к лабораторной 5</a>
+    <div class="success-message">
+        <p>Добро пожаловать, <strong>{{ login }}</strong>!</p>
+        <div class="welcome-icon">🎉</div>
     </div>
+    
+    <div class="auth-links">
+        <a href="/lab5/" class="btn">Назад к лабораторной 5</a>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .auth-container h1 {
+        color: #561e61;
+        margin-bottom: 30px;
+        font-size: 2.2rem;
+        font-weight: 300;
+    }
+    
+    .success-message {
+        background: linear-gradient(135deg, #a7ffae, #8eff9a);
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border: 2px solid #2d7034;
+        position: relative;
+    }
+    
+    .success-message p {
+        margin: 0;
+        font-size: 1.3rem;
+        color: #2d7034;
+        font-weight: 500;
+    }
+    
+    .success-message strong {
+        color: #1a4d1f;
+        font-weight: 600;
+    }
+    
+    .welcome-icon {
+        font-size: 3rem;
+        margin-top: 15px;
+        animation: bounce 1s ease-in-out;
+    }
+    
+    .btn {
+        display: inline-block;
+        background: #561e61;
+        color: white;
+        text-decoration: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: 2px solid #561e61;
+    }
+    
+    .btn:hover {
+        background: white;
+        color: #561e61;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(86, 30, 97, 0.3);
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .auth-container {
+            margin: 40px 20px;
+            padding: 30px 20px;
+        }
+        
+        .auth-container h1 {
+            font-size: 1.8rem;
+        }
+        
+        .success-message p {
+            font-size: 1.1rem;
+        }
+        
+        .welcome-icon {
+            font-size: 2.5rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .auth-container {
+            margin: 20px 15px;
+            padding: 25px 15px;
+        }
+        
+        .auth-container h1 {
+            font-size: 1.6rem;
+        }
+        
+        .success-message {
+            padding: 20px;
+        }
+        
+        .success-message p {
+            font-size: 1rem;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+        }
+    }
+</style>
 {% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+<div class="auth-container">
+    <h1>Список пользователей</h1>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Реальное имя</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user['login'] }}</td>
+                <td>{{ user['real_name'] or 'Не указано' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="auth-links">
+        <a href="/lab5/">Назад к лабораторной 5</a>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .auth-container h1 {
+        text-align: center;
+        color: #561e61;
+        margin-bottom: 30px;
+    }
+    
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    .users-table th {
+        background: #561e61;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+    }
+    
+    .users-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .users-table tr:hover {
+        background: #f9f9f9;
+    }
+    
+    .users-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .auth-links a {
+        color: #561e61;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 16px;
+        border: 1px solid #561e61;
+        border-radius: 5px;
+    }
+    
+    .auth-links a:hover {
+        color: white;
+        background: #561e61;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}

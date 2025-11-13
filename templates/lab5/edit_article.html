@@ -6,6 +6,7 @@
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
+<div class="auth-container">
     <h1>Редактирование статьи</h1>
 
     {% if error %}
@@ -13,26 +14,123 @@
     {% endif %}
     
     <form method="post">
-        <div>
+        <div class="form-group">
             <label>
                 Название статьи:
-                <input type="text" maxlength="50" name="title" value="{{ article['title'] }}">
+                <input type="text" maxlength="50" name="title" value="{{ article['title'] }}" required>
             </label>
         </div>
 
-        <div>
+        <div class="form-group">
             <label>
                 Текст статьи:
-                <textarea name="article_text">{{ article['article_text'] }}</textarea>
+                <textarea name="article_text" rows="8" required>{{ article['article_text'] }}</textarea>
             </label>
         </div>
 
         <div>
-            <button type="submit">Сохранить изменения</button>
+            <button type="submit" class="btn">Сохранить изменения</button>
         </div>
     </form>
     
-    <div style="margin-top: 20px;">
-        <a href="/lab5/list" class="lab5-btn">Назад к списку статей</a>
+    <div class="auth-links">
+        <a href="/lab5/list">Назад к списку статей</a>
     </div>
+</div>
+
+<style>
+    .auth-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .auth-container h1 {
+        text-align: center;
+        color: #561e61;
+        margin-bottom: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: #561e61;
+        outline: none;
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        background: #561e61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-bottom: 15px;
+        transition: background 0.3s ease;
+    }
+    
+    .btn:hover {
+        background: #452c50;
+    }
+    
+    .error {
+        background: #ffeaa7;
+        color: #d63031;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border-left: 4px solid #d63031;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .auth-links a {
+        color: #561e61;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 16px;
+        border: 1px solid #561e61;
+        border-radius: 5px;
+    }
+    
+    .auth-links a:hover {
+        color: white;
+        background: #561e61;
+        text-decoration: none;
+    }
+</style>
 {% endblock %}

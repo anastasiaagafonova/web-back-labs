@@ -1,36 +1,167 @@
 {% extends "base.html" %}
 
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='lab5/create.css')}}">
-{% endblock %}
-
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
-<div class="create-container">
-    <div class="page-header">
-        <h1>Создание новой статьи</h1>
-    </div>
+<div class="auth-container">
+    <h1>Создание статьи</h1>
 
-    <form method="post" class="create-form">
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
         <div class="form-group">
-            <label for="title">Название статьи:</label>
-            <input type="text" id="title" name="title">
+            <label>
+                Название статьи:
+                <input type="text" maxlength="50" name="title" required>
+            </label>
         </div>
 
         <div class="form-group">
-            <label for="article_text">Текст статьи:</label>
-            <textarea id="article_text" name="article_text"></textarea>
+            <label>
+                Текст статьи:
+                <textarea name="article_text" rows="8" required></textarea>
+            </label>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="lab5-btn save-btn">Сохранить статью</button>
-            <a href="/lab5/article" class="lab5-btn cancel-btn">Отмена</a>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="is_favorite">
+                <span class="checkmark"></span>
+                Избранная статья ⭐
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="is_public">
+                <span class="checkmark"></span>
+                Публичная статья 🌐
+            </label>
+        </div>
+
+        <div>
+            <button type="submit" class="btn">Создать статью</button>
         </div>
     </form>
-
-    <div class="back-nav">
-        <a href="/lab5/" class="lab5-btn">← Назад в меню лабораторной</a>
+    
+     <div class="navigation-links">
+        <a href="/lab5/" class="back-link">Назад к лабораторной 5</a>
     </div>
 </div>
+
+<style>
+    .auth-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .auth-container h1 {
+        text-align: center;
+        color: #561e61;
+        margin-bottom: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: #561e61;
+        outline: none;
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .checkbox-group {
+        margin-bottom: 15px;
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-weight: normal;
+        margin-bottom: 0;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+        width: auto;
+        margin-right: 10px;
+        transform: scale(1.2);
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        background: #561e61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-bottom: 15px;
+        transition: background 0.3s ease;
+    }
+    
+    .btn:hover {
+        background: #452c50;
+    }
+    
+    .error {
+        background: #ffeaa7;
+        color: #d63031;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border-left: 4px solid #d63031;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .auth-links a {
+        color: #561e61;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 16px;
+        border: 1px solid #561e61;
+        border-radius: 5px;
+    }
+    
+    .auth-links a:hover {
+        color: white;
+        background: #561e61;
+        text-decoration: none;
+    }
+</style>
 {% endblock %}
