@@ -43,9 +43,9 @@ def register():
     
     login = request.form.get('login')
     password = request.form.get('password')
-    real_name = request.form.get('real_name')  # Добавляем получение real_name
+    real_name = request.form.get('real_name') 
     
-    if not (login or password or real_name):  # Проверяем все поля
+    if not (login or password or real_name):  
         return render_template('lab5/register.html', error='Заполните все поля')
     
     conn, cur = db_connect()
@@ -74,7 +74,7 @@ def register():
     session['login'] = login
     session['user_real_name'] = real_name  # Сохраняем реальное имя в сессии
     
-    return redirect('/lab5/list')  # Перенаправляем в личный кабинет
+    return redirect('/lab5/list')  
 
 
 @lab5.route('/lab5/login', methods=['GET', 'POST'])
@@ -135,6 +135,7 @@ def create():
     if not title or not article_text:
         return render_template('lab5/create_article.html', error='Заполните название и текст статьи')
 
+    #получение id пользователя
     conn, cur = db_connect()
     
     if current_app.config['DB_TYPE'] == 'postgres':
@@ -145,6 +146,7 @@ def create():
     user = cur.fetchone()
     login_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
 
+    #создание статьи в бд
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("INSERT INTO articles(user_id, title, article_text, is_favorite, is_public) VALUES (%s, %s, %s, %s, %s);", 
                    (login_id, title, article_text, is_favorite, is_public))
@@ -263,7 +265,7 @@ def list_articles():
     user = cur.fetchone()
     login_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
     
-    # ИСПРАВЛЕННЫЙ ЗАПРОС - избранные статьи выводятся первыми
+    # избранные статьи выводятся первыми
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT * FROM articles WHERE user_id=%s ORDER BY is_favorite DESC, id DESC;", (login_id,))
     else:
