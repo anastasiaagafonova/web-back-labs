@@ -72,7 +72,7 @@ def register():
     
     # Автоматический логин после регистрации
     session['login'] = login
-    session['user_real_name'] = real_name  # Сохраняем реальное имя в сессии
+    session['user_real_name'] = real_name  
     
     return redirect('/lab5/list')  
 
