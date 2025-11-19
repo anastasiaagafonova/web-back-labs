@@ -149,10 +149,10 @@ def create():
 
     #создание статьи в бд
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("INSERT INTO articles(user_id, title, article_text, is_favorite, is_public) VALUES (%s, %s, %s, %s, %s);", 
+        cur.execute("INSERT INTO articles(login_id, title, article_text, is_favorite, is_public) VALUES (%s, %s, %s, %s, %s);", 
                    (login_id, title, article_text, is_favorite, is_public))
     else:
-        cur.execute("INSERT INTO articles(user_id, title, article_text, is_favorite, is_public) VALUES (?, ?, ?, ?, ?);", 
+        cur.execute("INSERT INTO articles(login_id, title, article_text, is_favorite, is_public) VALUES (?, ?, ?, ?, ?);", 
                    (login_id, title, article_text, is_favorite, is_public))
     
     db_close(conn, cur)
