@@ -138,6 +138,7 @@ def create():
     #получение id пользователя
     conn, cur = db_connect()
     
+    user_id = session.get('user_id')
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
     else:
