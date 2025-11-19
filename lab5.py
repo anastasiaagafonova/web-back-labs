@@ -135,29 +135,27 @@ def create():
     if not title or not article_text:
         return render_template('lab5/create_article.html', error='Заполните название и текст статьи')
 
-    #получение id пользователя
+    # получение id пользователя
     conn, cur = db_connect()
     
-    user_id = session.get('user_id')
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
     else:
         cur.execute("SELECT * FROM users WHERE login=?;", (login, ))
     
     user = cur.fetchone()
-    login_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
+    user_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
 
-    #создание статьи в бд
+    # создание статьи в бд 
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("INSERT INTO articles(login_id, title, article_text, is_favorite, is_public) VALUES (%s, %s, %s, %s, %s);", 
-                   (login_id, title, article_text, is_favorite, is_public))
+        cur.execute("INSERT INTO articles(user_id, title, article_text, is_favorite, is_public) VALUES (%s, %s, %s, %s, %s);", 
+                   (user_id, title, article_text, is_favorite, is_public))
     else:
-        cur.execute("INSERT INTO articles(login_id, title, article_text, is_favorite, is_public) VALUES (?, ?, ?, ?, ?);", 
-                   (login_id, title, article_text, is_favorite, is_public))
+        cur.execute("INSERT INTO articles(user_id, title, article_text, is_favorite, is_public) VALUES (?, ?, ?, ?, ?);", 
+                   (user_id, title, article_text, is_favorite, is_public))
     
     db_close(conn, cur)
-    return redirect('/lab5')
-
+    return redirect('/lab5/list')  
 
 @lab5.route('/lab5/public')
 def public():
@@ -264,18 +262,18 @@ def list_articles():
         cur.execute("SELECT id FROM users WHERE login=?;", (login,))
     
     user = cur.fetchone()
-    login_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
+    user_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
     
     # избранные статьи выводятся первыми
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("SELECT * FROM articles WHERE user_id=%s ORDER BY is_favorite DESC, id DESC;", (login_id,))
+        cur.execute("SELECT * FROM articles WHERE user_id=%s ORDER BY is_favorite DESC, id DESC;", (user_id,))
     else:
-        cur.execute("SELECT * FROM articles WHERE user_id=? ORDER BY is_favorite DESC, id DESC;", (login_id,))
+        cur.execute("SELECT * FROM articles WHERE user_id=? ORDER BY is_favorite DESC, id DESC;", (user_id,))
     
     articles = cur.fetchall()
     
     db_close(conn, cur)
-    return render_template('/lab5/articles.html', articles=articles)
+    return render_template('/lab5/articles.html', articles=articles, login=login)
 
 
 @lab5.route('/lab5/edit/<int:article_id>', methods=['GET', 'POST'])
