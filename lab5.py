@@ -146,7 +146,7 @@ def create():
     user = cur.fetchone()
     login_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
 
-    # создание статьи в бд - ИСПРАВЛЕНО: используем login_id
+    # создание статьи в бд 
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("INSERT INTO articles(login_id, title, article_text, is_favorite, is_public) VALUES (%s, %s, %s, %s, %s);", 
                    (login_id, title, article_text, is_favorite, is_public))
@@ -161,7 +161,7 @@ def create():
 def public():
     conn, cur = db_connect()
     
-    # ИСПРАВЛЕНО: используем login_id вместо user_id
+   
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT a.*, u.login as author FROM articles a JOIN users u ON a.login_id = u.id WHERE a.is_public = true ORDER BY a.id DESC;")
     else:
@@ -265,7 +265,7 @@ def list_articles():
     user = cur.fetchone()
     login_id = user['id'] if current_app.config['DB_TYPE'] == 'postgres' else user[0]
     
-    # избранные статьи выводятся первыми - ИСПРАВЛЕНО: используем login_id
+    # избранные статьи выводятся первыми 
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT * FROM articles WHERE login_id=%s ORDER BY is_favorite DESC, id DESC;", (login_id,))
     else:
@@ -285,7 +285,7 @@ def edit_article(article_id):
     
     conn, cur = db_connect()
     
-    # ИСПРАВЛЕНО: используем login_id
+    
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT * FROM articles WHERE id=%s AND login_id=(SELECT id FROM users WHERE login=%s);", 
                    (article_id, login))
@@ -330,7 +330,7 @@ def delete_article(article_id):
     
     conn, cur = db_connect()
     
-    # ИСПРАВЛЕНО: используем login_id
+   
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT * FROM articles WHERE id=%s AND login_id=(SELECT id FROM users WHERE login=%s);", 
                    (article_id, login))
