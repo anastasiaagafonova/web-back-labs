@@ -4,6 +4,7 @@ from lab2 import lab2
 from lab3 import lab3
 from lab4 import lab4
 from lab5 import lab5
+from lab6 import lab6
 from datetime import datetime
 import os
 from collections import Counter
@@ -18,6 +19,7 @@ app.register_blueprint(lab2)
 app.register_blueprint(lab3)
 app.register_blueprint(lab4)
 app.register_blueprint(lab5)
+app.register_blueprint(lab6)
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), '404_log.txt')  
 
@@ -101,8 +103,10 @@ def index():
          <ul>
             <li><a href="/lab5">Лабораторная работа №5</a></li>
         </ul>
+        <ul>
+            <li><a href="/lab6">Лабораторная работа №6</a></li>
+        </ul>
     </body>
-    
     <footer>
         <p>Агафонова Анастасия, ФБИ-32, 3 курс, 2025</p>
     </footer>
