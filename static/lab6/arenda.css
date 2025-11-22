@@ -1,21 +1,4 @@
-.auth-info {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    border-left: 4px solid #007bff;
-}
-
-.auth-info a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.auth-info a:hover {
-    text-decoration: underline;
-}
-
-.office-container {
+.lab6-office-container {
     max-width: 900px;
     margin: 40px auto;
     padding: 30px;
@@ -24,14 +7,14 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.office-title {
+.lab6-office-title {
     text-align: center;
     color: #561e61;
     margin-bottom: 30px;
     font-size: 2rem;
 }
 
-.auth-info {
+.lab6-auth-info {
     background: #f8f9fa;
     padding: 20px;
     border-radius: 8px;
@@ -40,13 +23,13 @@
     text-align: center;
 }
 
-.auth-info p {
+.lab6-auth-info p {
     margin: 0 0 10px 0;
     color: #333;
     font-size: 1.1rem;
 }
 
-.auth-info a {
+.lab6-auth-info a {
     color: #561e61;
     text-decoration: none;
     transition: color 0.3s ease;
@@ -56,13 +39,13 @@
     font-weight: 500;
 }
 
-.auth-info a:hover {
+.lab6-auth-info a:hover {
     color: white;
     background: #561e61;
     text-decoration: none;
 }
 
-.office-list {
+.lab6-office-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -71,7 +54,7 @@
     gap: 20px;
 }
 
-.office-item {
+.lab6-office-item {
     background: white;
     border-radius: 8px;
     padding: 25px;
@@ -83,50 +66,40 @@
     align-items: center;
 }
 
-.office-item:hover {
+.lab6-office-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.office-info {
+.lab6-office-info {
     flex: 1;
 }
 
-.office-number {
+.lab6-office-number {
     font-size: 1.3rem;
     font-weight: bold;
     color: #561e61;
     margin-bottom: 8px;
 }
 
-.office-status {
+.lab6-office-status {
     font-size: 1rem;
     color: #666;
     margin-bottom: 8px;
 }
 
-.office-status:contains('Арендован') {
-    color: #dc3545;
-    font-weight: 500;
-}
-
-.office-status:contains('Свободен') {
-    color: #28a745;
-    font-weight: 500;
-}
-
-.office-price {
+.lab6-office-price {
     font-size: 1.1rem;
     font-weight: bold;
     color: #333;
 }
 
-.office-actions {
+.lab6-office-actions {
     display: flex;
     gap: 10px;
 }
 
-.office-button {
+.lab6-office-button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -136,27 +109,27 @@
     font-weight: 500;
 }
 
-.book-button {
+.lab6-book-button {
     background: #28a745;
     color: white;
 }
 
-.book-button:hover {
+.lab6-book-button:hover {
     background: #218838;
     transform: translateY(-1px);
 }
 
-.cancel-button {
+.lab6-cancel-button {
     background: #dc3545;
     color: white;
 }
 
-.cancel-button:hover {
+.lab6-cancel-button:hover {
     background: #c82333;
     transform: translateY(-1px);
 }
 
-.office-info-text {
+.lab6-office-info-text {
     color: #666;
     font-style: italic;
     padding: 8px 12px;
@@ -164,7 +137,7 @@
     border-radius: 4px;
 }
 
-.total-cost {
+.lab6-total-cost {
     text-align: center;
     padding: 20px;
     background: linear-gradient(135deg, #561e61, #452c50);
@@ -176,18 +149,18 @@
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    .office-container {
+    .lab6-office-container {
         margin: 20px;
         padding: 20px;
     }
     
-    .office-item {
+    .lab6-office-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
     }
     
-    .office-actions {
+    .lab6-office-actions {
         width: 100%;
         justify-content: flex-end;
     }

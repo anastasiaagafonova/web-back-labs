@@ -35,29 +35,29 @@ function getOfficeList() {
         for(let i = 0; i < office_list.length; i++) {
             const office = office_list[i];
             const li = document.createElement('li');
-            li.className = 'office-item';
+            li.className = 'lab6-office-item';
         
             li.innerHTML = `
-                <div class="office-info">
-                    <div class="office-number">Офис №${office.number}</div>
-                    <div class="office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
-                    <div class="office-price">${office.price} руб./мес.</div>
+                <div class="lab6-office-info">
+                    <div class="lab6-office-number">Офис №${office.number}</div>
+                    <div class="lab6-office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
+                    <div class="lab6-office-price">${office.price} руб./мес.</div>
                 </div>
-                <div class="office-actions"></div>
+                <div class="lab6-office-actions"></div>
             `;
 
             const actionsDiv = li.querySelector('.office-actions');
             
             if (!office.tenant) {
                 const bookingButton = document.createElement('button');
-                bookingButton.className = 'office-button book-button';
+                bookingButton.className = 'lab6-office-button lab6-book-button';
                 bookingButton.innerText = 'Забронировать';
                 bookingButton.onclick = function() { booking(office.number); };
                 actionsDiv.appendChild(bookingButton);
             } else {
                 const login = '{{ session.get("login", "") }}';
                     const cancelButton = document.createElement('button');
-                    cancelButton.className = 'office-button cancel-button';
+                    cancelButton.className = 'lab6-office-button lab6-cancel-button';
                     cancelButton.innerText = 'Освободить';
                     cancelButton.onclick = function() { cancellation(office.number); };
                     actionsDiv.appendChild(cancelButton);
