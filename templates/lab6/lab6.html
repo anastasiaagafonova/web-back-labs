@@ -35,15 +35,15 @@ function getOfficeList() {
         for(let i = 0; i < office_list.length; i++) {
             const office = office_list[i];
             const li = document.createElement('li');
-            li.className = 'lab6-office-item';
+            li.className = 'office-item';
         
             li.innerHTML = `
                 <div class="lab6-office-info">
-                    <div class="lab6-office-number">Офис №${office.number}</div>
-                    <div class="lab6-office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
-                    <div class="lab6-office-price">${office.price} руб./мес.</div>
+                    <div class="office-number">Офис №${office.number}</div>
+                    <div class="office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
+                    <div class="office-price">${office.price} руб./мес.</div>
                 </div>
-                <div class="lab6-office-actions"></div>
+                <div class="office-actions"></div>
             `;
 
             const actionsDiv = li.querySelector('.office-actions');
