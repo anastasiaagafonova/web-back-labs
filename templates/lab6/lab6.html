@@ -35,18 +35,18 @@ function getOfficeList() {
         for(let i = 0; i < office_list.length; i++) {
             const office = office_list[i];
             const li = document.createElement('li');
-            li.className = 'office-item';
+            li.className = 'lab6-office-item';
         
             li.innerHTML = `
                 <div class="lab6-office-info">
-                    <div class="office-number">Офис №${office.number}</div>
-                    <div class="office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
-                    <div class="office-price">${office.price} руб./мес.</div>
+                    <div class="lab6-office-number">Офис №${office.number}</div>
+                    <div class="lab6-office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
+                    <div class="lab6-office-price">${office.price} руб./мес.</div>
                 </div>
-                <div class="office-actions"></div>
+                <div class="lab6-office-actions"></div>
             `;
 
-            const actionsDiv = li.querySelector('.office-actions');
+            const actionsDiv = li.querySelector('.lab6-office-actions');
             
             if (!office.tenant) {
                 const bookingButton = document.createElement('button');
@@ -174,11 +174,11 @@ function updateAuthInfo() {
 
 {# основной контент: #}
 {% block main %}
-    <div class="office-container">
-        <h1 class="office-title">Аренда офисов</h1>
+    <div class="lab6-office-container">
+        <h1 class="lab6-office-title">Аренда офисов</h1>
         
         {# Блок авторизации #}
-        <div class="auth-info">
+        <div class="lab6-auth-info">
             {% if session.get('login') %}
                 <p>Вы вошли как: <strong>{{ session['login'] }}</strong></p>
                 <a href="{{ url_for('lab5.logout') }}">Выйти</a>
@@ -187,7 +187,7 @@ function updateAuthInfo() {
             {% endif %}
         </div>
 
-        <ul class="office-list" id="office-list"></ul>
-        <div id="total-cost" class="total-cost"></div>
+        <ul class="lab6-office-list" id="office-list"></ul>
+        <div id="total-cost" class="lab6-total-cost"></div>
     </div>
 {% endblock %}
