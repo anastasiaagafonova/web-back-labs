@@ -1,0 +1,16 @@
+.auth-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+}
+
+.auth-info a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-info a:hover {
+    text-decoration: underline;
+}

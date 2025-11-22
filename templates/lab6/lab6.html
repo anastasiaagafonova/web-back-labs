@@ -154,8 +154,17 @@ function cancellation(officeNumber) {
                 document.getElementById('office-list').innerHTML = '';
                 getOfficeList();
             }
+            updateAuthInfo();
         });
 }
+function updateAuthInfo() {
+    const login = '{{ session.get("login", "") }}';
+    if (login) {
+        console.log('User is logged in:', login);
+    } else {
+        console.log('User is not logged in');
+    }
+}      
 
  document.addEventListener('DOMContentLoaded', function() {
     getOfficeList();
@@ -165,6 +174,24 @@ function cancellation(officeNumber) {
 
 {# основной контент: #}
 {% block main %}
+
+    <div class="office-container">
+        <h1 class="office-title">Аренда офисов</h1>
+        
+        {# Блок авторизации #}
+        <div class="auth-info">
+            {% if session.get('login') %}
+                <p>Вы вошли как: <strong>{{ session['login'] }}</strong></p>
+                <a href="{{ url_for('lab5.logout') }}">Выйти</a>
+            {% else %}
+                <p>Для бронирования офиса необходимо <a href="{{ url_for('lab5.login') }}">войти</a></p>
+            {% endif %}
+        </div>
+
+        <ul class="office-list" id="office-list"></ul>
+        <div id="total-cost" class="total-cost"></div>
+    </div>
+
     <div class="office-container">
         <h1 class="office-title">Аренда офисов</h1>
         <ul class="office-list" id="office-list"></ul>
