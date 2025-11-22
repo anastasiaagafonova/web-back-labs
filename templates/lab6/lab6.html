@@ -9,74 +9,75 @@
 
 {% block script %}
 <script>
+
 function getOfficeList() {
-        const url = '/lab6/json-rpc-api/';
-        const json = {
-            'jsonrpc': '2.0',
-            'method': 'info',
-            'id': Math.round(Math.random() * 1000)
-        };
-        fetch(url, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(json)
-        })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            const office_list = data.result;
-            const ul = document.getElementById('office-list');
-            ul.innerHTML = '';
+    const url = '/lab6/json-rpc-api/';
+    const json = {
+        'jsonrpc': '2.0',
+        'method': 'info',
+        'id': Math.round(Math.random() * 1000)
+    };
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(json)
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        const office_list = data.result;  
+        const ul = document.getElementById('office-list');
+        ul.innerHTML = '';
 
-            let totalCost = 0;
+        let totalCost = 0;
 
-            for(let i = 0; i < office_list.length; i++) {
-                const office = office_list[i];
-                const li = document.createElement('li');
-                li.className = 'office-item';
+        for(let i = 0; i < office_list.length; i++) {
+            const office = office_list[i];
+            const li = document.createElement('li');
+            li.className = 'office-item';
+        
+            li.innerHTML = `
+                <div class="office-info">
+                    <div class="office-number">Кабинет №${office.number}</div>
+                    <div class="office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
+                    <div class="office-price">${office.price} руб./мес.</div>
+                </div>
+                <div class="office-actions"></div>
+            `;
+
+            const actionsDiv = li.querySelector('.office-actions');
             
-                li.innerHTML = `
-                    <div class="office-info">
-                        <div class="office-number">Кабинет №${office.number}</div>
-                        <div class="office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
-                        <div class="office-price">${office.price} руб./мес.</div>
-                    </div>
-                    <div class="office-actions"></div>
-                `;
-
-                const actionsDiv = li.querySelector('.office-actions');
-                
-                if (!office.tenant) {
-                    const bookingButton = document.createElement('button');
-                    bookingButton.className = 'office-button book-button';
-                    bookingButton.innerText = 'Забронировать';
-                    bookingButton.onclick = function() { booking(office.number); };
-                    actionsDiv.appendChild(bookingButton);
-                } else {
-                    const login = '{{ session.get("login", "") }}';
-                        const cancelButton = document.createElement('button');
-                        cancelButton.className = 'office-button cancel-button';
-                        cancelButton.innerText = 'Освободить';
-                        cancelButton.onclick = function() { cancellation(office.number); };
-                        actionsDiv.appendChild(cancelButton);
-
-                        if (office.tenant === login) {
-                            totalCost += office.price;
-                        }
-                }
-
-                ul.appendChild(li);
-            }
-
-            const totalElement = document.getElementById('total-cost');
-            if (totalCost > 0) {
-                totalElement.innerHTML = `<strong>Общая стоимость аренды: ${totalCost} руб./мес.</strong>`;
+            if (!office.tenant) {
+                const bookingButton = document.createElement('button');
+                bookingButton.className = 'office-button book-button';
+                bookingButton.innerText = 'Забронировать';
+                bookingButton.onclick = function() { booking(office.number); };
+                actionsDiv.appendChild(bookingButton);
             } else {
-                totalElement.innerHTML = '';
+                const login = '{{ session.get("login", "") }}';
+                    const cancelButton = document.createElement('button');
+                    cancelButton.className = 'office-button cancel-button';
+                    cancelButton.innerText = 'Освободить';
+                    cancelButton.onclick = function() { cancellation(office.number); };
+                    actionsDiv.appendChild(cancelButton);
+
+                    if (office.tenant === login) {
+                        totalCost += office.price;
+                    }
             }
-        });
- }
+
+            ul.appendChild(li);
+        }
+
+        const totalElement = document.getElementById('total-cost');
+        if (totalCost > 0) {
+            totalElement.innerHTML = `<strong>Общая стоимость аренды: ${totalCost} руб./мес.</strong>`;
+        } else {
+            totalElement.innerHTML = '';
+        }
+    });
+}
 
 function booking(officeNumber) {
         const url = '/lab6/json-rpc-api/';
