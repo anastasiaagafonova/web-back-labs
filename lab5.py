@@ -115,7 +115,7 @@ def login():
 @lab5.route('/lab5/logout')
 def logout():
     session.pop('login', None)
-     return render_template('/lab6/lab6.html')
+     return redirect('/lab5')
 
 
 @lab5.route('/lab5/create', methods = ['GET', 'POST'])
