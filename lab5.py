@@ -109,13 +109,13 @@ def login():
     
     db_close(conn, cur)
     
-    return render_template('lab5/success_login.html', login=login)
+    return render_template('lab6/lab6.html', login=login)
 
 
 @lab5.route('/lab5/logout')
 def logout():
     session.pop('login', None)
-    return redirect('/lab5/')
+    return redirect('/lab6/lab6.html')
 
 
 @lab5.route('/lab5/create', methods = ['GET', 'POST'])

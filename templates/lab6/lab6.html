@@ -39,7 +39,7 @@ function getOfficeList() {
         
             li.innerHTML = `
                 <div class="office-info">
-                    <div class="office-number">Кабинет №${office.number}</div>
+                    <div class="office-number">Офис №${office.number}</div>
                     <div class="office-status">${office.tenant ? 'Арендован: ' + office.tenant : 'Свободен'}</div>
                     <div class="office-price">${office.price} руб./мес.</div>
                 </div>
@@ -174,7 +174,6 @@ function updateAuthInfo() {
 
 {# основной контент: #}
 {% block main %}
-
     <div class="office-container">
         <h1 class="office-title">Аренда офисов</h1>
         
@@ -188,12 +187,6 @@ function updateAuthInfo() {
             {% endif %}
         </div>
 
-        <ul class="office-list" id="office-list"></ul>
-        <div id="total-cost" class="total-cost"></div>
-    </div>
-
-    <div class="office-container">
-        <h1 class="office-title">Аренда офисов</h1>
         <ul class="office-list" id="office-list"></ul>
         <div id="total-cost" class="total-cost"></div>
     </div>
