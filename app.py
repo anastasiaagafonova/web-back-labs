@@ -20,7 +20,6 @@ app.register_blueprint(lab3)
 app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6)
-app.register_blueprint(rgz)
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), '404_log.txt')  
 
