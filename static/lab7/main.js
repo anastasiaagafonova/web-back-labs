@@ -136,9 +136,9 @@ function editFilm(id) {
             return data.json();
         })
         .then(function (film) {
-            document.getElementById('film-id').value = film.id;
+            document.getElementById('film-id').value = id;  // Используем переданный id
             document.getElementById('title').value = film.title;
-            document.getElementById('title_ru').value = film.title_ru;  // Добавьте заполнение этого поля
+            document.getElementById('title_ru').value = film.title_ru;
             document.getElementById('year').value = film.year;
             document.getElementById('description').value = film.description;
             showModal();

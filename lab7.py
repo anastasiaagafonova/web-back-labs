@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, request, render_template, make_response, redirect, session, current_app
+from flask import Blueprint, url_for, request, render_template, make_response, redirect, session, current_app, abort, jsonify
 
 
 lab7 = Blueprint('lab7', __name__)
@@ -57,20 +57,20 @@ films = [
 
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
-    return films
+    return jsonify(films)  # Используем jsonify
 
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
     if id < 0 or id >= len(films):
-        abort(404)
-    return films[id]
+        abort(404, description=f"Film with id {id} not found")  # Добавлено описание ошибки
+    return jsonify(films[id])  # Используем jsonify
 
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
     if id < 0 or id >= len(films):
-        abort(404)
+        abort(404, description=f"Film with id {id} not found")  # Добавлено описание ошибки
     
     del films[id]
     return '', 204
@@ -79,29 +79,29 @@ def del_film(id):
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
     if id < 0 or id >= len(films):
-        abort(404)
+        abort(404, description=f"Film with id {id} not found")  # Добавлено описание ошибки
     
     film = request.get_json()
 
-    if not film['title'] and film['title_ru']:
+    if not film.get('title') and film.get('title_ru'):
         film['title'] = film['title_ru']
 
-    if film['description'] == "":
-        return {'description': 'Заполните описание'}, 400
+    if film.get('description') == "":
+        return jsonify({'description': 'Заполните описание'}), 400
     
     films[id] = film
-    return films[id]
+    return jsonify(films[id])  # Используем jsonify
 
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
     film = request.get_json()
 
-    if not film['title'] and film['title_ru']:
+    if not film.get('title') and film.get('title_ru'):
         film['title'] = film['title_ru']
 
-    if film['description'] == "":
-        return {'description': 'Заполните описание'}, 400
+    if film.get('description') == "":
+        return jsonify({'description': 'Заполните описание'}), 400
     
     films.append(film)
-    return {'id': len(films) - 1}, 201
+    return jsonify({'id': len(films) - 1}), 201
