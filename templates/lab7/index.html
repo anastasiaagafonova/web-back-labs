@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 7{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='lab7/style.css')}}">
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='lab7/main.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+<h1>Список фильмов</h1>
+
+<button id="add-film-btn" onclick="addFilm()">Добавить фильм</button>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">Название</th>
+            <th>Год</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody id="film-list"></tbody>
+</table>
+
+<script>
+    fillFilmList();
+</script>
+
+
+<div id="film-modal" class="modal">
+    <div class="modal-content">
+        <input type="hidden" id="film-id">
+        
+        <label for="title_ru">
+            Название фильма на русском: *
+        </label>
+        <input type="text" id="title_ru" required>
+        
+        <label for="title">
+            Название фильма на оригинальном языке
+            <i>(если фильм русский, то оставьте пустым):</i>
+        </label>
+        <input type="text" id="title">
+        
+        <label for="year">
+            Год выпуска: *
+        </label>
+        <input type="number" id="year" required>
+        
+        <label for="description">
+            Описание: *
+        </label>
+        <textarea id="description" required></textarea>
+        <div id="description_error" class="error-message"></div>
+        
+        <div class="modal-buttons">
+            <button id="cancel-btn" onclick="cancel()">Отмена</button>
+            <button id="ok-btn" onclick="sendFilm()">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
