@@ -49,3 +49,14 @@ function fillFilmList() {
             }
         });
 }
+
+function deleteFilm(id, title) {
+    if (!confirm(`Вы точно хотите удалить фильм "${title}"?`)) {
+        return;
+    }
+    
+    fetch(`/lab7/rest-api/films/${id}`, {method: 'DELETE'})
+    .then(function () {
+        fillFilmList();
+    });
+}
