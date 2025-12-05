@@ -164,3 +164,24 @@ function editFilm(id) {
             console.error('Ошибка при загрузке фильма:', error);
         });
 }
+
+function resetFilms() {
+    if (!confirm('Восстановить оригинальный список фильмов? Все изменения будут потеряны.')) {
+        return;
+    }
+    
+    fetch('/lab7/rest-api/reset-films/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(function(resp) {
+        if(resp.ok) {
+            fillFilmList();
+            alert('Список фильмов восстановлен!');
+        }
+    })
+    .catch(function(error) {
+        console.error('Ошибка при восстановлении:', error);
+        alert('Ошибка при восстановлении списка фильмов');
+    });
+}

@@ -8,7 +8,8 @@ def main():
     return render_template('lab7/index.html')
 
 
-films = [
+def get_original_films():
+    return [
     {
         "title": "Method",
         "title_ru": "Метод",
@@ -55,6 +56,9 @@ films = [
 ]
 
 
+films = get_original_films()
+
+
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
     return jsonify(films)  # Используем jsonify
@@ -73,7 +77,7 @@ def del_film(id):
         abort(404, description=f"Film with id {id} not found")  # Добавлено описание ошибки
     
     del films[id]
-    return '', 204
+    return jsonify({"message": "Фильм удален"}), 200
 
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
@@ -105,3 +109,10 @@ def add_film():
     
     films.append(film)
     return jsonify({'id': len(films) - 1}), 201
+
+
+@lab7.route('/lab7/rest-api/reset-films/', methods=['POST'])
+def reset_films():
+    global films
+    films = get_original_films()
+    return jsonify({"message": "Фильмы воставлены", "count": len(films)}), 200
