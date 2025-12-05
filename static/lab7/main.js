@@ -128,3 +128,22 @@ function sendFilm() {
         console.error('Ошибка при отправке данных:', error);
     });
 }
+
+
+function editFilm(id) {
+    fetch(`/lab7/rest-api/films/${id}`)
+        .then(function (data) {
+            return data.json();
+        })
+        .then(function (film) {
+            document.getElementById('film-id').value = film.id;
+            document.getElementById('title').value = film.title;
+            document.getElementById('title_ru').value = film.title_ru;  // Добавьте заполнение этого поля
+            document.getElementById('year').value = film.year;
+            document.getElementById('description').value = film.description;
+            showModal();
+        })
+        .catch(function(error) {
+            console.error('Ошибка при загрузке фильма:', error);
+        });
+}
