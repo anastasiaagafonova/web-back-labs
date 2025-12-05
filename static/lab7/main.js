@@ -83,12 +83,27 @@ function cancel() {
     hideModal();
 }
 
+function updateCharCount() {
+    const description = document.getElementById('description');
+    const charCount = document.getElementById('char-count');
+    if (charCount) {
+        const length = description.value.length;
+        charCount.textContent = `${length}/2000`;
+        if (length > 2000) {
+            charCount.style.color = '#e74c3c';
+        } else {
+            charCount.style.color = '#666';
+        }
+    }
+}
+
 function addFilm() {
     document.getElementById('film-id').value = '';
     document.getElementById('title').value = '';
     document.getElementById('title_ru').value = '';
     document.getElementById('year').value = '';
     document.getElementById('description').value = '';
+    updateCharCount();
     showModal();
 }
 
@@ -158,6 +173,7 @@ function editFilm(id) {
             document.getElementById('title_ru').value = film.title_ru;
             document.getElementById('year').value = film.year;
             document.getElementById('description').value = film.description;
+            updateCharCount();
             showModal();
         })
         .catch(function(error) {

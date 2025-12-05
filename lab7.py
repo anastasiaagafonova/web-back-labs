@@ -1,5 +1,5 @@
 from flask import Blueprint, url_for, request, render_template, make_response, redirect, session, current_app, abort, jsonify
-
+from datetime import datetime
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -89,12 +89,26 @@ def put_film(id):
 
     if not film.get('title') and film.get('title_ru'):
         film['title'] = film['title_ru']
-
-    if film.get('description') == "":
+    
+    current_year = datetime.now().year  # Текущий год
+    
+    # Проверка года (от 1895 до текущего)
+    if 'year' not in film or not isinstance(film.get('year'), int):
+        return jsonify({'year': 'Год должен быть числом'}), 400
+    if film['year'] < 1895 or film['year'] > current_year:
+        return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
+    
+    # Проверка описания (не пустое и не более 2000 символов)
+    if 'description' not in film:
+        return jsonify({'description': 'Описание обязательно'}), 400
+    if film['description'] == "":
         return jsonify({'description': 'Заполните описание'}), 400
+    if len(film['description']) > 2000:
+        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
     
     films[id] = film
-    return jsonify(films[id])  
+    return jsonify(films[id])
+ 
 
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
@@ -103,12 +117,26 @@ def add_film():
 
     if not film.get('title') and film.get('title_ru'):
         film['title'] = film['title_ru']
-
-    if film.get('description') == "":
+    
+    current_year = datetime.now().year  # Текущий год
+    
+    # Проверка года (от 1895 до текущего)
+    if 'year' not in film or not isinstance(film.get('year'), int):
+        return jsonify({'year': 'Год должен быть числом'}), 400
+    if film['year'] < 1895 or film['year'] > current_year:
+        return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
+    
+    # Проверка описания (не пустое и не более 2000 символов)
+    if 'description' not in film:
+        return jsonify({'description': 'Описание обязательно'}), 400
+    if film['description'] == "":
         return jsonify({'description': 'Заполните описание'}), 400
+    if len(film['description']) > 2000:
+        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
     
     films.append(film)
     return jsonify({'id': len(films) - 1}), 201
+
 
 
 @lab7.route('/lab7/rest-api/reset-films/', methods=['POST'])
