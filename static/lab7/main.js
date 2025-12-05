@@ -50,6 +50,14 @@ function fillFilmList() {
         });
 }
 
+function clearAllErrors() {
+    const errorElements = document.querySelectorAll('.error-message');
+    const inputElements = document.querySelectorAll('.error-border');
+    
+    errorElements.forEach(el => el.innerText = '');
+    inputElements.forEach(el => el.classList.remove('error-border'));
+}
+
 function deleteFilm(id, title) {
     if (!confirm(`Вы точно хотите удалить фильм "${title}"?`)) {
         return;
@@ -89,7 +97,7 @@ function sendFilm() {
     const film = {
         title: document.getElementById('title').value,
         title_ru: document.getElementById('title_ru').value,
-        year: document.getElementById('year').value,
+        year: parseInt(document.getElementById('year').value),
         description: document.getElementById('description').value
     };
 
@@ -109,7 +117,14 @@ function sendFilm() {
             hideModal();
             return {};
         }
-        return resp.json();
+        // Если есть ошибка валидации (400)
+        if(resp.status === 400) {
+            return resp.json();
+        }
+        // Для других ошибок
+        return resp.text().then(text => {
+            throw new Error(text || 'Unknown error');
+        });
     })
     .then(function(errors) {
         if (errors && Object.keys(errors).length > 0) {
@@ -117,8 +132,10 @@ function sendFilm() {
                 const errorElement = document.getElementById(`${field}_error`);
                 const inputElement = document.getElementById(field);
                 
-                if (errorElement && inputElement) {
+                if (errorElement) {
                     errorElement.innerText = message;
+                }
+                if (inputElement) {
                     inputElement.classList.add('error-border');
                 }
             }
@@ -126,9 +143,9 @@ function sendFilm() {
     })
     .catch(function(error) {
         console.error('Ошибка при отправке данных:', error);
+        alert('Произошла ошибка: ' + error.message);
     });
 }
-
 
 function editFilm(id) {
     fetch(`/lab7/rest-api/films/${id}`)
