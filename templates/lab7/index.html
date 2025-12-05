@@ -2,10 +2,6 @@
 
 {% block lab %}Лабораторная работа 7{% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='lab7/style.css')}}">
-{% endblock %}
-
 {% block script %}
 <script src="{{ url_for('static', filename='lab7/main.js') }}"></script>
 {% endblock %}
@@ -14,9 +10,7 @@
 <h1>Список фильмов</h1>
 
 <button id="add-film-btn" onclick="addFilm()">Добавить фильм</button>
-<button id="reset-films-btn" onclick="resetFilms()" style="margin-left: 10px; background-color: #f39c12;">
-        Восстановить оригинальный список
-    </button>
+<button id="reset-films-btn" onclick="resetFilms()">Восстановить оригинальный список</button>
 
 <table>
     <thead>
@@ -66,5 +60,475 @@
         </div>
     </div>
 </div>
+<style>
+:root {
+    --primary-blue: #4a6fa5;
+    --light-blue: #a8d0e6;
+    --soft-pink: #f8b5d5;
+    --dark-pink: #e75480;
+    --accent-purple: #9d6bff;
+    --white: #ffffff;
+    --light-gray: #f5f7fa;
+    --medium-gray: #e1e5eb;
+    --dark-gray: #374151;
+    --text-dark: #1f2937;
+    --shadow-light: rgba(74, 111, 165, 0.1);
+    --shadow-medium: rgba(74, 111, 165, 0.2);
+}
 
+/* Таблица */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 25px 0;
+    font-family: 'Segoe UI', 'Inter', -apple-system, sans-serif;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow-light);
+    border: 1px solid var(--medium-gray);
+}
+
+table th {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-purple) 100%);
+    color: var(--white);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    border: none;
+    position: relative;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+table th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--medium-gray);
+    vertical-align: middle;
+    color: var(--text-dark);
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr {
+    transition: all 0.3s ease;
+}
+
+table tr:hover {
+    background: linear-gradient(90deg, rgba(168, 208, 230, 0.1) 0%, rgba(248, 181, 213, 0.05) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px var(--shadow-light);
+}
+
+table tr:nth-child(even) {
+    background-color: rgba(168, 208, 230, 0.05);
+}
+
+table tr:nth-child(even):hover {
+    background: linear-gradient(90deg, rgba(168, 208, 230, 0.15) 0%, rgba(248, 181, 213, 0.08) 100%);
+}
+
+/* Кнопки в таблице */
+table button {
+    padding: 8px 16px;
+    margin: 3px 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+table button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+table button:focus::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+table button:nth-of-type(1) {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+    color: var(--white);
+    border: 1px solid rgba(74, 111, 165, 0.2);
+}
+
+table button:nth-of-type(1):hover {
+    background: linear-gradient(135deg, #3a5a85 0%, #8bc0e6 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 15px rgba(74, 111, 165, 0.3);
+}
+
+table button:nth-of-type(2) {
+    background: linear-gradient(135deg, var(--dark-pink) 0%, var(--soft-pink) 100%);
+    color: var(--white);
+    border: 1px solid rgba(231, 84, 128, 0.2);
+}
+
+table button:nth-of-type(2):hover {
+    background: linear-gradient(135deg, #d14374 0%, #f8a0ca 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 15px rgba(231, 84, 128, 0.3);
+}
+
+/* Кнопка добавления */
+#add-film-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent-purple) 0%, #b591ff 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+#add-film-btn::before {
+    content: '+';
+    margin-right: 8px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#add-film-btn:hover {
+    background: linear-gradient(135deg, #8c52ff 0%, #a374ff 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(157, 107, 255, 0.4);
+}
+
+#add-film-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Кнопка восстановления фильмов - в стиле кнопки добавления */
+#reset-films-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ff6b8b 0%, #ff9a9e 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(255, 107, 139, 0.2);
+    margin-left: 15px;
+}
+
+#reset-films-btn::before {
+    content: '↻';
+    margin-right: 8px;
+    font-weight: bold;
+    font-size: 18px;
+    display: inline-block;
+    transition: transform 0.5s ease;
+}
+
+#reset-films-btn:hover {
+    background: linear-gradient(135deg, #ff5a7a 0%, #ff8a8e 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 107, 139, 0.4);
+}
+
+#reset-films-btn:hover::before {
+    transform: rotate(360deg);
+}
+
+#reset-films-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(255, 107, 139, 0.3);
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(31, 41, 55, 0.7);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: linear-gradient(135deg, var(--white) 0%, #f8fafc 100%);
+    margin: 8% auto;
+    padding: 30px;
+    border-radius: 16px;
+    width: 520px;
+    box-shadow: 0 20px 60px rgba(74, 111, 165, 0.3);
+    animation: modalSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--medium-gray);
+    position: relative;
+}
+
+@keyframes modalSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--soft-pink), var(--accent-purple));
+    border-radius: 16px 16px 0 0;
+}
+
+.modal label {
+    display: block;
+    margin: 18px 0 8px;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+.modal input[type="text"],
+.modal input[type="number"],
+.modal textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--medium-gray);
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', 'Inter', sans-serif;
+    background: var(--white);
+}
+
+.modal input[type="text"]:focus,
+.modal input[type="number"]:focus,
+.modal textarea:focus {
+    border-color: var(--primary-blue);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+    background: var(--white);
+}
+
+.modal textarea {
+    height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.modal i {
+    color: var(--dark-gray);
+    font-size: 12px;
+    font-style: normal;
+    opacity: 0.7;
+    font-weight: 400;
+}
+
+/* Кнопки в модальном окне */
+.modal-buttons {
+    margin-top: 30px;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.modal-buttons button {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.3px;
+    min-width: 100px;
+}
+
+#ok-btn {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-purple) 100%);
+    color: var(--white);
+}
+
+#ok-btn:hover {
+    background: linear-gradient(135deg, #3a5a85 0%, #8c52ff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(74, 111, 165, 0.4);
+}
+
+#cancel-btn {
+    background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%);
+    color: var(--text-dark);
+}
+
+#cancel-btn:hover {
+    background: linear-gradient(135deg, #7c8ca3 0%, #b0bccf 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(148, 163, 184, 0.3);
+}
+
+/* Сообщения об ошибках */
+.error-message {
+    color: var(--dark-pink);
+    font-size: 13px;
+    margin-top: 6px;
+    min-height: 18px;
+    font-weight: 500;
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.error-message::before {
+    content: '⚠';
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.error-border {
+    border-color: var(--dark-pink) !important;
+    background: rgba(231, 84, 128, 0.05) !important;
+}
+
+.error-border:focus {
+    box-shadow: 0 0 0 3px rgba(231, 84, 128, 0.2) !important;
+}
+
+/* Оригинальное название */
+.original-title {
+    font-style: italic;
+    color: var(--primary-blue);
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 2px 6px;
+    background: rgba(74, 111, 165, 0.08);
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Заголовок страницы */
+h1 {
+    color: var(--text-dark);
+    border-bottom: 3px solid transparent;
+    background: linear-gradient(90deg, var(--primary-blue), var(--soft-pink)) left bottom no-repeat;
+    background-size: 100% 3px;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 32px;
+    position: relative;
+    display: inline-block;
+    padding-right: 40px;
+}
+
+h1::after {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 28px;
+    opacity: 0.8;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+        margin: 15% auto;
+        padding: 20px;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    table th,
+    table td {
+        padding: 12px 10px;
+    }
+    
+    .modal-buttons {
+        flex-direction: column;
+    }
+    
+    .modal-buttons button {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 10px;
+    }
+    
+    #add-film-btn,
+    #reset-films-btn {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+</style>
 {% endblock %}
