@@ -19,13 +19,10 @@
             <th>Действия</th>
         </tr>
     </thead>
-    <tbody id="film-list"></tbody>
+    <tbody id="film-list">
+        <!-- Здесь JavaScript будет добавлять строки -->
+    </tbody>
 </table>
-
-<script>
-    fillFilmList();
-</script>
-
 
 <div id="film-modal" class="modal">
     <div class="modal-content">
@@ -60,59 +57,7 @@
         </div>
     </div>
 </div>
-<h1>Список фильмов</h1>
 
-<button id="add-film-btn" onclick="addFilm()">Добавить фильм</button>
-
-<table>
-    <thead>
-        <tr>
-            <th colspan="2">Название</th>
-            <th>Год</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody id="film-list"></tbody>
-</table>
-
-<script>
-    fillFilmList();
-</script>
-
-
-<div id="film-modal" class="modal">
-    <div class="modal-content">
-        <input type="hidden" id="film-id">
-        
-        <label for="title_ru">
-            Название фильма на русском: *
-        </label>
-        <input type="text" id="title_ru" required>
-        
-        <label for="title">
-            Название фильма на оригинальном языке
-            <i>(если фильм русский, то оставьте пустым):</i>
-        </label>
-        <input type="text" id="title">
-        
-        <label for="year">
-            Год выпуска: *
-        </label>
-        <input type="number" id="year" required>
-        <div id="year_error" class="error-message"></div> 
-        
-        <label for="description">
-            Описание: * <span id="char-count" style="font-size: 12px; color: #666;">0/2000</span>
-        </label>
-        <textarea id="description" required></textarea>
-        <div id="description_error" class="error-message"></div>
-        
-        <div class="modal-buttons">
-            <button id="cancel-btn" onclick="cancel()">Отмена</button>
-            <button id="ok-btn" onclick="sendFilm()">Сохранить</button>
-        </div>
-    </div>
-</div>
 <style>
 :root {
     --primary-blue: #4a6fa5;
@@ -569,4 +514,11 @@ h1 {
     }
 }
 </style>
+
+<script>
+    // Вызываем fillFilmList после загрузки страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        fillFilmList();
+    });
+</script>
 {% endblock %}
