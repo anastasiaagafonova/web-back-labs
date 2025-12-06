@@ -1,5 +1,7 @@
 from flask import Blueprint, url_for, request, render_template, make_response, redirect, session, current_app, abort, jsonify
 from datetime import datetime
+import sqlite3
+from pathlib import Path
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -7,140 +9,208 @@ lab7 = Blueprint('lab7', __name__)
 def main():
     return render_template('lab7/index.html')
 
+def get_db_connection():
+    """Создает соединение с базой данных SQLite"""
+    current_dir = Path(__file__).parent
+    db_path = current_dir / "database.db"
+    
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-def get_original_films():
-    return [
-    {
-        "title": "Method",
-        "title_ru": "Метод",
-        "year": 2015,
-        "description": "Родион Меглин — загадочная и неординарная личность, следователь высочайшего уровня,\
-            который раскрывает самые сложные убийства. Он привык работать в одиночку, не раскрывая секреты своего метода.\
-            Выпускница юрфака Есеня становится стажером Меглина. У девушки есть личные мотивы для работы с прославленным\
-            следователем — мать Есени убили, а отец скрывает важные детали произошедшего, но она не оставляет надежды выйти на след убийцы.\
-            Работа с Меглиным становится для Есени тяжелым испытанием. Профессиональные успехи и странное поведение учителя заставляют\
-            девушку задуматься: если Родион так тонко чувствует маньяков и может предсказать их действия, не является ли он сам одним из них."
-    },
-     {
-        "title": "Fire",
-        "title_ru": "Огонь",
-        "year": 2020,
-        "description": "Героическая история о пожарных и спасателях. То, что обычно называют подвигом, для них — привычные будни,\
-            если только можно привыкнуть к смертельной опасности и предельному риску. Когда людям, попавшим в беду, кажется, что помощи \
-            ждать неоткуда, на выручку приходят спасатели, чтобы встать на пути беспощадной стихии."
-    },
-     {
-        "title": "Father 2",
-        "title_ru": "Батя 2",
-        "year": 2025,
-        "description": "Во время развода с женой Макс вспоминает детство, когда родители, которые тоже собирались разводиться, отправили \
-            его на лето к деду-фронтовику в деревню. Тогда строгий дед стал настоящим другом и учителем для мальчика, а также свидетелем и \
-            участником его многочисленных проделок."
-    },
-    {
-        "title": "Unforgiven",
-        "title_ru": "Непрощенный",
-        "year": 2025,
-        "description": "Жизнь для инженера-строителя Виталия Калоева остановилась в ту самую секунду, когда самолет «Башкирских авиалиний», \
-            в котором летели его жена и дети, столкнулся над Боденским озером с транспортным бортом. Не дождавшись семьи в аэропорту Барселоны, \
-            Виталий отправляется на место катастрофы, где находит тела своих родных. Калоев теряет все, ради чего жил. "
-    },
-    {
-        "title": "Onegin",
-        "title_ru": "Онегин",
-        "year": 2025,
-        "description": "Евгений Онегин живет на широкую ногу: балы, приемы, театральные премьеры и прочие развлечения, которые может предложить\
-            молодому человеку столица. Но светская жизнь давно утомила его, потому известие о болезни живущего в деревне дяди, он воспринимает, \
-            как возможность сбежать от опостылевшего света."
+def film_to_dict(row):
+    """Преобразует запись из БД в словарь"""
+    return {
+        'id': row['id'],
+        'title': row['title'],
+        'title_ru': row['title_ru'],
+        'year': row['year'],
+        'description': row['description']
     }
-]
-
-
-films = get_original_films()
-
 
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
-    return jsonify(films)  # Используем jsonify
-
+    """Получить все фильмы из БД"""
+    conn = get_db_connection()
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM films ORDER BY id")
+        films = cursor.fetchall()
+        
+        films_list = [film_to_dict(film) for film in films]
+        return jsonify(films_list)
+    finally:
+        conn.close()
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
-    if id < 0 or id >= len(films):
-        abort(404, description=f"Film with id {id} not found")  
-    return jsonify(films[id])  # Используем jsonify
-
+    """Получить один фильм по ID"""
+    conn = get_db_connection()
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM films WHERE id = ?", (id,))
+        film = cursor.fetchone()
+        
+        if film is None:
+            abort(404, description=f"Film with id {id} not found")
+        
+        return jsonify(film_to_dict(film))
+    finally:
+        conn.close()
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
-    if id < 0 or id >= len(films):
-        abort(404, description=f"Film with id {id} not found")  
+    """Удалить фильм по ID"""
+    conn = get_db_connection()
     
-    del films[id]
-    return jsonify({"message": "Фильм удален"}), 200
-
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM films WHERE id = ?", (id,))
+        film = cursor.fetchone()
+        
+        if film is None:
+            abort(404, description=f"Film with id {id} not found")
+        
+        film_name = film['title_ru']
+        
+        cursor.execute("DELETE FROM films WHERE id = ?", (id,))
+        conn.commit()
+        
+        return jsonify({
+            "message": f"Фильм '{film_name}' удален",
+            "id": id
+        }), 200
+    finally:
+        conn.close()
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
-    if id < 0 or id >= len(films):
-        abort(404, description=f"Film with id {id} not found")  
+    """Обновить фильм по ID"""
+    conn = get_db_connection()
     
-    film = request.get_json()
-
-    if not film.get('title') and film.get('title_ru'):
-        film['title'] = film['title_ru']
-    
-    current_year = datetime.now().year  # Текущий год
-    
-    # Проверка года (от 1895 до текущего)
-    if 'year' not in film or not isinstance(film.get('year'), int):
-        return jsonify({'year': 'Год должен быть числом'}), 400
-    if film['year'] < 1895 or film['year'] > current_year:
-        return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
-    
-    # Проверка описания (не пустое и не более 2000 символов)
-    if 'description' not in film:
-        return jsonify({'description': 'Описание обязательно'}), 400
-    if film['description'] == "":
-        return jsonify({'description': 'Заполните описание'}), 400
-    if len(film['description']) > 2000:
-        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
-    
-    films[id] = film
-    return jsonify(films[id])
- 
-
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM films WHERE id = ?", (id,))
+        film = cursor.fetchone()
+        
+        if film is None:
+            abort(404, description=f"Film with id {id} not found")
+        
+        data = request.get_json()
+        
+        # Проверка русского названия
+        if 'title_ru' not in data or not data['title_ru'].strip():
+            return jsonify({'title_ru': 'Русское название обязательно'}), 400
+        
+        # Проверка оригинального названия (если русское пустое)
+        if not data.get('title') and not data.get('title_ru'):
+            return jsonify({'title': 'Оригинальное название обязательно, если русское пустое'}), 400
+        
+        # Проверка года
+        if 'year' not in data:
+            return jsonify({'year': 'Год обязателен'}), 400
+        
+        try:
+            year = int(data['year'])
+        except ValueError:
+            return jsonify({'year': 'Год должен быть числом'}), 400
+        
+        current_year = datetime.now().year
+        if year < 1895 or year > current_year:
+            return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
+        
+        # Проверка описания
+        if 'description' not in data:
+            return jsonify({'description': 'Описание обязательно'}), 400
+        
+        description = data['description']
+        if not description.strip():
+            return jsonify({'description': 'Заполните описание'}), 400
+        
+        if len(description) > 2000:
+            return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
+        
+        # Если оригинальное название не указано, используем русское
+        title = data.get('title')
+        if not title:
+            title = data['title_ru']
+        
+        # Обновляем запись
+        cursor.execute('''
+            UPDATE films 
+            SET title = ?, title_ru = ?, year = ?, description = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        ''', (title, data['title_ru'], year, description, id))
+        
+        conn.commit()
+        
+        cursor.execute("SELECT * FROM films WHERE id = ?", (id,))
+        updated_film = cursor.fetchone()
+        
+        return jsonify(film_to_dict(updated_film))
+    finally:
+        conn.close()
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
-    film = request.get_json()
-
-    if not film.get('title') and film.get('title_ru'):
-        film['title'] = film['title_ru']
+    """Добавить новый фильм"""
+    conn = get_db_connection()
     
-    current_year = datetime.now().year  # Текущий год
-    
-    # Проверка года (от 1895 до текущего)
-    if 'year' not in film or not isinstance(film.get('year'), int):
-        return jsonify({'year': 'Год должен быть числом'}), 400
-    if film['year'] < 1895 or film['year'] > current_year:
-        return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
-    
-    # Проверка описания (не пустое и не более 2000 символов)
-    if 'description' not in film:
-        return jsonify({'description': 'Описание обязательно'}), 400
-    if film['description'] == "":
-        return jsonify({'description': 'Заполните описание'}), 400
-    if len(film['description']) > 2000:
-        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
-    
-    films.append(film)
-    return jsonify({'id': len(films) - 1}), 201
-
-
-
-@lab7.route('/lab7/rest-api/reset-films/', methods=['POST'])
-def reset_films():
-    global films
-    films = get_original_films()
-    return jsonify({"message": "Фильмы воставлены", "count": len(films)}), 200
+    try:
+        cursor = conn.cursor()
+        data = request.get_json()
+        
+        # Проверка русского названия
+        if 'title_ru' not in data or not data['title_ru'].strip():
+            return jsonify({'title_ru': 'Русское название обязательно'}), 400
+        
+        # Проверка оригинального названия (если русское пустое)
+        if not data.get('title') and not data.get('title_ru'):
+            return jsonify({'title': 'Оригинальное название обязательно, если русское пустое'}), 400
+        
+        # Проверка года
+        if 'year' not in data:
+            return jsonify({'year': 'Год обязателен'}), 400
+        
+        try:
+            year = int(data['year'])
+        except ValueError:
+            return jsonify({'year': 'Год должен быть числом'}), 400
+        
+        current_year = datetime.now().year
+        if year < 1895 or year > current_year:
+            return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
+        
+        # Проверка описания
+        if 'description' not in data:
+            return jsonify({'description': 'Описание обязательно'}), 400
+        
+        description = data['description']
+        if not description.strip():
+            return jsonify({'description': 'Заполните описание'}), 400
+        
+        if len(description) > 2000:
+            return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
+        
+        # Если оригинальное название не указано, используем русское
+        title = data.get('title')
+        if not title:
+            title = data['title_ru']
+        
+        # Добавляем новый фильм
+        cursor.execute('''
+            INSERT INTO films (title, title_ru, year, description)
+            VALUES (?, ?, ?, ?)
+        ''', (title, data['title_ru'], year, description))
+        
+        conn.commit()
+        
+        new_id = cursor.lastrowid
+        cursor.execute("SELECT * FROM films WHERE id = ?", (new_id,))
+        new_film = cursor.fetchone()
+        
+        return jsonify(film_to_dict(new_film)), 201
+    finally:
+        conn.close()

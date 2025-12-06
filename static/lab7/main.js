@@ -28,13 +28,13 @@ function fillFilmList() {
                 let editButton = document.createElement('button');
                 editButton.innerText = 'Редактировать';
                 editButton.onclick = function() {
-                    editFilm(i);
+                    editFilm(films[i].id);
                 };
                 
                 let delButton = document.createElement('button');
                 delButton.innerText = 'Удалить';
                 delButton.onclick = function() {
-                    deleteFilm(i, films[i].title_ru);
+                    deleteFilm(films[i].id, films[i].title_ru);
                 };
                 
                 tdActions.append(editButton);
@@ -68,7 +68,6 @@ function deleteFilm(id, title) {
         fillFilmList();
     });
 }
-
 
 function showModal() {
     document.getElementById('film-modal').style.display = 'block';
@@ -127,38 +126,11 @@ function sendFilm() {
         body: JSON.stringify(film)
     })
     .then(function(resp) {
-        if(resp.ok) {
-            fillFilmList();
-            hideModal();
-            return {};
-        }
-        // Если есть ошибка валидации (400)
-        if(resp.status === 400) {
-            return resp.json();
-        }
-        // Для других ошибок
-        return resp.text().then(text => {
-            throw new Error(text || 'Unknown error');
-        });
+        return resp.json();
     })
-    .then(function(errors) {
-        if (errors && Object.keys(errors).length > 0) {
-            for (const [field, message] of Object.entries(errors)) {
-                const errorElement = document.getElementById(`${field}_error`);
-                const inputElement = document.getElementById(field);
-                
-                if (errorElement) {
-                    errorElement.innerText = message;
-                }
-                if (inputElement) {
-                    inputElement.classList.add('error-border');
-                }
-            }
-        }
-    })
-    .catch(function(error) {
-        console.error('Ошибка при отправке данных:', error);
-        alert('Произошла ошибка: ' + error.message);
+    .then(function(data) {
+        fillFilmList();
+        hideModal();
     });
 }
 
@@ -168,36 +140,12 @@ function editFilm(id) {
             return data.json();
         })
         .then(function (film) {
-            document.getElementById('film-id').value = id;  // Используем переданный id
+            document.getElementById('film-id').value = film.id;
             document.getElementById('title').value = film.title;
             document.getElementById('title_ru').value = film.title_ru;
             document.getElementById('year').value = film.year;
             document.getElementById('description').value = film.description;
             updateCharCount();
             showModal();
-        })
-        .catch(function(error) {
-            console.error('Ошибка при загрузке фильма:', error);
         });
-}
-
-function resetFilms() {
-    if (!confirm('Восстановить оригинальный список фильмов? Все изменения будут потеряны.')) {
-        return;
-    }
-    
-    fetch('/lab7/rest-api/reset-films/', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-    })
-    .then(function(resp) {
-        if(resp.ok) {
-            fillFilmList();
-            alert('Список фильмов восстановлен!');
-        }
-    })
-    .catch(function(error) {
-        console.error('Ошибка при восстановлении:', error);
-        alert('Ошибка при восстановлении списка фильмов');
-    });
 }
