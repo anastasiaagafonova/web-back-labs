@@ -130,7 +130,7 @@ def register():
     # Регистрация
     password_hash = generate_password_hash(password)
     db_execute("INSERT INTO rgz_users (login, password) VALUES (?, ?)", (login, password_hash))
-    return render_template('rgz/register_success.html', login=login)
+    return render_template('rgz/success.html', login=login)
 
 @rgz.route('/rgz/login', methods=['GET', 'POST'])
 def login():
