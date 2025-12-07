@@ -35,3 +35,28 @@ def db_close(conn, cur):
     cur.close()
     conn.close()
 
+@rgz.route('/rgz/')
+def main():
+    conn, cur = db_connect()
+
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT * FROM products2")
+    else:
+        cur.execute("SELECT * FROM products2")
+    
+    products = cur.fetchall()
+    
+    db_close(conn, cur)
+    
+    login = session.get('login')
+    return render_template('rgz/rgz.html', products=products, login=login)
+
+#валидация
+def validate_latin_chars(text):
+    if not text or not text.strip():
+        return False, "Поле не может быть пустым"
+    
+    if not re.match(r'^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]*$', text):
+        return False, "Можно использовать только латинские буквы, цифры и знаки препинания"
+    
+    return True, ""
