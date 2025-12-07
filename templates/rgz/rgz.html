@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block lab %}Магазин мебели "Отдыхайка"{% endblock %}
+{% block lab %}Онлайн-магазин мебели{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='rgz/rgz.css') }}">
@@ -26,75 +26,88 @@
         
         return await response.json();
     }
-    // Добавьте в script блок rgz.html:
-async function loadFurniture() {
-    try {
-        const result = await callApi('get_products');
-        if (result.result) {
-            renderFurniture(result.result);
-        } else if (result.error) {
-            console.error('Error:', result.error);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-function renderFurniture(products) {
-    const grid = document.getElementById('furniture-grid');
-    let html = '';
-    
-    products.forEach(product => {
-        html += `
-            <div class="furniture-item">
-                <img src="${product.image_url || '/static/default.jpg'}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p class="price">${parseFloat(product.price).toLocaleString('ru-RU')} руб.</p>
-                ${login ? `
-                    <button onclick="addToCart(${product.id})" class="add-to-cart-btn">
-                        В корзину
-                    </button>
-                ` : ''}
-            </div>
-        `;
-    });
-    
-    grid.innerHTML = html;
-}
-
-async function addToCart(productId) {
-    try {
-        const result = await callApi('add_to_cart', { product_id: productId });
-        if (result.result) {
-            alert('Товар добавлен в корзину!');
-        } else if (result.error) {
-            alert('Ошибка: ' + result.error.message);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-async function deleteAccount() {
-    if (confirm('Вы уверены, что хотите удалить аккаунт? Это действие необратимо.')) {
+    // функция загрузки мебели из API
+    async function loadFurniture() {
         try {
-            const result = await callApi('delete_account');
+            const result = await callApi('get_furniture');
             if (result.result) {
-                alert('Аккаунт удален');
-                window.location.href = '/rgz/';
+                currentFurniture = result.result;
+                renderFurniture(currentFurniture);
+            } else if (result.error) {
+                alert('Ошибка загрузки товаров: ' + result.error.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ошибка загрузки товаров');
+        }
+    }
+    // функция отрисовки списка мебели в виде карточек
+    function renderFurniture(furniture) {
+        const grid = document.querySelector('.furniture-grid');
+        grid.innerHTML = '';
+        // для кадого элемента
+        furniture.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'furniture-card';
+            
+            card.innerHTML = `
+                <h3>${item.name}</h3>
+                <p class="description">${item.description}</p>
+                ${item.image ? `<img src="/static/${item.image}" alt="${item.name}" class="furniture-image" onerror="this.style.display='none'">` : ''}
+                <div class="price">${parseFloat(item.price).toLocaleString('ru-RU')} руб.</div>
+                ${'{{ login }}' ? `
+                    <button class="add-to-cart-btn" onclick="addToCart(${item.id})">
+                        Добавить в корзину
+                    </button>
+                ` : `
+                    <button class="add-to-cart-btn" disabled title="Для добавления в корзину необходимо авторизоваться">
+                        Войдите для покупок
+                    </button>
+                `}
+            `;
+            
+            grid.appendChild(card);
+        });
+    }
+    // товар в корзину
+    async function addToCart(furnitureId) {
+        try {
+            const result = await callApi('add_to_cart', { furniture_id: furnitureId });
+            
+            if (result.result) {
+                alert('Товар добавлен в корзину!');
             } else if (result.error) {
                 alert('Ошибка: ' + result.error.message);
             }
         } catch (error) {
             console.error('Error:', error);
+            alert('Ошибка добавления в корзину');
         }
+    }
+    // удалить аккаунт
+    async function deleteAccount() {
+    if (!confirm('ВНИМАНИЕ! Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.')) {
+        return;
+    }
+    
+    try {
+        const result = await callApi('delete_account');
+        
+        if (result.result) {
+            alert('Аккаунт успешно удален');
+            window.location.href = '/rgz/';
+        } else if (result.error) {
+            alert('Ошибка: ' + result.error.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Ошибка удаления аккаунта');
     }
 }
 
     document.addEventListener('DOMContentLoaded', function() {
         loadFurniture();
     });
-
 </script>
 {% endblock %}
 
