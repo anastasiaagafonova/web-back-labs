@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block lab %}Онлайн-магазин мебели{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='rgz/rgz.css') }}">
+{% endblock %}
+
+{% block script %}
+<script>
+    let currentFurniture = [];
+    // функция для вызова API методов
+    async function callApi(method, params = {}) {
+        const response = await fetch('/rgz/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: method,
+                params: params,
+                id: Math.floor(Math.random() * 1000)
+            })
+        });
+        
+        return await response.json();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFurniture();
+    });
+</script>
+{% endblock %}
+
+
+{% block main %}
+    <div class="rgz-container">
+        <div class="rgz-header">
+            <h1>Магазин мебели</h1>
+        </div>
+
+        <div class="user-panel">
+            {% if login %}
+                <div class="user-info">
+                    Пользователь: {{ login }}
+                </div>
+                <div class="user-actions">
+                    <a href="/rgz/cart" class="cart-btn">Корзина</a>
+                    <a href="/rgz/logout" class="logout-btn">Выйти</a>
+                    <button onclick="deleteAccount()" class="delete-account-btn">Удалить аккаунт</button>
+                </div>
+            {% else %}
+                <div class="user-info">
+                    Для покупок необходимо авторизоваться
+                </div>
+                <div class="user-actions">
+                    <a href="/rgz/login" class="login-btn">Войти</a>
+                    <a href="/rgz/register" class="register-btn">Регистрация</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="furniture-grid" id="furniture-grid">
+            <div class="loading">Загрузка товаров...</div>
+        </div>
+    </div>
+{% endblock %}
