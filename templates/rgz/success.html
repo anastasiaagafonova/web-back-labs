@@ -7,13 +7,19 @@
 {% endblock %}
 
 {% block main %}
-    <div class="rgz-container">
-        <div class="success-message">
-            <h1>Регистрация успешна</h1>
-            <p>Пользователь <strong>{{ login }}</strong> успешно зарегистрирован.</p>
-            <a href="/rgz/login" class="submit-btn" style="display: inline-block; width: auto; padding: 8px 16px; margin-top: 10px;">
-                Войти в систему
-            </a>
+<div class="auth-container">
+    <div class="success-message">
+        <h1>Регистрация прошла успешно!</h1>
+        <p>Пользователь <strong>{{ login }}</strong> успешно зарегистрирован.</p>
+        <p>Теперь вы можете войти в систему.</p>
+        
+        <a href="/rgz/login" class="submit-btn" style="display: inline-block; width: auto; padding: 15px 30px; margin: 20px auto 10px;">
+            Войти в систему
+        </a>
+        
+        <div class="auth-links">
+            <a href="/rgz/" class="back-btn">← Вернуться к товарам</a>
         </div>
     </div>
+</div>
 {% endblock %}

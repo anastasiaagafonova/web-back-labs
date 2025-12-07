@@ -2,13 +2,16 @@
 
 {% block lab %}Вход{% endblock %}
 
-{% block main %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='rgz/rgz.css') }}">
+{% endblock %}
 
+{% block main %}
 <div class="auth-container">
     <h1>Вход в систему</h1>
     
     {% if error %}
-        <div class="error">{{ error }}</div>
+        <div class="error-message">{{ error }}</div>
     {% endif %}
 
     <form method="POST">
@@ -22,14 +25,15 @@
             <input type="password" id="password" name="password" required>
         </div>
         
-        <button type="submit" class="btn">Войти</button>
+        <button type="submit" class="submit-btn">Войти</button>
     </form>
     
     <div class="auth-links">
         <p>Нет аккаунта? <a href="/rgz/register">Зарегистрируйтесь</a></p>
     </div>
-    <div style="margin-top: 20px;">
-        <a href="/rgz/">Назад</a>
+    
+    <div class="back-link" style="margin-top: 20px; text-align: center;">
+        <a href="/rgz/" class="back-btn">← Назад к товарам</a>
     </div>
 </div>
 {% endblock %}
