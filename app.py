@@ -114,7 +114,7 @@ def index():
             <li><a href="/lab7">Лабораторная работа №7</a></li>
         </ul>
         <ul>
-            <li><a href="/rgz">Магазин мебели "Отдыхайка"</a></li>
+            <li><a href="/rgz">Магазин мебели "cozyhome"</a></li>
         </ul>
     </body>
     <footer>
