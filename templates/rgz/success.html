@@ -2,10 +2,6 @@
 
 {% block lab %}Успешная регистрация{% endblock %}
 
-{% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='rgz/rgz.css') }}">
-{% endblock %}
-
 {% block main %}
 <div class="auth-container">
     <div class="success-message">
@@ -22,4 +18,196 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Стили для страницы успешной регистрации */
+    .rgz-success-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .rgz-student-info {
+        background: linear-gradient(135deg, #2c3e50, #4a6491);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .rgz-student-info h2 {
+        margin: 0;
+        font-size: 1.3em;
+        font-weight: 500;
+    }
+    
+    .rgz-success-message {
+        background: white;
+        padding: 50px 40px;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        border-top: 5px solid #27ae60;
+    }
+    
+    .rgz-success-message h1 {
+        color: #27ae60;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+    
+    .rgz-success-message p {
+        color: #555;
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .rgz-success-message strong {
+        color: #2c3e50;
+        font-size: 1.2em;
+    }
+    
+    .rgz-success-btn {
+        display: inline-block;
+        background: linear-gradient(to right, #27ae60, #219653);
+        color: white;
+        text-decoration: none;
+        padding: 15px 40px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        margin: 25px auto;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+    
+    .rgz-success-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+    }
+    
+    .rgz-success-btn:active {
+        transform: translateY(0);
+    }
+    
+    .rgz-back-links {
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid #eee;
+    }
+    
+    .rgz-back-btn {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.3s;
+    }
+    
+    .rgz-back-btn:hover {
+        color: #2980b9;
+        text-decoration: underline;
+    }
+    
+    .rgz-success-icon {
+        font-size: 4em;
+        color: #27ae60;
+        margin-bottom: 20px;
+        animation: successBounce 1s ease-in-out;
+    }
+    
+    @keyframes successBounce {
+        0% { transform: scale(0.5); opacity: 0; }
+        50% { transform: scale(1.1); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .rgz-welcome-text {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 30px 0;
+        border-left: 4px solid #3498db;
+    }
+    
+    .rgz-welcome-text h3 {
+        color: #2c3e50;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    
+    .rgz-next-steps {
+        text-align: left;
+        margin-top: 30px;
+        padding: 20px;
+        background: #f0f8ff;
+        border-radius: 10px;
+        border: 1px solid #d6eaf8;
+    }
+    
+    .rgz-next-steps h3 {
+        color: #2c3e50;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    
+    .rgz-next-steps ul {
+        padding-left: 20px;
+        margin: 0;
+    }
+    
+    .rgz-next-steps li {
+        margin-bottom: 8px;
+        color: #555;
+    }
+    
+    /* Анимация текста */
+    .rgz-success-text {
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Адаптивность */
+    @media (max-width: 600px) {
+        .rgz-success-container {
+            padding: 10px;
+            margin: 20px auto;
+        }
+        
+        .rgz-success-message {
+            padding: 30px 20px;
+        }
+        
+        .rgz-success-message h1 {
+            font-size: 1.6em;
+        }
+        
+        .rgz-success-btn {
+            padding: 12px 30px;
+            font-size: 1em;
+        }
+        
+        .rgz-success-icon {
+            font-size: 3em;
+        }
+    }
+</style>
 {% endblock %}
