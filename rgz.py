@@ -1,5 +1,5 @@
 import re
-from flask import jsonify, render_template, request, session, redirect, current_app
+from flask import Blueprint, jsonify, render_template, request, session, redirect, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 from psycopg2.extras import RealDictCursor
