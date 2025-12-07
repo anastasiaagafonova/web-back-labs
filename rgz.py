@@ -4,37 +4,41 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
+from contextlib import contextmanager
 from os import path
 
 rgz = Blueprint('rgz', __name__)
 
 
-def db_connect():
+@contextmanager
+def db_connection():
+    """Контекстный менеджер для работы с БД"""
     if current_app.config['DB_TYPE'] == 'postgres':
         conn = psycopg2.connect(
-                host='127.0.0.1',
-                database='anastasia_agafonova_knowledge_base',
-                user='anastasia_agafonova_knowledge_base',
-                password='123'
+            host='127.0.0.1',
+            database='anastasia_agafonova_knowledge_base',
+            user='anastasia_agafonova_knowledge_base',
+            password='123'
         )
         cur = conn.cursor(cursor_factory=RealDictCursor)
     else:
         dir_path = path.dirname(path.realpath(__file__))
         db_path = path.join(dir_path, "database.db")
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, timeout=10)  # Увеличиваем timeout
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
     
-    return conn, cur
+    try:
+        yield conn, cur
+    finally:
+        conn.commit()
+        cur.close()
+        conn.close()
 
-def db_close(conn, cur):
-    conn.commit()
-    cur.close()
-    conn.close()
 
 
 @rgz.route('/rgz/')
-def main():
+def main3():
     conn, cur = db_connect()
 
     if current_app.config['DB_TYPE'] == 'postgres':
@@ -65,45 +69,57 @@ def register():
     if request.method == 'GET':
         return render_template('rgz/register.html')
     
-    login = request.form.get('login')
-    password = request.form.get('password')
-
-    #валидация
-    is_valid_login, login_error = validate_latin_chars(login)
-    is_valid_password, password_error = validate_latin_chars(password)
+    login = request.form.get('login', '').strip()
+    password = request.form.get('password', '').strip()
     
-    if not is_valid_login:
-        return render_template('rgz/register.html', error=login_error)
-    
-    if not is_valid_password:
-        return render_template('rgz/register.html', error=password_error)
-    
-    if not (login and password):
+    # Базовая валидация
+    if not login or not password:
         return render_template('rgz/register.html', error='Заполните все поля')
     
-    conn, cur = db_connect()
+    if len(login) < 3:
+        return render_template('rgz/register.html', error='Логин должен быть не менее 3 символов')
     
-    #проверка логина
-    if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("SELECT * FROM user2 WHERE username=%s", (login,))
-    else:
-        cur.execute("SELECT * FROM user2 WHERE username=?", (login,))
+    if len(password) < 6:
+        return render_template('rgz/register.html', error='Пароль должен быть не менее 6 символов')
     
-    if cur.fetchone():
-        db_close(conn, cur)
-        return render_template('rgz/register.html', error='Пользователь уже существует')
-
-    password_hash = generate_password_hash(password)
-    
-    if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("INSERT INTO user2 (username, password_hash) VALUES (%s, %s)", 
-                    (login, password_hash))
-    else:
-        cur.execute("INSERT INTO user2 (username, password_hash) VALUES (?, ?)", 
-                    (login, password_hash))
-    
-    db_close(conn, cur)
-    return render_template('rgz/register_success.html', login=login)
+    try:
+        with db_connection() as (conn, cur):
+            # Проверка существования пользователя
+            if current_app.config['DB_TYPE'] == 'postgres':
+                cur.execute("SELECT id FROM user2 WHERE username = %s", (login,))
+            else:
+                cur.execute("SELECT id FROM user2 WHERE username = ?", (login,))
+            
+            if cur.fetchone():
+                return render_template('rgz/register.html', error='Пользователь уже существует')
+            
+            password_hash = generate_password_hash(password)
+            
+            # Пробуем вставить пользователя (email может быть обязательным)
+            try:
+                if current_app.config['DB_TYPE'] == 'postgres':
+                    cur.execute("INSERT INTO user2 (username, password_hash) VALUES (%s, %s)", 
+                               (login, password_hash))
+                else:
+                    cur.execute("INSERT INTO user2 (username, password_hash) VALUES (?, ?)", 
+                               (login, password_hash))
+            except (sqlite3.IntegrityError, psycopg2.IntegrityError) as e:
+                # Если нужен email, добавляем пустую строку
+                if "email" in str(e):
+                    if current_app.config['DB_TYPE'] == 'postgres':
+                        cur.execute("INSERT INTO user2 (username, password_hash, email) VALUES (%s, %s, %s)", 
+                                   (login, password_hash, ""))
+                    else:
+                        cur.execute("INSERT INTO user2 (username, password_hash, email) VALUES (?, ?, ?)", 
+                                   (login, password_hash, ""))
+                else:
+                    raise e
+        
+        return render_template('rgz/register_success.html', login=login)
+        
+    except Exception as e:
+        current_app.logger.error(f"Registration error: {e}")
+        return render_template('rgz/register.html', error=f'Ошибка регистрации: {str(e)}')
 
 
 @rgz.route('/rgz/login', methods=['GET', 'POST'])
