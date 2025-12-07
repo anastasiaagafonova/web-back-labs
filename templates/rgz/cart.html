@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block lab %}Онлайн-магазин мебели{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='rgz/rgz.css') }}">
+{% endblock %}
+
+{% block script %}
+<script>
+    //  API методы
+    async function callApi(method, params = {}) {
+        const response = await fetch('/rgz/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: method,
+                params: params,
+                id: Math.floor(Math.random() * 1000)
+            })
+        });
+        
+        return await response.json();
+    }
+    //  загрузка содержимого корзины
+    async function loadCart() {
+        try {
+            const result = await callApi('get_cart');
+            if (result.result) {
+                renderCart(result.result);
+            } else if (result.error) {
+                if (result.error.code === 1) {
+                    window.location.href = '/rgz/login';
+                } else {
+                    alert('Ошибка загрузки корзины: ' + result.error.message);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ошибка загрузки корзины');
+        }
+    }
+    //  отрисовка содержимого
+    function renderCart(cartData) {
+        const cartContent = document.getElementById('cart-content');
+        
+        if (!cartData.items || cartData.items.length === 0) {
+            cartContent.innerHTML = `
+                <div class="empty-cart">
+                    <h2>Корзина пуста</h2>
+                    <p>Добавьте товары из каталога</p>
+                    <a href="/rgz/" class="submit-btn" style="display: inline-block; width: auto; padding: 10px 20px;">
+                        Перейти к покупкам
+                    </a>
+                </div>
+            `;
+            return;
+        }
+        // HTML для каждого товара в корзине
+        let itemsHtml = '';
+        cartData.items.forEach(item => {
+            itemsHtml += `
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h3>${item.name}</h3>
+                        <p class="item-price">${parseFloat(item.price).toLocaleString('ru-RU')} руб. × ${item.quantity}</p>
+                        <p class="item-total">Итого: ${(parseFloat(item.price) * item.quantity).toLocaleString('ru-RU')} руб.</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})">
+                            Удалить
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        cartContent.innerHTML = `
+            <div class="cart-items">
+                ${itemsHtml}
+            </div>
+            <div class="cart-summary">
+                <div class="total-amount">
+                    <strong>Общая сумма: ${cartData.total.toLocaleString('ru-RU')} руб.</strong>
+                </div>
+                <button class="checkout-btn" onclick="createOrder()">
+                    Оформить заказ
+                </button>
+            </div>
+        `;
+    }
+    // функция удалить товар
+    async function removeFromCart(cartItemId, currentQuantity) {
+        try {
+            const result = await callApi('remove_from_cart', { 
+                cart_item_id: cartItemId
+            });
+            
+            if (result.result) {
+                await loadCart(); // перезагружаем корзину
+            } else if (result.error) {
+                alert('Ошибка: ' + result.error.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ошибка удаления из корзины');
+        }
+    }
+    // функция оформить заказ
+    async function createOrder() {
+        try {
+            const result = await callApi('create_order');
+            
+            if (result.result) {
+                alert('Заказ успешно оформлен!');
+                window.location.href = '/rgz/';
+            } else if (result.error) {
+                alert('Ошибка оформления заказа: ' + result.error.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ошибка оформления заказа');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCart();
+    });
+</script>
+{% endblock %}
+
+
+{% block main %}
+    <div class="rgz-container">
+        <div class="cart-header">
+            <h1>Корзина покупок</h1>
+            <a href="/rgz/" class="back-btn">← Вернуться к товарам</a>
+        </div>
+
+        <div id="cart-content">
+            <div class="loading">Загрузка корзины...</div>
+        </div>
+    </div>
+{% endblock %}
