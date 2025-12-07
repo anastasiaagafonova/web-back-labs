@@ -82,6 +82,12 @@
                 <h3>${item.name}</h3>
                 <p class="description">${item.description || ''}</p>
                 <div class="price">${parseFloat(item.price || 0).toLocaleString('ru-RU')} руб.</div>
+                <div class="category">
+                    Категория: ${item.category || 'Мебель'}
+                </div>
+                <div class="quantity">
+                    В наличии: ${item.quantity || 0} шт.
+                </div>
                 ${buttonHtml}
             `;
             
