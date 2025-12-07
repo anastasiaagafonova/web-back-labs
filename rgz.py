@@ -97,14 +97,25 @@ def main():
     cur.execute("SELECT * FROM rgz_furniture")
     furniture = cur.fetchall()
     db_close(conn, cur)
-    return render_template('rgz/rgz.html', furniture=furniture, login=session.get('login'))
-
-def validate_latin_chars(text):
-    if not text or not text.strip():
-        return False, "Поле не может быть пустым"
-    if not re.match(r'^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]*$', text):
-        return False, "Только латинские буквы, цифры и знаки препинания"
-    return True, ""
+    
+    furniture_list = []
+    for item in furniture:
+        if hasattr(item, 'keys'):  
+            furniture_list.append(dict(item))
+        else:  
+            furniture_list.append({
+                'id': item[0],
+                'name': item[1],
+                'price': item[2],
+                'description': item[3],
+                'category': item[4],
+                'image': item[5],
+                'quantity': item[6]
+            })
+    
+    return render_template('rgz/rgz.html', 
+                         furniture_items=furniture_list,  
+                         login=session.get('login'))
 
 @rgz.route('/rgz/register', methods=['GET', 'POST'])
 def register():

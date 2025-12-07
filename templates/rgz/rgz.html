@@ -1,27 +1,8 @@
-{% extends "base.html" %}
-
-{% block lab %}Онлайн-магазин мебели{% endblock %}
-
 {% block script %}
 <script>
     let currentFurniture = [];
-    // функция для вызова API методов
-    async function callApi(method, params = {}) {
-        const response = await fetch('/rgz/api', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                jsonrpc: '2.0',
-                method: method,
-                params: params,
-                id: Math.floor(Math.random() * 1000)
-            })
-        });
-        
-        return await response.json();
-    }
+    let isLoggedIn = {% if login %}true{% else %}false{% endif %};
+
     // функция загрузки мебели из API
     async function loadFurniture() {
         try {
@@ -30,36 +11,84 @@
                 currentFurniture = result.result;
                 renderFurniture(currentFurniture);
             } else if (result.error) {
-                alert('Ошибка загрузки товаров: ' + result.error.message);
+                // Если API не работает, используем данные из шаблона
+                console.log('API error, using template data');
+                useTemplateFurniture();
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Ошибка загрузки товаров');
+            useTemplateFurniture();
         }
     }
+
+    // Использование данных из шаблона
+    function useTemplateFurniture() {
+        // Преобразуем данные из шаблона в формат для JS
+        const furnitureFromTemplate = {{ furniture_items|tojson|safe }};
+        if (furnitureFromTemplate && furnitureFromTemplate.length > 0) {
+            currentFurniture = furnitureFromTemplate;
+            renderFurniture(currentFurniture);
+        } else {
+            document.querySelector('.furniture-grid').innerHTML = 
+                '<div class="no-items">Товары временно отсутствуют</div>';
+        }
+    }
+    
     // функция отрисовки списка мебели в виде карточек
     function renderFurniture(furniture) {
         const grid = document.querySelector('.furniture-grid');
+        
+        // Если furniture уже есть в DOM (отрендерено шаблоном), не перерисовываем
+        if (grid.children.length > 1) {
+            return;
+        }
+        
         grid.innerHTML = '';
-        // для кадого элемента
+        
         furniture.forEach(item => {
             const card = document.createElement('div');
             card.className = 'furniture-card';
             
-            card.innerHTML = `
-                <h3>${item.name}</h3>
-                <p class="description">${item.description}</p>
-                ${item.image ? `<img src="/static/${item.image}" alt="${item.name}" class="furniture-image" onerror="this.style.display='none'">` : ''}
-                <div class="price">${parseFloat(item.price).toLocaleString('ru-RU')} руб.</div>
-                ${'{{ login }}' ? `
+            // Правильный путь к изображению
+            // Пробуем разные варианты, если один не работает
+            let imagePath = '';
+            if (item.image) {
+                // Вариант 1: предположительный путь
+                imagePath = `/static/rgz/images/${item.image}`;
+                // Вариант 2: если изображения в корне static
+                // imagePath = `/static/${item.image}`;
+            }
+            
+            let buttonHtml = '';
+            if (isLoggedIn) {
+                buttonHtml = `
                     <button class="add-to-cart-btn" onclick="addToCart(${item.id})">
                         Добавить в корзину
                     </button>
-                ` : `
+                `;
+            } else {
+                buttonHtml = `
                     <button class="add-to-cart-btn" disabled title="Для добавления в корзину необходимо авторизоваться">
                         Войдите для покупок
                     </button>
-                `}
+                `;
+            }
+            
+            card.innerHTML = `
+                <img src="${imagePath}" 
+                     alt="${item.name}" 
+                     class="furniture-image"
+                     onerror="this.onerror=null; this.src='/static/rgz/images/no-image.jpg'; console.log('Image not found: ${imagePath}')">
+                <h3>${item.name}</h3>
+                <p class="description">${item.description || ''}</p>
+                <div class="price">${parseFloat(item.price || 0).toLocaleString('ru-RU')} руб.</div>
+                <div class="category">
+                    Категория: ${item.category || 'Мебель'}
+                </div>
+                <div class="quantity">
+                    В наличии: ${item.quantity || 0} шт.
+                </div>
+                ${buttonHtml}
             `;
             
             grid.appendChild(card);
