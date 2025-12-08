@@ -94,6 +94,24 @@
             grid.appendChild(card);
         });
     }
+    async function callApi(endpoint, data = {}) {
+    try {
+        const response = await fetch(`/rgz/api/${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data),
+            credentials: 'include' // для передачи cookies
+        });
+        
+        return await response.json();
+    } catch (error) {
+        console.error('API call failed:', error);
+        return { error: { message: 'Network error' } };
+    }
+}
     // товар в корзину
     async function addToCart(furnitureId) {
         try {
