@@ -230,18 +230,30 @@ def add_to_cart(params, request_id):
     if not furniture_id:
         return json_rpc_error(-32602, "Invalid params", request_id)
     
-    # Проверка товара
+    # Проверка товара и его количества
     furniture = db_execute("SELECT * FROM rgz_furniture WHERE id=?", (furniture_id,))
     if not furniture:
         return json_rpc_error(2, "Товар не найден", request_id)
+    
+    # Проверяем, есть ли товар в наличии
+    furniture_item = furniture[0]
+    if furniture_item['quantity'] <= 0:
+        return json_rpc_error(5, "Товар отсутствует на складе", request_id)
     
     # Проверка наличия в корзине
     existing = db_execute("SELECT * FROM rgz_cart WHERE user_id=? AND furniture_id=?", (user_id, furniture_id))
     
     if existing:
+        # Проверяем, не превысим ли доступное количество
+        cart_quantity = existing[0]['quantity'] + 1
+        if cart_quantity > furniture_item['quantity']:
+            return json_rpc_error(6, f"Недостаточно товара на складе. Доступно: {furniture_item['quantity']} шт.", request_id)
+        
         db_execute("UPDATE rgz_cart SET quantity = quantity + 1 WHERE id=?", (existing[0]['id'],))
     else:
         db_execute("INSERT INTO rgz_cart (user_id, furniture_id, quantity) VALUES (?, ?, 1)", (user_id, furniture_id))
+    
+    db_execute("UPDATE rgz_furniture SET quantity = quantity - 1 WHERE id=?", (furniture_id,))
     
     return json_rpc_response({"success": True}, request_id=request_id)
 
@@ -281,10 +293,15 @@ def remove_from_cart(params, request_id):
     if not cart_item:
         return json_rpc_error(3, "Товар не найден в корзине", request_id)
     
+    furniture_id = cart_item[0]['furniture_id']
+    quantity_to_remove = 1  # или cart_item[0]['quantity'] если удаляем все
+    
     if cart_item[0]['quantity'] > 1:
         db_execute("UPDATE rgz_cart SET quantity = quantity - 1 WHERE id=?", (cart_item_id,))
     else:
         db_execute("DELETE FROM rgz_cart WHERE id=?", (cart_item_id,))
+    
+    db_execute("UPDATE rgz_furniture SET quantity = quantity + 1 WHERE id=?", (furniture_id,))
     
     return json_rpc_response({"success": True}, request_id=request_id)
 
@@ -294,7 +311,7 @@ def create_order(params, request_id):
         return user_id
     
     cart_items = db_execute("""
-        SELECT c.*, f.price 
+        SELECT c.*, f.price, f.quantity as available_quantity 
         FROM rgz_cart c 
         JOIN rgz_furniture f ON c.furniture_id = f.id 
         WHERE c.user_id=?
@@ -303,18 +320,30 @@ def create_order(params, request_id):
     if not cart_items:
         return json_rpc_error(4, "Корзина пуста", request_id)
     
+    # Проверяем наличие всех товаров перед созданием заказа
+    for item in cart_items:
+        if item['quantity'] > item['available_quantity']:
+            return json_rpc_error(7, f"Товара '{item['name']}' недостаточно на складе", request_id)
+    
     # Подсчет суммы
     total_amount = sum(float(item['price']) * item['quantity'] for item in cart_items)
     
     # Создание заказа
     order_id = db_execute("INSERT INTO rgz_orders (user_id, total_amount) VALUES (?, ?)", (user_id, total_amount))
     
-    # Добавление элементов заказа
+    # Добавление элементов заказа И уменьшение остатков на складе
     for item in cart_items:
         db_execute("""
             INSERT INTO rgz_order_items (order_id, furniture_id, quantity, price) 
             VALUES (?, ?, ?, ?)
         """, (order_id, item['furniture_id'], item['quantity'], item['price']))
+        
+        # Уменьшаем количество на складе после оформления заказа
+        db_execute("""
+            UPDATE rgz_furniture 
+            SET quantity = quantity - ? 
+            WHERE id = ?
+        """, (item['quantity'], item['furniture_id']))
     
     # Очистка корзины
     db_execute("DELETE FROM rgz_cart WHERE user_id=?", (user_id,))
