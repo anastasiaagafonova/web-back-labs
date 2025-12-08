@@ -5,21 +5,21 @@
 
     // функция загрузки мебели из API
     async function loadFurniture() {
-        try {
-            const result = await callApi('get_furniture');
-            if (result.result) {
-                currentFurniture = result.result;
-                renderFurniture(currentFurniture);
-            } else if (result.error) {
-                // Если API не работает, используем данные из шаблона
-                console.log('API error, using template data');
-                useTemplateFurniture();
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    try {
+        // ⚠️ Используем JSON-RPC формат
+        const result = await callApi('get_furniture');  
+        if (result.result) {
+            currentFurniture = result.result;
+            renderFurniture(currentFurniture);
+        } else if (result.error) {
+            console.log('API error, using template data');
             useTemplateFurniture();
         }
+    } catch (error) {
+        console.error('Error:', error);
+        useTemplateFurniture();
     }
+}
 
     // Использование данных из шаблона
     function useTemplateFurniture() {
@@ -94,22 +94,36 @@
             grid.appendChild(card);
         });
     }
-    async function callApi(endpoint, data = {}) {
+    async function callApi(method, params = {}) {
     try {
-        const response = await fetch(`/rgz/api/${endpoint}`, {
+        const response = await fetch('/rgz/api', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify(data),
-            credentials: 'include' // для передачи cookies
+            body: JSON.stringify({  
+                jsonrpc: '2.0',
+                method: method,      
+                params: params,     
+                id: Math.floor(Math.random() * 1000)
+            }),
+            credentials: 'include' 
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         return await response.json();
     } catch (error) {
         console.error('API call failed:', error);
-        return { error: { message: 'Network error' } };
+        return { 
+            error: { 
+                message: 'Network error',
+                details: error.message 
+            } 
+        };
     }
 }
     // товар в корзину
