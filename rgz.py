@@ -134,14 +134,23 @@ def register():
         return render_template('rgz/register.html', error=error)
     
     # Проверка существующего пользователя
-    existing = db_execute("SELECT * FROM rgz_users WHERE login=?", (login,))
+    try:
+        existing = db_execute("SELECT * FROM rgz_users WHERE login=?", (login,))
+    except Exception as e:
+        current_app.logger.error(f"Database error: {e}")
+        return render_template('rgz/register.html', error='Ошибка базы данных')
+    
     if existing:
         return render_template('rgz/register.html', error='Пользователь уже существует')
     
     # Регистрация
-    password_hash = generate_password_hash(password)
-    db_execute("INSERT INTO rgz_users (login, password) VALUES (?, ?)", (login, password_hash))
-    return render_template('rgz/success.html', login=login)
+    try:
+        password_hash = generate_password_hash(password)
+        db_execute("INSERT INTO rgz_users (login, password) VALUES (?, ?)", (login, password_hash))
+        return render_template('rgz/success.html', login=login)
+    except Exception as e:
+        current_app.logger.error(f"Registration error: {e}")
+        return render_template('rgz/register.html', error='Ошибка регистрации')
 
 @rgz.route('/rgz/login', methods=['GET', 'POST'])
 def login():
@@ -160,7 +169,11 @@ def login():
         return render_template('rgz/login.html', error=error)
     
     # Проверка пользователя
-    user = db_execute("SELECT * FROM rgz_users WHERE login=?", (login,))
+    try:
+        user = db_execute("SELECT * FROM rgz_users WHERE login=?", (login,))
+    except Exception as e:
+        current_app.logger.error(f"Database error: {e}")
+        return render_template('rgz/login.html', error='Ошибка базы данных')
     
     if not user or not check_password_hash(user[0]['password'], password):
         return render_template('rgz/login.html', error='Неверный логин или пароль')
@@ -369,3 +382,24 @@ def delete_account(params, request_id):
     
     session.clear()
     return json_rpc_response({"success": True, "message": "Аккаунт успешно удален"}, request_id=request_id)
+
+def validate_latin_chars(text):
+    """
+    Проверяет, что строка содержит только латинские буквы и цифры
+    Возвращает: (is_valid, error_message)
+    """
+    if not text:
+        return False, "Поле не может быть пустым"
+    
+    # Проверка на латинские буквы и цифры
+    if not re.match(r'^[a-zA-Z0-9]+$', text):
+        return False, "Разрешены только латинские буквы и цифры"
+    
+    # Дополнительные проверки
+    if len(text) < 3:
+        return False, "Минимум 3 символа"
+    
+    if len(text) > 30:
+        return False, "Максимум 30 символов"
+    
+    return True, None
