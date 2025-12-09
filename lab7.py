@@ -10,7 +10,6 @@ def main():
     return render_template('lab7/index.html')
 
 def get_db_connection():
-    """Создает соединение с базой данных SQLite"""
     current_dir = Path(__file__).parent
     db_path = current_dir / "database.db"
     
@@ -19,7 +18,6 @@ def get_db_connection():
     return conn
 
 def film_to_dict(row):
-    """Преобразует запись из БД в словарь"""
     return {
         'id': row['id'],
         'title': row['title'],
@@ -30,7 +28,6 @@ def film_to_dict(row):
 
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
-    """Получить все фильмы из БД"""
     conn = get_db_connection()
     
     try:
@@ -45,7 +42,6 @@ def get_films():
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
-    """Получить один фильм по ID"""
     conn = get_db_connection()
     
     try:
@@ -62,7 +58,6 @@ def get_film(id):
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
-    """Удалить фильм по ID"""
     conn = get_db_connection()
     
     try:
@@ -87,7 +82,6 @@ def del_film(id):
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
-    """Обновить фильм по ID"""
     conn = get_db_connection()
     
     try:
@@ -100,15 +94,15 @@ def put_film(id):
         
         data = request.get_json()
         
-        # Проверка русского названия
+
         if 'title_ru' not in data or not data['title_ru'].strip():
             return jsonify({'title_ru': 'Русское название обязательно'}), 400
         
-        # Проверка оригинального названия (если русское пустое)
+
         if not data.get('title') and not data.get('title_ru'):
             return jsonify({'title': 'Оригинальное название обязательно, если русское пустое'}), 400
         
-        # Проверка года
+        
         if 'year' not in data:
             return jsonify({'year': 'Год обязателен'}), 400
         
@@ -121,7 +115,7 @@ def put_film(id):
         if year < 1895 or year > current_year:
             return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
         
-        # Проверка описания
+       
         if 'description' not in data:
             return jsonify({'description': 'Описание обязательно'}), 400
         
@@ -132,7 +126,7 @@ def put_film(id):
         if len(description) > 2000:
             return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
         
-        # Если оригинальное название не указано, используем русское
+        
         title = data.get('title')
         if not title:
             title = data['title_ru']
@@ -155,22 +149,18 @@ def put_film(id):
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
-    """Добавить новый фильм"""
     conn = get_db_connection()
     
     try:
         cursor = conn.cursor()
         data = request.get_json()
         
-        # Проверка русского названия
         if 'title_ru' not in data or not data['title_ru'].strip():
             return jsonify({'title_ru': 'Русское название обязательно'}), 400
         
-        # Проверка оригинального названия (если русское пустое)
         if not data.get('title') and not data.get('title_ru'):
             return jsonify({'title': 'Оригинальное название обязательно, если русское пустое'}), 400
         
-        # Проверка года
         if 'year' not in data:
             return jsonify({'year': 'Год обязателен'}), 400
         
@@ -183,7 +173,6 @@ def add_film():
         if year < 1895 or year > current_year:
             return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
         
-        # Проверка описания
         if 'description' not in data:
             return jsonify({'description': 'Описание обязательно'}), 400
         
@@ -194,12 +183,10 @@ def add_film():
         if len(description) > 2000:
             return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
         
-        # Если оригинальное название не указано, используем русское
         title = data.get('title')
         if not title:
             title = data['title_ru']
         
-        # Добавляем новый фильм
         cursor.execute('''
             INSERT INTO films (title, title_ru, year, description)
             VALUES (?, ?, ?, ?)
