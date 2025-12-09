@@ -1,0 +1,229 @@
+{% block main %}
+<style>
+    .lab8-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .lab8-header {
+        text-align: center;
+        margin-bottom: 0;
+        background: rgb(86, 14, 97);
+        color: white;
+        padding: 30px 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .lab8-header .subtitle {
+        font-size: 1.3em;
+        opacity: 0.95;
+        font-weight: 300;
+        margin: 0;
+    }
+
+    .navigation-menu {
+        background: #452c50;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .nav-links li {
+        margin: 0;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 20px 5px;
+        display: block;
+        transition: all 0.3s ease;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        font-weight: 500;
+        text-align: center;
+        font-size: 1.1em;
+        background: #60676c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .nav-links a:hover {
+        background: #a634db;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links li:last-child a {
+        border-right: none;
+    }
+
+    .user-info {
+        background: #1f2122;
+        color: white;
+        padding: 15px 20px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1em;
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        box-sizing: border-box;
+    }
+
+    .home-link {
+        text-align: center;
+        margin: 30px 0;
+        padding: 0 20px;
+    }
+
+    .home-link a {
+        color: #561e61;
+        text-decoration: none;
+        padding: 12px 24px;
+        border: 2px solid #561e61;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-weight: 500;
+    }
+
+    .home-link a:hover {
+        background: #561e61;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    @media (max-width: 1024px) {
+        .nav-links {
+            flex-wrap: wrap;
+        }
+        
+        .nav-links li {
+            flex: 1 1 33.333%;
+        }
+        
+        .nav-links a {
+            padding: 18px 5px;
+            font-size: 1em;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .lab8-header {
+            padding: 25px 15px;
+        }
+        
+        .lab8-header .subtitle {
+            font-size: 1.1em;
+        }
+        
+        .nav-links {
+            flex-direction: column;
+        }
+        
+        .nav-links li {
+            flex: 1 1 100%;
+        }
+        
+        .nav-links a {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 18px;
+            white-space: normal;
+        }
+        
+        .nav-links li:last-child a {
+            border-bottom: none;
+        }
+        
+        .user-info {
+            padding: 12px 15px;
+            font-size: 0.95em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .lab8-header {
+            padding: 20px 10px;
+        }
+        
+        .lab8-header .subtitle {
+            font-size: 1em;
+        }
+        
+        .nav-links a {
+            padding: 15px 10px;
+            font-size: 0.95em;
+        }
+        
+        .user-info {
+            padding: 10px;
+            font-size: 0.9em;
+        }
+        
+        .home-link {
+            margin: 20px 0;
+        }
+        
+        .home-link a {
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+    }
+</style>
+
+<div class="lab8-container">
+    <div class="lab8-header">
+        <div class="subtitle">Лабораторная работа 8 - База знаний</div>
+    </div>
+
+    <div class="navigation-menu">
+        <ul class="nav-links">
+            <li><a href="/lab8/list">Статьи</a></li>
+            <li><a href="/lab8/create">Создать статью</a></li>
+            <li><a href="/lab8/users">Все пользователи</a></li>
+            {% if login %}
+                <li><a href="/lab8/profile">Профиль</a></li>
+                <li><a href="/lab8/logout">Выйти</a></li>
+            {% else %}
+                <li><a href="/lab8/login">Войти</a></li>
+                <li><a href="/lab8/register">Регистрация</a></li>
+            {% endif %}
+        </ul>
+        <div class="user-info">
+            Текущий пользователь: 
+            <strong style="color: #8e2aaf;">
+                {% if login %}
+                    {{ login }}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </strong>
+        </div>
+    </div>
+</div>
+
+<div class="home-link">
+    <a href="/">На главную</a>
+</div>
+{% endblock %}
