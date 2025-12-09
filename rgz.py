@@ -42,10 +42,8 @@ def db_close(conn, cur):
         conn.close()
 
 def db_execute(query, params=None):
-    """Универсальная функция выполнения SQL запросов"""
     conn, cur = db_connect()
     try:
-        # Выполняем запрос
         if params:
             if isinstance(params, (list, tuple)):
                 cur.execute(query, params)
@@ -71,11 +69,11 @@ def db_execute(query, params=None):
             
         elif query_upper.startswith('UPDATE'):
             conn.commit()
-            result = cur.rowcount  # Количество обновленных строк
+            result = cur.rowcount  
             
         elif query_upper.startswith('DELETE'):
             conn.commit()
-            result = cur.rowcount  # Количество удаленных строк
+            result = cur.rowcount 
             
         else:
             conn.commit()
@@ -93,28 +91,14 @@ def db_execute(query, params=None):
 
 @rgz.route('/rgz/')
 def main():
-    conn, cur = db_connect()
-    cur.execute("SELECT * FROM rgz_furniture")
-    furniture = cur.fetchall()
-    db_close(conn, cur)
-    
-    furniture_list = []
-    for item in furniture:
-        if hasattr(item, 'keys'):  
-            furniture_list.append(dict(item))
-        else:  
-            furniture_list.append({
-                'id': item[0],
-                'name': item[1],
-                'price': item[2],
-                'description': item[3],
-                'category': item[4],
-                'image': item[5],
-                'quantity': item[6]
-            })
+    try:
+        furniture = db_execute("SELECT * FROM rgz_furniture ORDER BY name")
+    except Exception as e:
+        current_app.logger.error(f"Error loading furniture: {e}")
+        furniture = []  
     
     return render_template('rgz/rgz.html', 
-                         furniture_items=furniture_list,  
+                         furniture_items=furniture,  
                          login=session.get('login'))
 
 @rgz.route('/rgz/register', methods=['GET', 'POST'])
@@ -201,7 +185,6 @@ def api():
     params = data.get('params', {})
     request_id = data.get('id')
     
-    # Словарь методов для компактности
     methods = {
         'get_furniture': get_furniture,
         'add_to_cart': add_to_cart,
@@ -257,7 +240,6 @@ def add_to_cart(params, request_id):
     existing = db_execute("SELECT * FROM rgz_cart WHERE user_id=? AND furniture_id=?", (user_id, furniture_id))
     
     if existing:
-        # Проверяем, не превысим ли доступное количество
         cart_quantity = existing[0]['quantity'] + 1
         if cart_quantity > furniture_item['quantity']:
             return json_rpc_error(6, f"Недостаточно товара на складе. Доступно: {furniture_item['quantity']} шт.", request_id)
@@ -307,7 +289,7 @@ def remove_from_cart(params, request_id):
         return json_rpc_error(3, "Товар не найден в корзине", request_id)
     
     furniture_id = cart_item[0]['furniture_id']
-    quantity_to_remove = 1  # или cart_item[0]['quantity'] если удаляем все
+    quantity_to_remove = 1  
     
     if cart_item[0]['quantity'] > 1:
         db_execute("UPDATE rgz_cart SET quantity = quantity - 1 WHERE id=?", (cart_item_id,))
@@ -384,22 +366,16 @@ def delete_account(params, request_id):
     return json_rpc_response({"success": True, "message": "Аккаунт успешно удален"}, request_id=request_id)
 
 def validate_latin_chars(text):
-    """
-    Проверяет, что строка содержит только латинские буквы и цифры
-    Возвращает: (is_valid, error_message)
-    """
     if not text:
-        return False, "Поле не может быть пустым"
+        return False, 
     
-    # Проверка на латинские буквы и цифры
     if not re.match(r'^[a-zA-Z0-9]+$', text):
-        return False, "Разрешены только латинские буквы и цифры"
+        return False, 
     
-    # Дополнительные проверки
     if len(text) < 3:
-        return False, "Минимум 3 символа"
+        return False, 
     
     if len(text) > 30:
-        return False, "Максимум 30 символов"
+        return False, 
     
     return True, None

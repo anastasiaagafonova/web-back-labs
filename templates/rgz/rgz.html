@@ -6,7 +6,6 @@
     // функция загрузки мебели из API
     async function loadFurniture() {
     try {
-        // ⚠️ Используем JSON-RPC формат
         const result = await callApi('get_furniture');  
         if (result.result) {
             currentFurniture = result.result;
@@ -21,9 +20,7 @@
     }
 }
 
-    // Использование данных из шаблона
     function useTemplateFurniture() {
-        // Преобразуем данные из шаблона в формат для JS
         const furnitureFromTemplate = {{ furniture_items|tojson|safe }};
         if (furnitureFromTemplate && furnitureFromTemplate.length > 0) {
             currentFurniture = furnitureFromTemplate;
@@ -38,7 +35,6 @@
     function renderFurniture(furniture) {
         const grid = document.querySelector('.furniture-grid');
         
-        // Если furniture уже есть в DOM (отрендерено шаблоном), не перерисовываем
         if (grid.children.length > 1) {
             return;
         }
@@ -49,14 +45,9 @@
             const card = document.createElement('div');
             card.className = 'furniture-card';
             
-            // Правильный путь к изображению
-            // Пробуем разные варианты, если один не работает
             let imagePath = '';
             if (item.image) {
-                // Вариант 1: предположительный путь
                 imagePath = `/static/rgz/images/${item.image}`;
-                // Вариант 2: если изображения в корне static
-                // imagePath = `/static/${item.image}`;
             }
             
             let buttonHtml = '';
