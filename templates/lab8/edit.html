@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8 - Редактирование статьи{% endblock %}
+
+{% block main %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid #eaeaea;
+    }
+
+    .form-container h1 {
+        color: #561e61;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 1.8em;
+    }
+
+    .article-info {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-radius: 5px;
+        margin-bottom: 25px;
+        border-left: 4px solid #561e61;
+    }
+
+    .article-info p {
+        margin: 5px 0;
+        color: #555;
+    }
+
+    .article-info strong {
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+        font-size: 1.1em;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        border-color: #561e61;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(86, 30, 97, 0.1);
+    }
+
+    .form-control-textarea {
+        min-height: 200px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #561e61;
+    }
+
+    .checkbox-item label {
+        margin: 0;
+        font-weight: normal;
+        font-size: 1em;
+        cursor: pointer;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        flex: 1;
+        text-align: center;
+        min-width: 120px;
+    }
+
+    .btn-primary {
+        background: #561e61;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #6b2a75;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    .error-message {
+        background: #ffe6e6;
+        color: #c00;
+        padding: 12px 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #c00;
+    }
+
+    .form-hint {
+        color: #666;
+        font-size: 0.9em;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .back-link a {
+        color: #561e61;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .back-link a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 20px 15px;
+            padding: 25px;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h1>Редактирование статьи</h1>
+    
+    <div class="article-info">
+        <p><strong>ID статьи:</strong> {{ article.id }}</p>
+        <p><strong>Создана:</strong> ID пользователя {{ article.login_id }}</p>
+        <p><strong>Лайков:</strong> {{ article.likes }}</p>
+    </div>
+    
+    {% if error %}
+        <div class="error-message">
+            <strong>Ошибка:</strong> {{ error }}
+        </div>
+    {% endif %}
+    
+    <form action="/lab8/edit/{{ article.id }}" method="post">
+        <div class="form-group">
+            <label for="title">Название статьи:</label>
+            <input type="text" id="title" name="title" class="form-control" 
+                   value="{{ request.form.title if request.form.title else article.title }}"
+                   placeholder="Введите название статьи" required maxlength="50">
+            <div class="form-hint">Максимум 50 символов</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="article_text">Текст статьи:</label>
+            <textarea id="article_text" name="article_text" class="form-control form-control-textarea" 
+                      placeholder="Введите текст статьи" required>{{ request.form.article_text if request.form.article_text else article.article_text }}</textarea>
+            <div class="form-hint">Можно использовать HTML-разметку</div>
+        </div>
+        
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="is_public" name="is_public" 
+                       {% if article.is_public %}checked{% endif %}>
+                <label for="is_public">Сделать статью публичной (доступна всем пользователям)</label>
+            </div>
+            
+            <div class="checkbox-item">
+                <input type="checkbox" id="is_favorite" name="is_favorite"
+                       {% if article.is_favorite %}checked{% endif %}>
+                <label for="is_favorite">Добавить в избранное</label>
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">💾 Сохранить изменения</button>
+            <a href="/lab8/articles" class="btn btn-secondary">Отмена</a>
+            <a href="/lab8/delete/{{ article.id }}" class="btn btn-danger" 
+               onclick="return confirm('Удалить статью «{{ article.title }}»?')">
+                🗑️ Удалить статью
+            </a>
+        </div>
+    </form>
+    
+    <div class="back-link">
+        <a href="/lab8/articles">← Назад к списку статей</a>
+    </div>
+</div>
+{% endblock %}

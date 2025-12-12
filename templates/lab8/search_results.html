@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8 - Результаты поиска{% endblock %}
+
+{% block main %}
+<style>
+    .results-container {
+        padding: 30px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .results-header {
+        margin-bottom: 30px;
+    }
+
+    .results-header h1 {
+        color: #561e61;
+        margin: 0 0 10px 0;
+        font-size: 1.8em;
+    }
+
+    .search-query {
+        color: #666;
+        font-size: 1.1em;
+        margin-bottom: 5px;
+    }
+
+    .results-count {
+        color: #333;
+        font-weight: 500;
+        background: #f0f0f0;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    .new-search {
+        text-align: center;
+        margin: 20px 0 40px 0;
+    }
+
+    .new-search a {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #452c50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .new-search a:hover {
+        background: #563961;
+        text-decoration: none;
+    }
+
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin: 30px 0;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eaeaea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .result-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .result-header h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 1.3em;
+        line-height: 1.4;
+    }
+
+    .result-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 500;
+    }
+
+    .badge-public {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-favorite {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-own {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .result-content {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    .result-content p {
+        color: #555;
+        line-height: 1.6;
+        margin: 0 0 15px 0;
+    }
+
+    .highlight {
+        background: #fff3cd;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: 500;
+    }
+
+    .result-footer {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-top: 1px solid #eaeaea;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .result-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9em;
+    }
+
+    .btn-edit {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #138496;
+        color: white;
+    }
+
+    .btn-view {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-view:hover {
+        background: #218838;
+        color: white;
+    }
+
+    .empty-results {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin: 40px 0;
+    }
+
+    .empty-results h3 {
+        color: #561e61;
+        margin-bottom: 15px;
+    }
+
+    .empty-results p {
+        color: #666;
+        margin-bottom: 25px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .back-link a {
+        color: #561e61;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        padding: 10px 20px;
+        border: 2px solid #561e61;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link a:hover {
+        background: #561e61;
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .results-container {
+            padding: 20px 15px;
+        }
+        
+        .results-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="results-container">
+    <div class="results-header">
+        <h1>📄 Результаты поиска</h1>
+        <div class="search-query">
+            Поисковый запрос: <strong>"{{ search_query }}"</strong>
+        </div>
+        <div class="results-count">
+            Найдено статей: {{ count }}
+        </div>
+    </div>
+    
+    <div class="new-search">
+        <a href="/lab8/articles/search">🔍 Новый поиск</a>
+    </div>
+    
+    {% if results %}
+        <div class="results-grid">
+            {% for article in results %}
+            <div class="result-card">
+                <div class="result-header">
+                    <h3>{{ article.title }}</h3>
+                    <div class="result-badges">
+                        {% if article.is_public %}
+                            <span class="badge badge-public">Публичная</span>
+                        {% endif %}
+                        {% if article.is_favorite %}
+                            <span class="badge badge-favorite">Избранная</span>
+                        {% endif %}
+                        {% if current_user.is_authenticated and article.login_id == current_user.id %}
+                            <span class="badge badge-own">Моя статья</span>
+                        {% endif %}
+                        <span class="badge">Лайков: {{ article.likes }}</span>
+                    </div>
+                </div>
+                
+                <div class="result-content">
+                    {% set text_lower = article.article_text.lower() %}
+                    {% set query_lower = search_query.lower() %}
+                    {% if query_lower in text_lower %}
+                        {# Используем Jinja2 фильтры вместо функций Python #}
+                        {% set start = text_lower.find(query_lower) %}
+                        {% set end = start + search_query|length %}
+                        {% set context_start = [0, start - 50]|sort|last %}
+                        {% set context_end = [article.article_text|length, end + 50]|sort|first %}
+                        <p>
+                            ...{{ article.article_text[context_start:start] }}
+                            <span class="highlight">{{ article.article_text[start:end] }}</span>
+                            {{ article.article_text[end:context_end] }}...
+                        </p>
+                    {% else %}
+                        <p>{{ article.article_text[:150] }}{% if article.article_text|length > 150 %}...{% endif %}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="result-footer">
+                    <div>ID: {{ article.id }}</div>
+                    <div class="result-actions">
+                        {% if current_user.is_authenticated and article.login_id == current_user.id %}
+                            <a href="/lab8/edit/{{ article.id }}" class="btn btn-edit">✏️ Редактировать</a>
+                        {% endif %}
+                        {% if article.is_public or (current_user.is_authenticated and article.login_id == current_user.id) %}
+                            <a href="#" class="btn btn-view">👁️ Просмотр</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-results">
+            <h3>Ничего не найдено</h3>
+            <p>По вашему запросу "{{ search_query }}" статей не найдено. Попробуйте изменить запрос или использовать другие ключевые слова.</p>
+            <a href="/lab8/articles/search" class="btn" style="background: #561e61; color: white; padding: 10px 20px;">Повторить поиск</a>
+        </div>
+    {% endif %}
+    
+    <div class="back-link">
+        <a href="/lab8/">← Назад к базе знаний</a>
+    </div>
+</div>
+{% endblock %}

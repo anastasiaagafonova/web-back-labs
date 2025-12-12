@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8 - Поиск статей{% endblock %}
+
+{% block main %}
+<style>
+    .search-container {
+        padding: 30px 20px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .search-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .search-header h1 {
+        color: #561e61;
+        margin: 0 0 15px 0;
+        font-size: 1.8em;
+    }
+
+    .search-header p {
+        color: #666;
+        font-size: 1.1em;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .search-form {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid #eaeaea;
+        margin-bottom: 40px;
+    }
+
+    .search-input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 1.1em;
+        transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: #561e61;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(86, 30, 97, 0.1);
+    }
+
+    .search-btn {
+        padding: 12px 30px;
+        background: #561e61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .search-btn:hover {
+        background: #6b2a75;
+    }
+
+    .search-hint {
+        color: #666;
+        font-size: 0.9em;
+        margin-top: 10px;
+        font-style: italic;
+    }
+
+    .error-message {
+        background: #ffe6e6;
+        color: #c00;
+        padding: 12px 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #c00;
+    }
+
+    .search-tips {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 40px;
+        border-left: 4px solid #561e61;
+    }
+
+    .search-tips h3 {
+        color: #561e61;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    .search-tips ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #555;
+    }
+
+    .search-tips li {
+        margin-bottom: 8px;
+        line-height: 1.5;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .back-link a {
+        color: #561e61;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        padding: 10px 20px;
+        border: 2px solid #561e61;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link a:hover {
+        background: #561e61;
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .search-container {
+            padding: 20px 15px;
+        }
+        
+        .search-form {
+            padding: 20px;
+        }
+        
+        .search-input-group {
+            flex-direction: column;
+        }
+        
+        .search-btn {
+            width: 100%;
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="search-container">
+    <div class="search-header">
+        <h1>Поиск по статьям</h1>
+        <p>Ищите статьи по ключевым словам в названии или тексте. Поиск работает как по вашим статьям, так и по публичным статьям других пользователей.</p>
+    </div>
+    
+    <div class="search-form">
+        {% if error %}
+            <div class="error-message">
+                <strong>Ошибка:</strong> {{ error }}
+            </div>
+        {% endif %}
+        
+        <form action="/lab8/articles/search" method="post">
+            <div class="search-input-group">
+                <input type="text" name="search_query" class="search-input" 
+                       placeholder="Введите поисковый запрос..." 
+                       value="{{ request.form.search_query if request.form.search_query else '' }}"
+                       required>
+                <button type="submit" class="search-btn">Найти</button>
+            </div>
+            <div class="search-hint">
+                Поиск не чувствителен к регистру. Например, запрос "python" найдет "Python", "PYTHON", "python" и т.д.
+            </div>
+        </form>
+    </div>
+    
+    <div class="search-tips">
+        <h3>🔎 Советы по поиску:</h3>
+        <ul>
+            <li>Ищите по ключевым словам, а не целым предложениям</li>
+            <li>Если вы авторизованы, поиск будет проводиться по вашим статьям и всем публичным статьям</li>
+            <li>Если вы не авторизованы, поиск будет проводиться только по публичным статьям</li>
+            <li>Для поиска точной фразы используйте кавычки: "web программирование"</li>
+            <li>Поиск работает по названию и тексту статей одновременно</li>
+        </ul>
+    </div>
+    
+    <div class="back-link">
+        <a href="/lab8/">← Назад к базе знаний</a>
+    </div>
+</div>
+{% endblock %}

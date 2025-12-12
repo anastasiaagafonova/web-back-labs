@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8 - Регистрация{% endblock %}
+
+{% block main %}
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid #eaeaea;
+    }
+
+    .form-container h1 {
+        color: #561e61;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 1.8em;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: #561e61;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(86, 30, 97, 0.1);
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background: #561e61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+        background: #6b2a75;
+    }
+
+    .error-message {
+        background: #ffe6e6;
+        color: #c00;
+        padding: 12px 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #c00;
+    }
+
+    .form-links {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .form-links a {
+        color: #561e61;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .form-links a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 20px 15px;
+            padding: 25px;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h1>Регистрация</h1>
+    
+    {% if error %}
+        <div class="error-message">
+            <strong>Ошибка:</strong> {{ error }}
+        </div>
+    {% endif %}
+    
+    <form action="/lab8/register" method="post">
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" class="form-control" 
+                   value="{{ request.form.login if request.form.login else '' }}"
+                   placeholder="Введите логин" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" class="form-control" 
+                   placeholder="Введите пароль" required>
+        </div>
+        
+        <button type="submit" class="btn-primary">Зарегистрироваться</button>
+    </form>
+    
+    <div class="form-links">
+        Уже есть аккаунт? <a href="/lab8/login">Войти</a><br>
+        <a href="/lab8/" style="margin-top: 10px; display: inline-block;">← Назад к базе знаний</a>
+    </div>
+</div>
+{% endblock %}

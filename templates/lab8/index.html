@@ -1,3 +1,7 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
 {% block main %}
 <style>
     .lab8-container {
@@ -13,6 +17,11 @@
         color: white;
         padding: 30px 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .lab8-header h1 {
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
     }
 
     .lab8-header .subtitle {
@@ -42,6 +51,7 @@
         margin: 0;
         flex: 1;
         min-width: 0;
+        text-align: center;
     }
 
     .nav-links a {
@@ -83,13 +93,103 @@
         box-sizing: border-box;
     }
 
-    .home-link {
+    .welcome-section {
+        padding: 40px 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        margin: 20px 0;
+        border-radius: 10px;
+    }
+
+    .welcome-section h2 {
+        color: #561e61;
+        margin-bottom: 15px;
+        font-size: 2em;
+    }
+
+    .welcome-section p {
+        color: #666;
+        font-size: 1.2em;
+        max-width: 800px;
+        margin: 0 auto 20px;
+        line-height: 1.6;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin: 40px 0;
+        padding: 0 20px;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eaeaea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .feature-card h3 {
+        color: #561e61;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .feature-card p {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        background: #561e61;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+    }
+
+    .btn:hover {
+        background: #6b2a75;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #452c50;
+    }
+
+    .btn-secondary:hover {
+        background: #563961;
+    }
+
+    .back-link {
         text-align: center;
         margin: 30px 0;
         padding: 0 20px;
     }
 
-    .home-link a {
+    .back-link a {
         color: #561e61;
         text-decoration: none;
         padding: 12px 24px;
@@ -100,32 +200,10 @@
         font-weight: 500;
     }
 
-    .home-link a:hover {
+    .back-link a:hover {
         background: #561e61;
         color: white;
         transform: translateY(-1px);
-    }
-
-    body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        overflow-x: hidden;
-    }
-
-    @media (max-width: 1024px) {
-        .nav-links {
-            flex-wrap: wrap;
-        }
-        
-        .nav-links li {
-            flex: 1 1 33.333%;
-        }
-        
-        .nav-links a {
-            padding: 18px 5px;
-            font-size: 1em;
-        }
     }
 
     @media (max-width: 768px) {
@@ -160,50 +238,36 @@
             padding: 12px 15px;
             font-size: 0.95em;
         }
-    }
-
-    @media (max-width: 480px) {
-        .lab8-header {
-            padding: 20px 10px;
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+            padding: 0 15px;
         }
         
-        .lab8-header .subtitle {
-            font-size: 1em;
+        .feature-card {
+            padding: 20px;
         }
         
-        .nav-links a {
-            padding: 15px 10px;
-            font-size: 0.95em;
-        }
-        
-        .user-info {
-            padding: 10px;
-            font-size: 0.9em;
-        }
-        
-        .home-link {
-            margin: 20px 0;
-        }
-        
-        .home-link a {
-            padding: 10px 20px;
-            font-size: 0.95em;
+        .welcome-section {
+            padding: 30px 15px;
+            margin: 15px;
         }
     }
 </style>
 
 <div class="lab8-container">
     <div class="lab8-header">
-        <div class="subtitle">Лабораторная работа 8 - База знаний</div>
+        <h1>База знаний</h1>
+        <div class="subtitle">Лабораторная работа 8 - Flask и ORM</div>
     </div>
 
     <div class="navigation-menu">
         <ul class="nav-links">
-            <li><a href="/lab8/list">Статьи</a></li>
+            <li><a href="/lab8/articles">Мои статьи</a></li>
             <li><a href="/lab8/create">Создать статью</a></li>
-            <li><a href="/lab8/users">Все пользователи</a></li>
-            {% if login %}
-                <li><a href="/lab8/profile">Профиль</a></li>
+            <li><a href="/lab8/articles/public">Публичные статьи</a></li>
+            <li><a href="/lab8/articles/search">Поиск статей</a></li>
+            {% if current_user.is_authenticated %}
                 <li><a href="/lab8/logout">Выйти</a></li>
             {% else %}
                 <li><a href="/lab8/login">Войти</a></li>
@@ -213,17 +277,17 @@
         <div class="user-info">
             Текущий пользователь: 
             <strong style="color: #8e2aaf;">
-                {% if login %}
-                    {{ login }}
+                {% if current_user.is_authenticated %}
+                    {{ current_user.login }}
                 {% else %}
                     Anonymous
                 {% endif %}
             </strong>
         </div>
     </div>
-</div>
-
-<div class="home-link">
-    <a href="/">На главную</a>
+        <div class="back-link">
+            <a href="/">На главную сайта</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

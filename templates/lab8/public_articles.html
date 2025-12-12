@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8 - Публичные статьи{% endblock %}
+
+{% block main %}
+<style>
+    .articles-container {
+        padding: 30px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .page-header h1 {
+        color: #561e61;
+        margin: 0;
+        font-size: 1.8em;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+    }
+
+    .btn-primary {
+        background: #561e61;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #6b2a75;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #452c50;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #563961;
+        color: white;
+        text-decoration: none;
+    }
+
+    .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin: 30px 0;
+    }
+
+    .article-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eaeaea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .article-header {
+        background: linear-gradient(135deg, #561e61 0%, #6b2a75 100%);
+        color: white;
+        padding: 20px;
+        position: relative;
+    }
+
+    .article-header h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.3em;
+        line-height: 1.4;
+    }
+
+    .public-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 500;
+    }
+
+    .article-content {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    .article-content p {
+        color: #555;
+        line-height: 1.6;
+        margin: 0 0 15px 0;
+    }
+
+    .article-footer {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-top: 1px solid #eaeaea;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .article-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin: 40px 0;
+    }
+
+    .empty-state h3 {
+        color: #561e61;
+        margin-bottom: 15px;
+    }
+
+    .empty-state p {
+        color: #666;
+        margin-bottom: 25px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .back-link a {
+        color: #561e61;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        padding: 10px 20px;
+        border: 2px solid #561e61;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link a:hover {
+        background: #561e61;
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .articles-container {
+            padding: 20px 15px;
+        }
+        
+        .articles-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .action-buttons {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="articles-container">
+    <div class="page-header">
+        <h1>Публичные статьи</h1>
+        <div class="action-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="/lab8/articles" class="btn btn-secondary">Мои статьи</a>
+                <a href="/lab8/create" class="btn btn-primary">+ Создать статью</a>
+            {% endif %}
+            <a href="/lab8/articles/search" class="btn btn-secondary">Поиск</a>
+        </div>
+    </div>
+    
+    {% if articles %}
+        <p>Найдено публичных статей: {{ articles|length }}</p>
+        
+        <div class="articles-grid">
+            {% for article in articles %}
+            <div class="article-card">
+                <div class="article-header">
+                    <h3>{{ article.title }}</h3>
+                    <div class="public-badge">ПУБЛИЧНАЯ</div>
+                </div>
+                
+                <div class="article-content">
+                    <p>{{ article.article_text[:250] }}{% if article.article_text|length > 250 %}...{% endif %}</p>
+                </div>
+                
+                <div class="article-footer">
+                    <div class="article-stats">
+                        <div>
+                            {% if article.is_favorite %}
+                                <span style="color: #856404;">⭐ Избранная</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            Лайков: {{ article.likes }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>Публичные статьи не найдены</h3>
+            <p>Пока никто не сделал свои статьи публичными. Станьте первым!</p>
+            {% if current_user.is_authenticated %}
+                <a href="/lab8/create" class="btn btn-primary">Создать статью</a>
+            {% else %}
+                <p>Чтобы создавать статьи, необходимо <a href="/lab8/login" style="color: #561e61; font-weight: 500;">войти</a> в систему.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <div class="back-link">
+        <a href="/lab8/">← Назад к базе знаний</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,4 +1,5 @@
 from flask import Flask, request, url_for
+from flask_login import LoginManager
 from db import db
 from db.models import users, articles
 from lab1 import lab1
@@ -14,21 +15,18 @@ from datetime import datetime
 import os
 from os import path
 from collections import Counter
+import secrets
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "секретно-секретный секрет")
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'sqlite')
- 
-db_name = 'anastasia_agafonova_orm'
-db_user = 'anastasia_agafonova_orm'
-db_password = '123'
-host_ip = '127.0.0.1'
-host_port = 5432
-
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{host_ip}:{host_port}/{db_name}'
 
 
+login_manager = LoginManager()
+login_manager.login_view = 'lab8.login'  
+login_manager.login_message = "Пожалуйста, войдите для доступа к этой странице"
+login_manager.login_message_category = "info"
 
 if app.config['DB_TYPE'] == 'postgres':
     db_name = 'anastasia_agafonova_orm'
@@ -47,6 +45,11 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+login_manager.init_app(app)  
+
+@login_manager.user_loader
+def load_user(user_id):
+    return users.query.get(int(user_id))
 
 with app.app_context():
     db.create_all() 
