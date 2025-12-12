@@ -1,5 +1,6 @@
 from flask import Flask, request, url_for
 from db import db
+from db.models import users, articles
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
