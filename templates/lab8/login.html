@@ -3,6 +3,44 @@
 {% block lab %}Лабораторная работа 8 - Вход в систему{% endblock %}
 
 {% block main %}
+
+<div class="form-container">
+    <h1>Вход в систему</h1>
+    
+    {% if error %}
+        <div class="error-message">
+            <strong>Ошибка:</strong> {{ error }}
+        </div>
+    {% endif %}
+    
+    <form action="/lab8/login" method="post">
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" class="form-control" 
+                   value="{{ request.form.login if request.form.login else '' }}"
+                   placeholder="Введите логин" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" class="form-control" 
+                   placeholder="Введите пароль" required>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember" style="margin: 0; font-weight: normal;">Запомнить меня</label>
+        </div>
+        
+        <button type="submit" class="btn-primary">Войти</button>
+    </form>
+    
+    <div class="form-links">
+        Нет аккаунта? <a href="/lab8/register">Зарегистрироваться</a>
+        <a href="/lab8/" style="margin-top: 15px; display: block;">← Назад к базе знаний</a>
+    </div>
+</div>
+
 <style>
     .form-container {
         max-width: 500px;
@@ -115,41 +153,4 @@
         }
     }
 </style>
-
-<div class="form-container">
-    <h1>Вход в систему</h1>
-    
-    {% if error %}
-        <div class="error-message">
-            <strong>Ошибка:</strong> {{ error }}
-        </div>
-    {% endif %}
-    
-    <form action="/lab8/login" method="post">
-        <div class="form-group">
-            <label for="login">Логин:</label>
-            <input type="text" id="login" name="login" class="form-control" 
-                   value="{{ request.form.login if request.form.login else '' }}"
-                   placeholder="Введите логин" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="password">Пароль:</label>
-            <input type="password" id="password" name="password" class="form-control" 
-                   placeholder="Введите пароль" required>
-        </div>
-        
-        <div class="checkbox-group">
-            <input type="checkbox" id="remember" name="remember">
-            <label for="remember" style="margin: 0; font-weight: normal;">Запомнить меня</label>
-        </div>
-        
-        <button type="submit" class="btn-primary">Войти</button>
-    </form>
-    
-    <div class="form-links">
-        Нет аккаунта? <a href="/lab8/register">Зарегистрироваться</a>
-        <a href="/lab8/" style="margin-top: 15px; display: block;">← Назад к базе знаний</a>
-    </div>
-</div>
 {% endblock %}

@@ -3,6 +3,43 @@
 {% block lab %}Лабораторная работа 8{% endblock %}
 
 {% block main %}
+
+<div class="lab8-container">
+    <div class="lab8-header">
+        <h1>База знаний</h1>
+        <div class="subtitle">Лабораторная работа 8 - Flask и ORM</div>
+    </div>
+
+    <div class="navigation-menu">
+        <ul class="nav-links">
+            <li><a href="/lab8/articles">Мои статьи</a></li>
+            <li><a href="/lab8/create">Создать статью</a></li>
+            <li><a href="/lab8/articles/public">Публичные статьи</a></li>
+            <li><a href="/lab8/articles/search">Поиск статей</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="/lab8/logout">Выйти</a></li>
+            {% else %}
+                <li><a href="/lab8/login">Войти</a></li>
+                <li><a href="/lab8/register">Регистрация</a></li>
+            {% endif %}
+        </ul>
+        <div class="user-info">
+            Текущий пользователь: 
+            <strong style="color: #8e2aaf;">
+                {% if current_user.is_authenticated %}
+                    {{ current_user.login }}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </strong>
+        </div>
+    </div>
+        <div class="back-link">
+            <a href="/">На главную сайта</a>
+        </div>
+    </div>
+</div>
+
 <style>
     .lab8-container {
         width: 100%;
@@ -254,40 +291,4 @@
         }
     }
 </style>
-
-<div class="lab8-container">
-    <div class="lab8-header">
-        <h1>База знаний</h1>
-        <div class="subtitle">Лабораторная работа 8 - Flask и ORM</div>
-    </div>
-
-    <div class="navigation-menu">
-        <ul class="nav-links">
-            <li><a href="/lab8/articles">Мои статьи</a></li>
-            <li><a href="/lab8/create">Создать статью</a></li>
-            <li><a href="/lab8/articles/public">Публичные статьи</a></li>
-            <li><a href="/lab8/articles/search">Поиск статей</a></li>
-            {% if current_user.is_authenticated %}
-                <li><a href="/lab8/logout">Выйти</a></li>
-            {% else %}
-                <li><a href="/lab8/login">Войти</a></li>
-                <li><a href="/lab8/register">Регистрация</a></li>
-            {% endif %}
-        </ul>
-        <div class="user-info">
-            Текущий пользователь: 
-            <strong style="color: #8e2aaf;">
-                {% if current_user.is_authenticated %}
-                    {{ current_user.login }}
-                {% else %}
-                    Anonymous
-                {% endif %}
-            </strong>
-        </div>
-    </div>
-        <div class="back-link">
-            <a href="/">На главную сайта</a>
-        </div>
-    </div>
-</div>
 {% endblock %}

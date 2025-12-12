@@ -3,6 +3,66 @@
 {% block lab %}Лабораторная работа 8 - Мои статьи{% endblock %}
 
 {% block main %}
+
+<div class="articles-container">
+    <div class="page-header">
+        <h1>Мои статьи</h1>
+        <div class="action-buttons">
+            <a href="/lab8/create" class="btn btn-primary">+ Создать статью</a>
+            <a href="/lab8/articles/public" class="btn btn-secondary">Публичные статьи</a>
+            <a href="/lab8/articles/search" class="btn btn-secondary">Поиск</a>
+        </div>
+    </div>
+    
+    {% if articles %}
+        <p>Найдено статей: {{ articles|length }}</p>
+        
+        <div class="articles-grid">
+            {% for article in articles %}
+            <div class="article-card">
+                <div class="article-header">
+                    <h3>{{ article.title }}</h3>
+                    <div class="article-badges">
+                        {% if article.is_public %}
+                            <span class="badge badge-public">Публичная</span>
+                        {% endif %}
+                        {% if article.is_favorite %}
+                            <span class="badge badge-favorite">Избранная</span>
+                        {% endif %}
+                        <span class="badge">Лайков: {{ article.likes }}</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>{{ article.article_text[:200] }}{% if article.article_text|length > 200 %}...{% endif %}</p>
+                </div>
+                
+                <div class="article-footer">
+                    <div>ID: {{ article.id }}</div>
+                    <div class="article-actions">
+                        <a href="/lab8/edit/{{ article.id }}" class="btn btn-sm btn-edit">✏️ Редактировать</a>
+                        <a href="/lab8/delete/{{ article.id }}" class="btn btn-sm btn-danger" 
+                           onclick="return confirm('Удалить статью «{{ article.title }}»?')">
+                            Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>У вас пока нет статей</h3>
+            <p>Создайте свою первую статью, чтобы начать работу с базой знаний.</p>
+            <a href="/lab8/create" class="btn btn-primary">Создать первую статью</a>
+        </div>
+    {% endif %}
+    
+    <div class="back-link">
+        <a href="/lab8/">← Назад к базе знаний</a>
+    </div>
+</div>
+
 <style>
     .articles-container {
         padding: 30px 20px;
@@ -252,63 +312,4 @@
         }
     }
 </style>
-
-<div class="articles-container">
-    <div class="page-header">
-        <h1>Мои статьи</h1>
-        <div class="action-buttons">
-            <a href="/lab8/create" class="btn btn-primary">+ Создать статью</a>
-            <a href="/lab8/articles/public" class="btn btn-secondary">Публичные статьи</a>
-            <a href="/lab8/articles/search" class="btn btn-secondary">Поиск</a>
-        </div>
-    </div>
-    
-    {% if articles %}
-        <p>Найдено статей: {{ articles|length }}</p>
-        
-        <div class="articles-grid">
-            {% for article in articles %}
-            <div class="article-card">
-                <div class="article-header">
-                    <h3>{{ article.title }}</h3>
-                    <div class="article-badges">
-                        {% if article.is_public %}
-                            <span class="badge badge-public">Публичная</span>
-                        {% endif %}
-                        {% if article.is_favorite %}
-                            <span class="badge badge-favorite">Избранная</span>
-                        {% endif %}
-                        <span class="badge">Лайков: {{ article.likes }}</span>
-                    </div>
-                </div>
-                
-                <div class="article-content">
-                    <p>{{ article.article_text[:200] }}{% if article.article_text|length > 200 %}...{% endif %}</p>
-                </div>
-                
-                <div class="article-footer">
-                    <div>ID: {{ article.id }}</div>
-                    <div class="article-actions">
-                        <a href="/lab8/edit/{{ article.id }}" class="btn btn-sm btn-edit">✏️ Редактировать</a>
-                        <a href="/lab8/delete/{{ article.id }}" class="btn btn-sm btn-danger" 
-                           onclick="return confirm('Удалить статью «{{ article.title }}»?')">
-                            🗑️ Удалить
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-state">
-            <h3>У вас пока нет статей</h3>
-            <p>Создайте свою первую статью, чтобы начать работу с базой знаний.</p>
-            <a href="/lab8/create" class="btn btn-primary">Создать первую статью</a>
-        </div>
-    {% endif %}
-    
-    <div class="back-link">
-        <a href="/lab8/">← Назад к базе знаний</a>
-    </div>
-</div>
 {% endblock %}

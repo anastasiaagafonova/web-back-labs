@@ -3,6 +3,55 @@
 {% block lab %}Лабораторная работа 8 - Создание статьи{% endblock %}
 
 {% block main %}
+
+<div class="form-container">
+    <h1>Создание новой статьи</h1>
+    
+    {% if error %}
+        <div class="error-message">
+            <strong>Ошибка:</strong> {{ error }}
+        </div>
+    {% endif %}
+    
+    <form action="/lab8/create" method="post">
+        <div class="form-group">
+            <label for="title">Название статьи:</label>
+            <input type="text" id="title" name="title" class="form-control" 
+                   value="{{ request.form.title if request.form.title else '' }}"
+                   placeholder="Введите название статьи" required maxlength="50">
+            <div class="form-hint">Максимум 50 символов</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="article_text">Текст статьи:</label>
+            <textarea id="article_text" name="article_text" class="form-control form-control-textarea" 
+                      placeholder="Введите текст статьи" required>{{ request.form.article_text if request.form.article_text else '' }}</textarea>
+            <div class="form-hint">Можно использовать HTML-разметку</div>
+        </div>
+        
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="is_public" name="is_public">
+                <label for="is_public">Сделать статью публичной (доступна всем пользователям)</label>
+            </div>
+            
+            <div class="checkbox-item">
+                <input type="checkbox" id="is_favorite" name="is_favorite">
+                <label for="is_favorite">Добавить в избранное</label>
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Сохранить статью</button>
+            <a href="/lab8/articles" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+    
+    <div class="back-link">
+        <a href="/lab8/articles">← Назад к списку статей</a>
+    </div>
+</div>
+
 <style>
     .form-container {
         max-width: 800px;
@@ -170,52 +219,4 @@
         }
     }
 </style>
-
-<div class="form-container">
-    <h1>Создание новой статьи</h1>
-    
-    {% if error %}
-        <div class="error-message">
-            <strong>Ошибка:</strong> {{ error }}
-        </div>
-    {% endif %}
-    
-    <form action="/lab8/create" method="post">
-        <div class="form-group">
-            <label for="title">Название статьи:</label>
-            <input type="text" id="title" name="title" class="form-control" 
-                   value="{{ request.form.title if request.form.title else '' }}"
-                   placeholder="Введите название статьи" required maxlength="50">
-            <div class="form-hint">Максимум 50 символов</div>
-        </div>
-        
-        <div class="form-group">
-            <label for="article_text">Текст статьи:</label>
-            <textarea id="article_text" name="article_text" class="form-control form-control-textarea" 
-                      placeholder="Введите текст статьи" required>{{ request.form.article_text if request.form.article_text else '' }}</textarea>
-            <div class="form-hint">Можно использовать HTML-разметку</div>
-        </div>
-        
-        <div class="checkbox-group">
-            <div class="checkbox-item">
-                <input type="checkbox" id="is_public" name="is_public">
-                <label for="is_public">Сделать статью публичной (доступна всем пользователям)</label>
-            </div>
-            
-            <div class="checkbox-item">
-                <input type="checkbox" id="is_favorite" name="is_favorite">
-                <label for="is_favorite">Добавить в избранное</label>
-            </div>
-        </div>
-        
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary">Сохранить статью</button>
-            <a href="/lab8/articles" class="btn btn-secondary">Отмена</a>
-        </div>
-    </form>
-    
-    <div class="back-link">
-        <a href="/lab8/articles">← Назад к списку статей</a>
-    </div>
-</div>
 {% endblock %}

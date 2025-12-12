@@ -3,6 +3,88 @@
 {% block lab %}Лабораторная работа 8 - Результаты поиска{% endblock %}
 
 {% block main %}
+
+<div class="results-container">
+    <div class="results-header">
+        <h1>📄 Результаты поиска</h1>
+        <div class="search-query">
+            Поисковый запрос: <strong>"{{ search_query }}"</strong>
+        </div>
+        <div class="results-count">
+            Найдено статей: {{ count }}
+        </div>
+    </div>
+    
+    <div class="new-search">
+        <a href="/lab8/articles/search">🔍 Новый поиск</a>
+    </div>
+    
+    {% if results %}
+        <div class="results-grid">
+            {% for article in results %}
+            <div class="result-card">
+                <div class="result-header">
+                    <h3>{{ article.title }}</h3>
+                    <div class="result-badges">
+                        {% if article.is_public %}
+                            <span class="badge badge-public">Публичная</span>
+                        {% endif %}
+                        {% if article.is_favorite %}
+                            <span class="badge badge-favorite">Избранная</span>
+                        {% endif %}
+                        {% if current_user.is_authenticated and article.login_id == current_user.id %}
+                            <span class="badge badge-own">Моя статья</span>
+                        {% endif %}
+                        <span class="badge">Лайков: {{ article.likes }}</span>
+                    </div>
+                </div>
+                
+                <div class="result-content">
+                    {% set text_lower = article.article_text.lower() %}
+                    {% set query_lower = search_query.lower() %}
+                    {% if query_lower in text_lower %}
+                        {# Используем Jinja2 фильтры вместо функций Python #}
+                        {% set start = text_lower.find(query_lower) %}
+                        {% set end = start + search_query|length %}
+                        {% set context_start = [0, start - 50]|sort|last %}
+                        {% set context_end = [article.article_text|length, end + 50]|sort|first %}
+                        <p>
+                            ...{{ article.article_text[context_start:start] }}
+                            <span class="highlight">{{ article.article_text[start:end] }}</span>
+                            {{ article.article_text[end:context_end] }}...
+                        </p>
+                    {% else %}
+                        <p>{{ article.article_text[:150] }}{% if article.article_text|length > 150 %}...{% endif %}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="result-footer">
+                    <div>ID: {{ article.id }}</div>
+                    <div class="result-actions">
+                        {% if current_user.is_authenticated and article.login_id == current_user.id %}
+                            <a href="/lab8/edit/{{ article.id }}" class="btn btn-edit">✏️ Редактировать</a>
+                        {% endif %}
+                        {% if article.is_public or (current_user.is_authenticated and article.login_id == current_user.id) %}
+                            <a href="#" class="btn btn-view">👁️ Просмотр</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-results">
+            <h3>Ничего не найдено</h3>
+            <p>По вашему запросу "{{ search_query }}" статей не найдено. Попробуйте изменить запрос или использовать другие ключевые слова.</p>
+            <a href="/lab8/articles/search" class="btn" style="background: #561e61; color: white; padding: 10px 20px;">Повторить поиск</a>
+        </div>
+    {% endif %}
+    
+    <div class="back-link">
+        <a href="/lab8/">← Назад к базе знаний</a>
+    </div>
+</div>
+
 <style>
     .results-container {
         padding: 30px 20px;
@@ -242,85 +324,4 @@
         }
     }
 </style>
-
-<div class="results-container">
-    <div class="results-header">
-        <h1>📄 Результаты поиска</h1>
-        <div class="search-query">
-            Поисковый запрос: <strong>"{{ search_query }}"</strong>
-        </div>
-        <div class="results-count">
-            Найдено статей: {{ count }}
-        </div>
-    </div>
-    
-    <div class="new-search">
-        <a href="/lab8/articles/search">🔍 Новый поиск</a>
-    </div>
-    
-    {% if results %}
-        <div class="results-grid">
-            {% for article in results %}
-            <div class="result-card">
-                <div class="result-header">
-                    <h3>{{ article.title }}</h3>
-                    <div class="result-badges">
-                        {% if article.is_public %}
-                            <span class="badge badge-public">Публичная</span>
-                        {% endif %}
-                        {% if article.is_favorite %}
-                            <span class="badge badge-favorite">Избранная</span>
-                        {% endif %}
-                        {% if current_user.is_authenticated and article.login_id == current_user.id %}
-                            <span class="badge badge-own">Моя статья</span>
-                        {% endif %}
-                        <span class="badge">Лайков: {{ article.likes }}</span>
-                    </div>
-                </div>
-                
-                <div class="result-content">
-                    {% set text_lower = article.article_text.lower() %}
-                    {% set query_lower = search_query.lower() %}
-                    {% if query_lower in text_lower %}
-                        {# Используем Jinja2 фильтры вместо функций Python #}
-                        {% set start = text_lower.find(query_lower) %}
-                        {% set end = start + search_query|length %}
-                        {% set context_start = [0, start - 50]|sort|last %}
-                        {% set context_end = [article.article_text|length, end + 50]|sort|first %}
-                        <p>
-                            ...{{ article.article_text[context_start:start] }}
-                            <span class="highlight">{{ article.article_text[start:end] }}</span>
-                            {{ article.article_text[end:context_end] }}...
-                        </p>
-                    {% else %}
-                        <p>{{ article.article_text[:150] }}{% if article.article_text|length > 150 %}...{% endif %}</p>
-                    {% endif %}
-                </div>
-                
-                <div class="result-footer">
-                    <div>ID: {{ article.id }}</div>
-                    <div class="result-actions">
-                        {% if current_user.is_authenticated and article.login_id == current_user.id %}
-                            <a href="/lab8/edit/{{ article.id }}" class="btn btn-edit">✏️ Редактировать</a>
-                        {% endif %}
-                        {% if article.is_public or (current_user.is_authenticated and article.login_id == current_user.id) %}
-                            <a href="#" class="btn btn-view">👁️ Просмотр</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-results">
-            <h3>Ничего не найдено</h3>
-            <p>По вашему запросу "{{ search_query }}" статей не найдено. Попробуйте изменить запрос или использовать другие ключевые слова.</p>
-            <a href="/lab8/articles/search" class="btn" style="background: #561e61; color: white; padding: 10px 20px;">Повторить поиск</a>
-        </div>
-    {% endif %}
-    
-    <div class="back-link">
-        <a href="/lab8/">← Назад к базе знаний</a>
-    </div>
-</div>
 {% endblock %}

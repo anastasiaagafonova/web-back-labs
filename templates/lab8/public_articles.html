@@ -3,6 +3,65 @@
 {% block lab %}Лабораторная работа 8 - Публичные статьи{% endblock %}
 
 {% block main %}
+<div class="articles-container">
+    <div class="page-header">
+        <h1>Публичные статьи</h1>
+        <div class="action-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="/lab8/articles" class="btn btn-secondary">Мои статьи</a>
+                <a href="/lab8/create" class="btn btn-primary">+ Создать статью</a>
+            {% endif %}
+            <a href="/lab8/articles/search" class="btn btn-secondary">Поиск</a>
+        </div>
+    </div>
+    
+    {% if articles %}
+        <p>Найдено публичных статей: {{ articles|length }}</p>
+        
+        <div class="articles-grid">
+            {% for article in articles %}
+            <div class="article-card">
+                <div class="article-header">
+                    <h3>{{ article.title }}</h3>
+                    <div class="public-badge">ПУБЛИЧНАЯ</div>
+                </div>
+                
+                <div class="article-content">
+                    <p>{{ article.article_text[:250] }}{% if article.article_text|length > 250 %}...{% endif %}</p>
+                </div>
+                
+                <div class="article-footer">
+                    <div class="article-stats">
+                        <div>
+                            {% if article.is_favorite %}
+                                <span style="color: #856404;">⭐ Избранная</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            Лайков: {{ article.likes }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>Публичные статьи не найдены</h3>
+            <p>Пока никто не сделал свои статьи публичными. Станьте первым!</p>
+            {% if current_user.is_authenticated %}
+                <a href="/lab8/create" class="btn btn-primary">Создать статью</a>
+            {% else %}
+                <p>Чтобы создавать статьи, необходимо <a href="/lab8/login" style="color: #561e61; font-weight: 500;">войти</a> в систему.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <div class="back-link">
+        <a href="/lab8/">← Назад к базе знаний</a>
+    </div>
+</div>
+
 <style>
     .articles-container {
         padding: 30px 20px;
@@ -205,62 +264,4 @@
     }
 </style>
 
-<div class="articles-container">
-    <div class="page-header">
-        <h1>Публичные статьи</h1>
-        <div class="action-buttons">
-            {% if current_user.is_authenticated %}
-                <a href="/lab8/articles" class="btn btn-secondary">Мои статьи</a>
-                <a href="/lab8/create" class="btn btn-primary">+ Создать статью</a>
-            {% endif %}
-            <a href="/lab8/articles/search" class="btn btn-secondary">Поиск</a>
-        </div>
-    </div>
-    
-    {% if articles %}
-        <p>Найдено публичных статей: {{ articles|length }}</p>
-        
-        <div class="articles-grid">
-            {% for article in articles %}
-            <div class="article-card">
-                <div class="article-header">
-                    <h3>{{ article.title }}</h3>
-                    <div class="public-badge">ПУБЛИЧНАЯ</div>
-                </div>
-                
-                <div class="article-content">
-                    <p>{{ article.article_text[:250] }}{% if article.article_text|length > 250 %}...{% endif %}</p>
-                </div>
-                
-                <div class="article-footer">
-                    <div class="article-stats">
-                        <div>
-                            {% if article.is_favorite %}
-                                <span style="color: #856404;">⭐ Избранная</span>
-                            {% endif %}
-                        </div>
-                        <div>
-                            Лайков: {{ article.likes }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-state">
-            <h3>Публичные статьи не найдены</h3>
-            <p>Пока никто не сделал свои статьи публичными. Станьте первым!</p>
-            {% if current_user.is_authenticated %}
-                <a href="/lab8/create" class="btn btn-primary">Создать статью</a>
-            {% else %}
-                <p>Чтобы создавать статьи, необходимо <a href="/lab8/login" style="color: #561e61; font-weight: 500;">войти</a> в систему.</p>
-            {% endif %}
-        </div>
-    {% endif %}
-    
-    <div class="back-link">
-        <a href="/lab8/">← Назад к базе знаний</a>
-    </div>
-</div>
 {% endblock %}
