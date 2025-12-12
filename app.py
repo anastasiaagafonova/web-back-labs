@@ -9,7 +9,6 @@ from lab5 import lab5
 from lab6 import lab6
 from lab7 import lab7
 from lab8 import lab8
-from lab9 import lab9
 from rgz import rgz
 from datetime import datetime
 import os
@@ -60,7 +59,6 @@ app.register_blueprint(lab5)
 app.register_blueprint(lab6)
 app.register_blueprint(lab7)
 app.register_blueprint(lab8)
-app.register_blueprint(lab9)
 app.register_blueprint(rgz)
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), '404_log.txt')  
@@ -153,9 +151,6 @@ def index():
         </ul>
         <ul>
             <li><a href="/lab8">Лабораторная работа №8</a></li>
-        </ul>
-        <ul>
-            <li><a href="/lab9">Лабораторная работа №9</a></li>
         </ul>
         <ul>
             <li><a href="/rgz">Магазин мебели "cozyhome"</a></li>
