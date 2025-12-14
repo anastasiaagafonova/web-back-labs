@@ -71,7 +71,6 @@ def generate_non_overlapping_positions():
 def main():
     conn, cur = db_connect()
 
-    # ID пользователя, если нет
     if 'lab9_user_id' not in session:
         session['lab9_user_id'] = str(uuid.uuid4())
     
@@ -144,7 +143,22 @@ def main():
             FROM lab9_gifts WHERE user_id = ? ORDER BY position_id
         """, (user_id,))
     
-    gifts = cur.fetchall()
+
+    gifts_rows = cur.fetchall()
+    gifts = []
+    for row in gifts_rows:
+        gift_dict = {
+            'position_id': row['position_id'],
+            'top_position': row['top_position'],
+            'left_position': row['left_position'],
+            'opened': row['opened'],
+            'message': row['message'],
+            'image': row['image'],
+            'box_image': row['box_image'],
+            'require_auth': row['require_auth']
+        }
+        gifts.append(gift_dict)
+    
     
     if current_app.config['DB_TYPE'] == 'postgres':
         cur.execute("SELECT COUNT(*) as cnt FROM lab9_gifts WHERE user_id = %s AND opened = TRUE", (user_id,))
