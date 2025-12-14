@@ -1,4 +1,3 @@
-lab9.py
 from flask import Blueprint, render_template, session, jsonify, request, current_app, redirect, url_for
 import random
 import uuid
@@ -117,60 +116,106 @@ def init_user_gifts(user_id, cur):
 def main():
     conn, cur = db_connect()
     
-    # Получаем ID пользователя
-    user_id = get_user_id()
-    
-    # Создаём запись пользователя если нет
-    if current_app.config.get('DB_TYPE') == 'postgres':
-        cur.execute("SELECT id FROM lab9_users WHERE id = %s", (user_id,))
-    else:
-        cur.execute("SELECT id FROM lab9_users WHERE id = ?", (user_id,))
-    
-    if not cur.fetchone():
-        if current_app.config.get('DB_TYPE') == 'postgres':
-            cur.execute("INSERT INTO lab9_users (id) VALUES (%s)", (user_id,))
+    try:
+        # Получаем ID пользователя
+        user_id = get_user_id()
+        
+        # Проверяем, какая БД используется (по умолчанию SQLite)
+        db_type = current_app.config.get('DB_TYPE', 'sqlite')
+        
+        # Создаём запись пользователя если нет
+        if db_type == 'postgres':
+            cur.execute("SELECT id FROM lab9_users WHERE id = %s", (user_id,))
         else:
-            cur.execute("INSERT INTO lab9_users (id) VALUES (?)", (user_id,))
+            cur.execute("SELECT id FROM lab9_users WHERE id = ?", (user_id,))
+        
+        if not cur.fetchone():
+            if db_type == 'postgres':
+                cur.execute("INSERT INTO lab9_users (id) VALUES (%s)", (user_id,))
+            else:
+                cur.execute("INSERT INTO lab9_users (id) VALUES (?)", (user_id,))
+        
+        # Инициализируем подарки если нужно
+        init_user_gifts(user_id, cur)
+        
+        # Получаем подарки пользователя
+        if db_type == 'postgres':
+            cur.execute("""
+                SELECT position_id, top_position, left_position, opened, 
+                       message, image, box_image, require_auth 
+                FROM lab9_gifts 
+                WHERE user_id = %s 
+                ORDER BY position_id
+            """, (user_id,))
+        else:
+            cur.execute("""
+                SELECT position_id, top_position, left_position, opened, 
+                       message, image, box_image, require_auth 
+                FROM lab9_gifts 
+                WHERE user_id = ? 
+                ORDER BY position_id
+            """, (user_id,))
+        
+        # Преобразуем Row объекты в словари
+        gifts_rows = cur.fetchall()
+        gifts = []
+        for row in gifts_rows:
+            gift_dict = {
+                'position_id': row['position_id'],
+                'top_position': float(row['top_position']),
+                'left_position': float(row['left_position']),
+                'opened': bool(row['opened']),
+                'message': row['message'],
+                'image': row['image'],
+                'box_image': row['box_image'],
+                'require_auth': bool(row['require_auth'])
+            }
+            gifts.append(gift_dict)
+        
+        # Считаем открытые подарки
+        if db_type == 'postgres':
+            cur.execute("SELECT COUNT(*) as cnt FROM lab9_gifts WHERE user_id = %s AND opened = TRUE", (user_id,))
+        else:
+            cur.execute("SELECT COUNT(*) as cnt FROM lab9_gifts WHERE user_id = ? AND opened = 1", (user_id,))
+        
+        result = cur.fetchone()
+        opened_count = result['cnt'] if result else 0
+        
+        db_close(conn, cur)
+        
+        return render_template('lab9/index.html',
+                             gifts=gifts,
+                             opened_count=opened_count,
+                             remaining=10 - opened_count,
+                             is_auth=is_authenticated(),
+                             login=session.get('login'))
     
-    # Инициализируем подарки если нужно
-    init_user_gifts(user_id, cur)
-    
-    # получаем подарки пользователя
-    if current_app.config.get('DB_TYPE') == 'postgres':
-        cur.execute("""
-            SELECT position_id, top_position, left_position, opened, 
-                   message, image, box_image, require_auth 
-            FROM lab9_gifts 
-            WHERE user_id = %s 
-            ORDER BY position_id
-        """, (user_id,))
-    else:
-        cur.execute("""
-            SELECT position_id, top_position, left_position, opened, 
-                   message, image, box_image, require_auth 
-            FROM lab9_gifts 
-            WHERE user_id = ? 
-            ORDER BY position_id
-        """, (user_id,))
-    
-    gifts = cur.fetchall()
-    
-    # считаем открытые подарки
-    if current_app.config.get('DB_TYPE') == 'postgres':
-        cur.execute("SELECT COUNT(*) as cnt FROM lab9_gifts WHERE user_id = %s AND opened = TRUE", (user_id,))
-    else:
-        cur.execute("SELECT COUNT(*) as cnt FROM lab9_gifts WHERE user_id = ? AND opened = 1", (user_id,))
-    
-    opened_count = cur.fetchone()['cnt']
-    
-    db_close(conn, cur)
-    
-    return render_template('lab9/index.html',
-                         gifts=gifts,
-                         opened_count=opened_count,
-                         remaining=10 - opened_count,
-                         is_auth=is_authenticated(),
-                         login=session.get('login'))
+    except Exception as e:
+        print(f"Ошибка в функции main: {e}")
+        try:
+            db_close(conn, cur)
+        except:
+            pass
+        
+        test_gifts = []
+        for i in range(10):
+            test_gifts.append({
+                'position_id': i,
+                'top_position': float(random.randint(5, 85)),
+                'left_position': float(random.randint(5, 85)),
+                'opened': False,
+                'message': f'Тестовое поздравление {i+1}',
+                'image': f'gift{i+1}.jpg',
+                'box_image': f'box{i+1}.jpg',
+                'require_auth': i >= 5
+            })
+        
+        return render_template('lab9/index.html',
+                             gifts=test_gifts,
+                             opened_count=0,
+                             remaining=10,
+                             is_auth=is_authenticated(),
+                             login=session.get('login'))
 
 @lab9.route('/lab9/open_gift', methods=['POST'])
 def open_gift():
