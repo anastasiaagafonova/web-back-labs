@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 9{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab9/lab9.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='lab9/snowflakes.js') }}"></script>
+    <script src="{{ url_for('static', filename='lab9/lab9.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+    <h1>🎁Новогодние Подарки</h1>
+    
+    <div class="auth-notice">
+        <p>🎄 <strong>Все подарки доступны авторизованным пользователям!</strong> 🎄</p>
+    </div>
+    
+    <div class="auth-buttons">
+        {% if not is_auth %}
+            <a href="{{ url_for('lab9.login') }}" class="auth-btn">Войти</a>
+            <a href="{{ url_for('lab9.register') }}" class="auth-btn register-btn">Зарегистрироваться</a>
+        {% else %}
+            <div class="user-info">
+                <span>Добро пожаловать, Эльф <strong>{{ login }}</strong></span>
+                <a href="{{ url_for('lab9.logout') }}" class="logout-btn">Выйти</a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="info-panel">
+        <div class="counter">
+            <p>🎁Открыто подарков: <span id="opened-count">{{ opened_count }}</span>/3</p>
+            <p>🎁Осталось подарков: <span id="remaining-count">{{ remaining }}</span>/10</p>
+        </div>
+        
+        {% if is_auth %}
+        <button onclick="resetGifts()" class="reset-btn">🎅 Дед Мороз</button>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        <div class="gift-container" id="gift-container">
+            {% for gift in gifts %}
+                <div class="gift-box {% if gift.opened %}opened{% endif %} {% if not is_auth and gift.require_auth %}locked{% endif %}" 
+                     data-id="{{ gift.position_id }}"
+                     data-require-auth="{{ gift.require_auth }}"
+                     style="top: {{ gift.top_position }}%; left: {{ gift.left_position }}%;">
+                    
+                    {% if gift.opened %}
+                        <div class="opened-gift">
+                            <div class="congratulation">
+                                <p>{{ gift.message }}</p>
+                            </div>
+                            <img src="{{ url_for('static', filename='lab9/' + gift.image) }}" 
+                                 alt="Подарок" class="gift-inside">
+                        </div>
+                    {% else %}
+                        <div class="gift-outer">
+                            {% if not is_auth and gift.require_auth %}
+                                <div class="lock-overlay">
+                                    🔒
+                                </div>
+                            {% endif %}
+                            <img src="{{ url_for('static', filename='lab9/' + gift.box_image) }}" 
+                                 alt="Новогодняя коробка" class="gift-closed"
+                                 onclick="openGift({{ gift.position_id }})"
+                                 {% if not is_auth and gift.require_auth %}style="opacity: 0.6;"{% endif %}>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="message-area" id="message-area"></div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 9 - Вход{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab9/lab9.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='lab9/snowflakes.js') }}"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="auth-container">
+        <h1>🎄 Вход в Новогоднюю систему</h1>
+        
+        {% if error %}
+            <div class="auth-error">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        <form method="post" class="auth-form">
+            <div class="form-group">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" name="login" required 
+                       class="form-input" placeholder="Введите логин">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required 
+                       class="form-input" placeholder="Введите пароль">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="auth-btn">Войти</button>
+                <a href="{{ url_for('lab9.register') }}" class="auth-link">
+                    Нет аккаунта? Зарегистрируйтесь
+                </a>
+                <a href="{{ url_for('lab9.main') }}" class="auth-link">
+                    Вернуться к подаркам
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
