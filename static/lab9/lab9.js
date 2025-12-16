@@ -3,10 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelector('.close-btn');
     const resetBtn = document.getElementById('resetBtn');
     
-    // Создаем снежинки для новогодней атмосферы
-    createSnowflakes();
     
-    // Обработка клика по подарку
+    // обработка клика по подарку
     document.querySelectorAll('.gift-box').forEach(box => {
         box.addEventListener('click', function() {
             const giftId = this.dataset.giftId;
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Открытие подарка через AJAX
+    // открытие подарка через AJAX
     function openGift(giftId) {
         fetch('/lab9/open', {
             method: 'POST',
@@ -59,30 +57,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Показать содержимое подарка
+    // содержимое подарка
     function showGiftContent(data) {
-        const modalBody = document.getElementById('modalBody');
-        modalBody.innerHTML = `
-            <div class="gift-content">
-                <h2>🎁 С Новым Годом! 🎁</h2>
-                <div class="gift-message">
-                    "${data.message}"
-                </div>
-                <img src="/static/lab9/images/${data.gift_image}" 
-                     alt="Новогодний подарок" 
-                     onerror="this.src='/static/lab9/images/gift_default.jpg'">
-                <p style="margin-top: 20px; color: #ffd700; font-weight: bold;">
-                    Вы получили новогодний подарок!
-                </p>
+    const modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = `
+        <div class="gift-content">
+            <h2>🎁 С Новым Годом! 🎁</h2>
+            <div class="gift-message">
+                "${data.message}"
             </div>
-        `;
-        modal.style.display = 'block';
-        
-        // Добавляем новогодний звук (опционально)
-        playNewYearSound();
-    }
+            <img src="/static/lab9/${data.gift_image}" 
+                 alt="Новогодний подарок" 
+                 onerror="this.src='/static/lab9/gift_default.jpg'">
+            <p style="margin-top: 20px; color: #ffd700; font-weight: bold;">
+                Вы получили новогодний подарок!
+            </p>
+        </div>
+    `;
+    modal.style.display = 'block';
+}
     
-    // Обновить статистику
+    // обновить статистику
     function updateStats(availableGifts) {
         const statElement = document.getElementById('availableGifts');
         if (statElement) {
@@ -96,24 +91,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Отметить подарок как открытый
+    // отметить подарок как открытый
     function markGiftAsOpened(giftId) {
-        const giftBox = document.querySelector(`[data-gift-id="${giftId}"]`);
-        if (giftBox) {
-            giftBox.dataset.opened = 'true';
-            giftBox.innerHTML = `
-                <div class="gift-opened">
-                    <img src="/static/lab9/images/box_opened.jpg" 
-                         alt="Открытая коробка" 
-                         class="gift-img">
-                    <span class="gift-label">Открыто</span>
-                </div>
-            `;
-            
-            // Анимация открытия
-            giftBox.style.animation = 'giftOpen 0.5s ease-out';
-        }
+    const giftBox = document.querySelector(`[data-gift-id="${giftId}"]`);
+    if (giftBox) {
+        giftBox.dataset.opened = 'true';
+        
+        const giftNumber = Array.from(document.querySelectorAll('.gift-box'))
+            .findIndex(box => box.dataset.giftId === giftId) + 1;
+        
+        giftBox.innerHTML = `
+            <div class="gift-opened">
+                <!-- Используем переданную картинку подарка -->
+                <img src="/static/lab9/gift${giftNumber}.jpg" 
+                     alt="Открытый подарок" 
+                     class="gift-img">
+                <span class="gift-label">Открыто</span>
+            </div>
+        `;
+        
+        // Анимация открытия
+        giftBox.style.animation = 'giftOpen 0.5s ease-out';
     }
+}
     
     // Кнопка "Дед Мороз"
     if (resetBtn) {
@@ -162,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Вспомогательные функции
     function showMessage(text, type = 'info') {
         const message = document.createElement('div');
         message.className = `message-${type}`;
@@ -227,80 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    function playNewYearSound() {
-        // Опционально: можно добавить звук открытия подарка
-        try {
-            const audio = new Audio('/static/lab9/sounds/gift_open.mp3');
-            audio.volume = 0.3;
-            audio.play().catch(e => console.log('Audio play failed:', e));
-        } catch (e) {
-            console.log('Sound not available');
-        }
-    }
-    
-    // Добавляем CSS анимации
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-        
-        @keyframes giftOpen {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2) rotate(10deg);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        /* Анимация для снежинок */
-        @keyframes snow {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .snowflake {
-            position: fixed;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: snow linear infinite;
-            opacity: 0.8;
-            z-index: 1000;
-            box-shadow: 0 0 5px white;
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Обработка ссылок для авторизации
+    // обработка ссылок для авторизации
     document.querySelectorAll('.login-btn, .register-btn, .logout-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             if (this.classList.contains('logout-btn')) {
@@ -308,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return true;
             }
             
-            // Для входа/регистрации проверяем, не открыто ли уже 3 подарка
+            // проверяем, не открыто ли уже 3 подарка
             const openedBoxes = document.querySelectorAll('.gift-box[data-opened="true"]').length;
             if (openedBoxes >= 3) {
                 showMessage('Вы уже открыли максимальное количество подарков. Авторизуйтесь, чтобы получить больше возможностей!', 'info');

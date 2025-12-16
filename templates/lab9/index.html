@@ -27,7 +27,7 @@
 
     <div class="stats-panel">
         <div class="stat-item">
-            <h3>🎁 Осталось подарков:</h3>
+            <h3>Осталось подарков:</h3>
             <div class="stat-value" id="availableGifts">{{ available_gifts }}</div>
         </div>
         <div class="instructions">
@@ -43,23 +43,31 @@
         {% for position in positions %}
             {% set gift = gifts[loop.index0] %}
             <div class="gift-box" 
-                 style="left: {{ position.left }}; top: {{ position.top }};"
+                 style="left: {{ position.left }}; top: {{ position.top }}; width: {{ position.width }}; height: {{ position.height }};"
                  data-gift-id="{{ gift.id }}"
                  data-requires-auth="{{ gift.requires_auth }}"
                  {% if gift.id in opened_gift_ids %}data-opened="true"{% endif %}>
                 
                 {% if gift.id in opened_gift_ids %}
                     <div class="gift-opened">
-                        <img src="{{ url_for('static', filename='lab9/images/box_opened.jpg') }}" 
-                             alt="Открытая коробка" 
-                             class="gift-img">
+                        {% if gift.gift_image %}
+                            <img src="{{ url_for('static', filename='lab9/' + gift.gift_image) }}" 
+                                 alt="Подарок {{ loop.index }}" 
+                                 class="gift-img opened-gift">
+                        {% else %}
+                            <div class="gift-placeholder">🎁</div>
+                        {% endif %}
                         <span class="gift-label">Открыто</span>
                     </div>
                 {% else %}
                     <div class="gift-closed">
-                        <img src="{{ url_for('static', filename='lab9/images/' + gift.box_image) }}" 
-                             alt="Коробка {{ loop.index }}" 
-                             class="gift-img">
+                        {% if gift.box_image %}
+                            <img src="{{ url_for('static', filename='lab9/' + gift.box_image) }}" 
+                                 alt="Коробка {{ loop.index }}" 
+                                 class="gift-img closed-box">
+                        {% else %}
+                            <div class="box-placeholder">📦</div>
+                        {% endif %}
                         <span class="gift-label">Подарок {{ loop.index }}</span>
                         {% if gift.requires_auth %}
                             <div class="lock-icon">🔒</div>
@@ -71,8 +79,8 @@
     </div>
 
     <div class="gift-info">
-        <p>🎄 Новогодние поздравления ждут вас!</p>
-        <p>❄️ Каждый подарок содержит уникальное поздравление</p>
+        <p>Новогодние поздравления ждут вас!</p>
+        <p>Каждый подарок содержит уникальное поздравление</p>
     </div>
 </div>
 
@@ -82,4 +90,9 @@
         <div id="modalBody"></div>
     </div>
 </div>
+ </div>
+        <div class="back-link">
+            <a href="/">На главную сайта</a>
+        </div>
+    </div>
 {% endblock %}
