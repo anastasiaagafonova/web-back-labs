@@ -190,7 +190,8 @@ class UserGiftModel:
         conn.close()
 
 # Инициализация моделей
-db = Database('/home/Aanastasi8/web-back-labs/anastasia_agafonova_knowledge_base.db')
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'anastasia_agafonova_knowledge_base.db')
+db = Database(db_path)
 user_model = UserModel(db)
 gift_model = GiftModel(db)
 user_gift_model = UserGiftModel(db)
