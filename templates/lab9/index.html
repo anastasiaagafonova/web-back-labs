@@ -6,74 +6,80 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='lab9/lab9.css') }}">
 {% endblock %}
 
-{% block scripts %}
-    <script src="{{ url_for('static', filename='lab9/snowflakes.js') }}"></script>
+{% block script %}
     <script src="{{ url_for('static', filename='lab9/lab9.js') }}"></script>
 {% endblock %}
 
 {% block main %}
-    <h1>🎁Новогодние Подарки</h1>
-    
-    <div class="auth-notice">
-        <p>🎄 <strong>Все подарки доступны авторизованным пользователям!</strong> 🎄</p>
-    </div>
-    
-    <div class="auth-buttons">
-        {% if not is_auth %}
-            <a href="{{ url_for('lab9.login') }}" class="auth-btn">Войти</a>
-            <a href="{{ url_for('lab9.register') }}" class="auth-btn register-btn">Зарегистрироваться</a>
-        {% else %}
-            <div class="user-info">
-                <span>Добро пожаловать, Эльф <strong>{{ login }}</strong></span>
+<div class="lab9-container">
+    <div class="header-controls">
+        <div class="user-info">
+            {% if session.user %}
+                <span>Привет, {{ session.user }}! 🎅</span>
                 <a href="{{ url_for('lab9.logout') }}" class="logout-btn">Выйти</a>
+                <button id="resetBtn" class="santa-btn">Дед Мороз</button>
+            {% else %}
+                <a href="{{ url_for('lab9.login') }}" class="login-btn">Войти</a>
+                <a href="{{ url_for('lab9.register') }}" class="register-btn">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stats-panel">
+        <div class="stat-item">
+            <h3>🎁 Осталось подарков:</h3>
+            <div class="stat-value" id="availableGifts">{{ available_gifts }}</div>
+        </div>
+        <div class="instructions">
+            <p>✨ Нажмите на коробку, чтобы открыть подарок</p>
+            <p>⚠️ Можно открыть только 3 подарка</p>
+            {% if not session.user %}
+                <p class="auth-notice">🔒 Некоторые подарки доступны только авторизованным пользователям</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="gifts-container">
+        {% for position in positions %}
+            {% set gift = gifts[loop.index0] %}
+            <div class="gift-box" 
+                 style="left: {{ position.left }}; top: {{ position.top }};"
+                 data-gift-id="{{ gift.id }}"
+                 data-requires-auth="{{ gift.requires_auth }}"
+                 {% if gift.id in opened_gift_ids %}data-opened="true"{% endif %}>
+                
+                {% if gift.id in opened_gift_ids %}
+                    <div class="gift-opened">
+                        <img src="{{ url_for('static', filename='lab9/images/box_opened.jpg') }}" 
+                             alt="Открытая коробка" 
+                             class="gift-img">
+                        <span class="gift-label">Открыто</span>
+                    </div>
+                {% else %}
+                    <div class="gift-closed">
+                        <img src="{{ url_for('static', filename='lab9/images/' + gift.box_image) }}" 
+                             alt="Коробка {{ loop.index }}" 
+                             class="gift-img">
+                        <span class="gift-label">Подарок {{ loop.index }}</span>
+                        {% if gift.requires_auth %}
+                            <div class="lock-icon">🔒</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
+        {% endfor %}
     </div>
-    
-    <div class="info-panel">
-        <div class="counter">
-            <p>🎁Открыто подарков: <span id="opened-count">{{ opened_count }}</span>/3</p>
-            <p>🎁Осталось подарков: <span id="remaining-count">{{ remaining }}</span>/10</p>
-        </div>
-        
-        {% if is_auth %}
-        <button onclick="resetGifts()" class="reset-btn">🎅 Дед Мороз</button>
-        {% endif %}
+
+    <div class="gift-info">
+        <p>🎄 Новогодние поздравления ждут вас!</p>
+        <p>❄️ Каждый подарок содержит уникальное поздравление</p>
     </div>
-    
-    <div class="container">
-        <div class="gift-container" id="gift-container">
-            {% for gift in gifts %}
-                <div class="gift-box {% if gift.opened %}opened{% endif %} {% if not is_auth and gift.require_auth %}locked{% endif %}" 
-                     data-id="{{ gift.position_id }}"
-                     data-require-auth="{{ gift.require_auth }}"
-                     style="top: {{ gift.top_position }}%; left: {{ gift.left_position }}%;">
-                    
-                    {% if gift.opened %}
-                        <div class="opened-gift">
-                            <div class="congratulation">
-                                <p>{{ gift.message }}</p>
-                            </div>
-                            <img src="{{ url_for('static', filename='lab9/' + gift.image) }}" 
-                                 alt="Подарок" class="gift-inside">
-                        </div>
-                    {% else %}
-                        <div class="gift-outer">
-                            {% if not is_auth and gift.require_auth %}
-                                <div class="lock-overlay">
-                                    🔒
-                                </div>
-                            {% endif %}
-                            <img src="{{ url_for('static', filename='lab9/' + gift.box_image) }}" 
-                                 alt="Новогодняя коробка" class="gift-closed"
-                                 onclick="openGift({{ gift.position_id }})"
-                                 {% if not is_auth and gift.require_auth %}style="opacity: 0.6;"{% endif %}>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
+</div>
+
+<div id="giftModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div id="modalBody"></div>
     </div>
-    
-    <div class="message-area" id="message-area"></div>
+</div>
 {% endblock %}
