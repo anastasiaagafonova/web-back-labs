@@ -29,14 +29,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Открытие подарка через AJAX
     function openGift(giftId) {
-        fetch('/lab9/open_gift', {
+        fetch('/lab9/open', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ gift_id: giftId })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error || 'Ошибка сервера');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 showMessage(data.error, 'error');
@@ -48,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            showMessage('Произошла ошибка при открытии подарка', 'error');
+            showMessage(error.message || 'Произошла ошибка при открытии подарка', 'error');
         });
     }
     
@@ -112,10 +119,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (resetBtn) {
         resetBtn.addEventListener('click', function() {
             if (confirm('🎅 Дед Мороз наполняет все коробки снова!\nХотите продолжить?')) {
-                fetch('/lab9/reset_gifts', {
-                    method: 'POST'
+                fetch('/lab9/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Ошибка сервера');
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         showMessage('Все коробки наполнены заново!', 'success');
@@ -128,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showMessage('Произошла ошибка', 'error');
+                    showMessage(error.message || 'Произошла ошибка', 'error');
                 });
             }
         });
@@ -212,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function playNewYearSound() {
         // Опционально: можно добавить звук открытия подарка
-        // Для этого нужен звуковой файл в static/lab9/sounds/
         try {
             const audio = new Audio('/static/lab9/sounds/gift_open.mp3');
             audio.volume = 0.3;
@@ -258,6 +274,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 transform: scale(1);
             }
         }
+        
+        /* Анимация для снежинок */
+        @keyframes snow {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .snowflake {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: snow linear infinite;
+            opacity: 0.8;
+            z-index: 1000;
+            box-shadow: 0 0 5px white;
+        }
     `;
     document.head.appendChild(style);
+    
+    // Обработка ссылок для авторизации
+    document.querySelectorAll('.login-btn, .register-btn, .logout-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (this.classList.contains('logout-btn')) {
+                // Для выхода используем обычную ссылку
+                return true;
+            }
+            
+            // Для входа/регистрации проверяем, не открыто ли уже 3 подарка
+            const openedBoxes = document.querySelectorAll('.gift-box[data-opened="true"]').length;
+            if (openedBoxes >= 3) {
+                showMessage('Вы уже открыли максимальное количество подарков. Авторизуйтесь, чтобы получить больше возможностей!', 'info');
+            }
+        });
+    });
 });

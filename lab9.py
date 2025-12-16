@@ -1,9 +1,193 @@
-from flask import Flask, Blueprint, render_template, request, jsonify, session, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 import random
 import os
-from models import Database, UserModel, GiftModel, UserGiftModel
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 lab9_bp = Blueprint('lab9', __name__, template_folder='templates', static_folder='static')
+
+# Классы моделей
+class Database:
+    def __init__(self, db_path):
+        self.db_path = db_path
+        
+    def get_connection(self):
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+class UserModel:
+    def __init__(self, db):
+        self.db = db
+    
+    def create_user(self, username, password):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO snow_users (username, password_hash) VALUES (?, ?)",
+                (username, generate_password_hash(password))
+            )
+            conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
+        finally:
+            conn.close()
+    
+    def get_user_by_username(self, username):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM snow_users WHERE username = ?", (username,))
+        user = cursor.fetchone()
+        conn.close()
+        return dict(user) if user else None
+    
+    def check_password(self, user, password):
+        return check_password_hash(user['password_hash'], password)
+
+class GiftModel:
+    def __init__(self, db):
+        self.db = db
+    
+    def init_gifts(self):
+        gifts = [
+            (1, "С Новым годом! Пусть сбудутся все мечты!", "gift1.jpg", "box1.jpg", 0),
+            (2, "Желаю здоровья, счастья и удачи в новом году!", "gift2.jpg", "box2.jpg", 0),
+            (3, "Пусть новый год принесет много радостных моментов!", "gift3.jpg", "box3.jpg", 1),
+            (4, "Счастья, любви и процветания в новом году!", "gift4.jpg", "box4.jpg", 0),
+            (5, "Мечтай, дерзай, достигай! С Новым годом!", "gift5.jpg", "box5.jpg", 0),
+            (6, "Пусть ангел-хранитель оберегает тебя весь год!", "gift6.jpg", "box6.jpg", 1),
+            (7, "Новых достижений и ярких впечатлений!", "gift7.jpg", "box7.jpg", 0),
+            (8, "Пусть каждый день будет наполнен счастьем!", "gift8.jpg", "box8.jpg", 0),
+            (9, "Успехов во всех начинаниях! С Новым годом!", "gift9.jpg", "box9.jpg", 1),
+            (10, "Гармонии, уюта и семейного тепла!", "gift10.jpg", "box10.jpg", 0)
+        ]
+        
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT COUNT(*) FROM snow_gifts")
+        count = cursor.fetchone()[0]
+        
+        if count == 0:
+            for gift_number, message, gift_image, box_image, requires_auth in gifts:
+                cursor.execute(
+                    """INSERT INTO snow_gifts 
+                       (gift_number, message, gift_image, box_image, requires_auth) 
+                       VALUES (?, ?, ?, ?, ?)""",
+                    (gift_number, message, gift_image, box_image, requires_auth)
+                )
+        
+        conn.commit()
+        conn.close()
+    
+    def get_all_gifts(self):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM snow_gifts ORDER BY gift_number")
+        gifts = cursor.fetchall()
+        conn.close()
+        return [dict(gift) for gift in gifts]
+    
+    def get_gift(self, gift_id):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM snow_gifts WHERE id = ?", (gift_id,))
+        gift = cursor.fetchone()
+        conn.close()
+        return dict(gift) if gift else None
+    
+    def mark_as_opened(self, gift_id):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE snow_gifts SET is_opened = 1 WHERE id = ?",
+            (gift_id,)
+        )
+        conn.commit()
+        conn.close()
+    
+    def reset_all_gifts(self):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE snow_gifts SET is_opened = 0")
+        cursor.execute("DELETE FROM snow_user_gifts")
+        conn.commit()
+        conn.close()
+
+class UserGiftModel:
+    def __init__(self, db):
+        self.db = db
+    
+    def add_opened_gift(self, user_id, session_id, gift_id):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """INSERT INTO snow_user_gifts (user_id, session_id, gift_id) 
+               VALUES (?, ?, ?)""",
+            (user_id, session_id, gift_id)
+        )
+        conn.commit()
+        conn.close()
+    
+    def get_opened_gifts_count(self, user_id=None, session_id=None):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        
+        if user_id:
+            cursor.execute(
+                "SELECT COUNT(*) FROM snow_user_gifts WHERE user_id = ?",
+                (user_id,)
+            )
+        else:
+            cursor.execute(
+                "SELECT COUNT(*) FROM snow_user_gifts WHERE session_id = ?",
+                (session_id,)
+            )
+        
+        count = cursor.fetchone()[0]
+        conn.close()
+        return count
+    
+    def get_opened_gifts(self, user_id=None, session_id=None):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        
+        if user_id:
+            cursor.execute(
+                """SELECT gift_id FROM snow_user_gifts 
+                   WHERE user_id = ?""",
+                (user_id,)
+            )
+        else:
+            cursor.execute(
+                """SELECT gift_id FROM snow_user_gifts 
+                   WHERE session_id = ?""",
+                (session_id,)
+            )
+        
+        gifts = cursor.fetchall()
+        conn.close()
+        return [gift[0] for gift in gifts]
+    
+    def clear_user_gifts(self, user_id=None, session_id=None):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        
+        if user_id:
+            cursor.execute(
+                "DELETE FROM snow_user_gifts WHERE user_id = ?",
+                (user_id,)
+            )
+        else:
+            cursor.execute(
+                "DELETE FROM snow_user_gifts WHERE session_id = ?",
+                (session_id,)
+            )
+        
+        conn.commit()
+        conn.close()
 
 # Инициализация моделей
 db = Database('anastasia_agafonova_knowledge_base.db')
@@ -11,18 +195,24 @@ user_model = UserModel(db)
 gift_model = GiftModel(db)
 user_gift_model = UserGiftModel(db)
 
-# Инициализация подарков
-def init_app():
-    gift_model.init_gifts()
+# Инициализируем подарки при первом запросе
+gifts_initialized = False
+
+@lab9_bp.before_app_request
+def initialize():
+    global gifts_initialized
+    if not gifts_initialized:
+        gift_model.init_gifts()
+        gifts_initialized = True
 
 # Генерация фиксированных случайных позиций
 def generate_positions(count=10):
     positions = []
-    random.seed(42)  # Фиксируем seed для одинаковых позиций
+    random.seed(42)
     
     for i in range(count):
-        left = random.randint(5, 85)  # Проценты от ширины
-        top = random.randint(10, 80)   # Проценты от высоты
+        left = random.randint(5, 85)
+        top = random.randint(10, 80)
         positions.append({
             'id': i + 1,
             'left': f"{left}%",
@@ -31,6 +221,7 @@ def generate_positions(count=10):
     
     return positions
 
+# Главная страница
 @lab9_bp.route('/')
 def main():
     if 'session_id' not in session:
@@ -39,7 +230,7 @@ def main():
     positions = generate_positions()
     gifts = gift_model.get_all_gifts()
     
-    # Получаем открытые подарки для текущей сессии/пользователя
+    # Получаем открытые подарки
     opened_gift_ids = []
     if 'user_id' in session:
         opened_gift_ids = user_gift_model.get_opened_gifts(
@@ -60,7 +251,8 @@ def main():
                          available_gifts=available_gifts,
                          login=session.get('user'))
 
-@lab9_bp.route('/open_gift', methods=['POST'])
+# Открыть подарок
+@lab9_bp.route('/open', methods=['POST'])
 def open_gift():
     data = request.get_json()
     if not data:
@@ -68,16 +260,16 @@ def open_gift():
     
     gift_id = data.get('gift_id')
     
-    # Проверяем существование подарка
+    # Проверяем подарок
     gift = gift_model.get_gift(gift_id)
     if not gift:
         return jsonify({'error': 'Подарок не найден'}), 404
     
-    # Проверяем авторизацию для специальных подарков
+    # Проверяем авторизацию
     if gift['requires_auth'] and 'user_id' not in session:
         return jsonify({'error': 'Требуется авторизация для этого подарка'}), 403
     
-    # Получаем количество уже открытых подарков
+    # Считаем открытые подарки
     opened_count = 0
     if 'user_id' in session:
         opened_count = user_gift_model.get_opened_gifts_count(
@@ -88,11 +280,11 @@ def open_gift():
             session_id=session['session_id']
         )
     
-    # Проверяем лимит (максимум 3 подарка)
+    # Проверяем лимит
     if opened_count >= 3:
         return jsonify({'error': 'Вы уже открыли максимальное количество подарков (3)'}), 403
     
-    # Проверяем, не открыт ли уже этот подарок
+    # Проверяем, не открыт ли уже
     opened_gift_ids = []
     if 'user_id' in session:
         opened_gift_ids = user_gift_model.get_opened_gifts(
@@ -122,7 +314,7 @@ def open_gift():
     
     gift_model.mark_as_opened(gift_id)
     
-    # Считаем оставшиеся подарки
+    # Считаем оставшиеся
     available_gifts = 10 - (opened_count + 1)
     
     return jsonify({
@@ -132,7 +324,8 @@ def open_gift():
         'available_gifts': available_gifts
     })
 
-@lab9_bp.route('/reset_gifts', methods=['POST'])
+# Сбросить все подарки (Дед Мороз)
+@lab9_bp.route('/reset', methods=['POST'])
 def reset_gifts():
     if 'user_id' not in session:
         return jsonify({'error': 'Требуется авторизация'}), 403
@@ -146,7 +339,8 @@ def reset_gifts():
     
     return jsonify({'success': True})
 
-@lab9_bp.route('/login', methods=['GET', 'POST'])
+# Вход
+@lab9_bp.route('/enter', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         login = request.form.get('login')
@@ -165,7 +359,8 @@ def login():
     
     return render_template('lab9/login.html')
 
-@lab9_bp.route('/register', methods=['GET', 'POST'])
+# Регистрация
+@lab9_bp.route('/signup', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         login = request.form.get('login')
@@ -181,13 +376,9 @@ def register():
     
     return render_template('lab9/register.html')
 
-@lab9_bp.route('/logout')
+# Выход
+@lab9_bp.route('/exit')
 def logout():
     session.pop('user_id', None)
     session.pop('user', None)
     return redirect(url_for('lab9.main'))
-
-# Инициализация при первом запросе
-@lab9_bp.before_app_first_request
-def initialize():
-    init_app()
