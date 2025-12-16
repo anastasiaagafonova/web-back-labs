@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, render_template, request, jsonify, session, redirect, url_for
 import random
 import os
-from lab9.models import Database, UserModel, GiftModel, UserGiftModel
+from .models import Database, UserModel, GiftModel, UserGiftModel
 
 lab9_bp = Blueprint('lab9', __name__, template_folder='templates', static_folder='static')
 
