@@ -195,11 +195,11 @@ user_model = UserModel(db)
 gift_model = GiftModel(db)
 user_gift_model = UserGiftModel(db)
 
-# Инициализируем подарки при первом запросе
+# Флаг инициализации подарков
 gifts_initialized = False
 
 @lab9_bp.before_app_request
-def initialize():
+def initialize_gifts():
     global gifts_initialized
     if not gifts_initialized:
         gift_model.init_gifts()
@@ -221,7 +221,6 @@ def generate_positions(count=10):
     
     return positions
 
-# Главная страница
 @lab9_bp.route('/')
 def main():
     if 'session_id' not in session:
@@ -230,7 +229,6 @@ def main():
     positions = generate_positions()
     gifts = gift_model.get_all_gifts()
     
-    # Получаем открытые подарки
     opened_gift_ids = []
     if 'user_id' in session:
         opened_gift_ids = user_gift_model.get_opened_gifts(
@@ -241,7 +239,6 @@ def main():
             session_id=session['session_id']
         )
     
-    # Считаем доступные подарки
     available_gifts = 10 - len(opened_gift_ids)
     
     return render_template('lab9/index.html', 
@@ -251,7 +248,6 @@ def main():
                          available_gifts=available_gifts,
                          login=session.get('user'))
 
-# Открыть подарок
 @lab9_bp.route('/open', methods=['POST'])
 def open_gift():
     data = request.get_json()
@@ -260,16 +256,13 @@ def open_gift():
     
     gift_id = data.get('gift_id')
     
-    # Проверяем подарок
     gift = gift_model.get_gift(gift_id)
     if not gift:
         return jsonify({'error': 'Подарок не найден'}), 404
     
-    # Проверяем авторизацию
     if gift['requires_auth'] and 'user_id' not in session:
         return jsonify({'error': 'Требуется авторизация для этого подарка'}), 403
     
-    # Считаем открытые подарки
     opened_count = 0
     if 'user_id' in session:
         opened_count = user_gift_model.get_opened_gifts_count(
@@ -280,11 +273,9 @@ def open_gift():
             session_id=session['session_id']
         )
     
-    # Проверяем лимит
     if opened_count >= 3:
         return jsonify({'error': 'Вы уже открыли максимальное количество подарков (3)'}), 403
     
-    # Проверяем, не открыт ли уже
     opened_gift_ids = []
     if 'user_id' in session:
         opened_gift_ids = user_gift_model.get_opened_gifts(
@@ -298,7 +289,6 @@ def open_gift():
     if gift_id in opened_gift_ids:
         return jsonify({'error': 'Этот подарок уже открыт'}), 400
     
-    # Открываем подарок
     if 'user_id' in session:
         user_gift_model.add_opened_gift(
             session['user_id'], 
@@ -314,7 +304,6 @@ def open_gift():
     
     gift_model.mark_as_opened(gift_id)
     
-    # Считаем оставшиеся
     available_gifts = 10 - (opened_count + 1)
     
     return jsonify({
@@ -324,7 +313,6 @@ def open_gift():
         'available_gifts': available_gifts
     })
 
-# Сбросить все подарки (Дед Мороз)
 @lab9_bp.route('/reset', methods=['POST'])
 def reset_gifts():
     if 'user_id' not in session:
@@ -339,44 +327,41 @@ def reset_gifts():
     
     return jsonify({'success': True})
 
-# Вход
 @lab9_bp.route('/enter', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        login = request.form.get('login')
+        login_name = request.form.get('login')
         password = request.form.get('password')
         
-        if not login or not password:
+        if not login_name or not password:
             return render_template('lab9/login.html', error='Заполните все поля')
         
-        user = user_model.get_user_by_username(login)
+        user = user_model.get_user_by_username(login_name)
         if user and user_model.check_password(user, password):
             session['user_id'] = user['id']
-            session['user'] = login
+            session['user'] = login_name
             return redirect(url_for('lab9.main'))
         else:
             return render_template('lab9/login.html', error='Неверный логин или пароль')
     
     return render_template('lab9/login.html')
 
-# Регистрация
 @lab9_bp.route('/signup', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        login = request.form.get('login')
+        login_name = request.form.get('login')
         password = request.form.get('password')
         
-        if not login or not password:
+        if not login_name or not password:
             return render_template('lab9/register.html', error='Заполните все поля')
         
-        if user_model.create_user(login, password):
+        if user_model.create_user(login_name, password):
             return redirect(url_for('lab9.login'))
         else:
             return render_template('lab9/register.html', error='Пользователь уже существует')
     
     return render_template('lab9/register.html')
 
-# Выход
 @lab9_bp.route('/exit')
 def logout():
     session.pop('user_id', None)
