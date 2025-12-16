@@ -1,4 +1,5 @@
 import sqlite3
+import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Database:
@@ -35,7 +36,7 @@ class UserModel:
         cursor.execute("SELECT * FROM snow_users WHERE username = ?", (username,))
         user = cursor.fetchone()
         conn.close()
-        return user
+        return dict(user) if user else None
     
     def check_password(self, user, password):
         return check_password_hash(user['password_hash'], password)
@@ -62,16 +63,18 @@ class GiftModel:
         conn = self.db.get_connection()
         cursor = conn.cursor()
         
-        # Очищаем и заполняем таблицу
-        cursor.execute("DELETE FROM snow_gifts")
+        # Проверяем, есть ли уже подарки
+        cursor.execute("SELECT COUNT(*) FROM snow_gifts")
+        count = cursor.fetchone()[0]
         
-        for gift_number, message, gift_image, box_image, requires_auth in gifts:
-            cursor.execute(
-                """INSERT INTO snow_gifts 
-                   (gift_number, message, gift_image, box_image, requires_auth) 
-                   VALUES (?, ?, ?, ?, ?)""",
-                (gift_number, message, gift_image, box_image, requires_auth)
-            )
+        if count == 0:
+            for gift_number, message, gift_image, box_image, requires_auth in gifts:
+                cursor.execute(
+                    """INSERT INTO snow_gifts 
+                       (gift_number, message, gift_image, box_image, requires_auth) 
+                       VALUES (?, ?, ?, ?, ?)""",
+                    (gift_number, message, gift_image, box_image, requires_auth)
+                )
         
         conn.commit()
         conn.close()
@@ -82,7 +85,8 @@ class GiftModel:
         cursor.execute("SELECT * FROM snow_gifts ORDER BY gift_number")
         gifts = cursor.fetchall()
         conn.close()
-        return gifts
+        # Преобразуем Row в словари
+        return [dict(gift) for gift in gifts]
     
     def get_gift(self, gift_id):
         conn = self.db.get_connection()
@@ -90,7 +94,7 @@ class GiftModel:
         cursor.execute("SELECT * FROM snow_gifts WHERE id = ?", (gift_id,))
         gift = cursor.fetchone()
         conn.close()
-        return gift
+        return dict(gift) if gift else None
     
     def mark_as_opened(self, gift_id):
         conn = self.db.get_connection()

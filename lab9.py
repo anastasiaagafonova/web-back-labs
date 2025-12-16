@@ -1,22 +1,18 @@
-from flask import Blueprint, Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, Blueprint, render_template, request, jsonify, session, redirect, url_for
 from models import Database, UserModel, GiftModel, UserGiftModel
 import random
 import os
 
-lab9 = Blueprint('lab9', __name__)
-
-lab9.secret_key = 'your-secret-key-here-change-in-production'
-lab9.config['DATABASE'] = 'anastasia_agafonova_knowledge_base.db'
+lab9_bp = Blueprint('lab9', __name__, template_folder='templates', static_folder='static')
 
 # Инициализация моделей
-db = Database(lab9.config['DATABASE'])
+db = Database('anastasia_agafonova_knowledge_base.db')
 user_model = UserModel(db)
 gift_model = GiftModel(db)
 user_gift_model = UserGiftModel(db)
 
-# Инициализация подарков при первом запуске
-@lab9.before_first_request
-def init_gifts():
+# Инициализация подарков
+def init_app():
     gift_model.init_gifts()
 
 # Генерация фиксированных случайных позиций
@@ -27,7 +23,7 @@ def generate_positions(count=10):
     for i in range(count):
         left = random.randint(5, 85)  # Проценты от ширины
         top = random.randint(10, 80)   # Проценты от высоты
-        positions.lab9end({
+        positions.append({
             'id': i + 1,
             'left': f"{left}%",
             'top': f"{top}%"
@@ -35,8 +31,8 @@ def generate_positions(count=10):
     
     return positions
 
-@lab9.route('/')
-def index():
+@lab9_bp.route('/')
+def main():
     if 'session_id' not in session:
         session['session_id'] = os.urandom(16).hex()
     
@@ -57,16 +53,20 @@ def index():
     # Считаем доступные подарки
     available_gifts = 10 - len(opened_gift_ids)
     
-    return render_template('index.html', 
+    return render_template('lab9/index.html', 
                          positions=positions,
                          gifts=gifts,
                          opened_gift_ids=opened_gift_ids,
                          available_gifts=available_gifts,
-                         user=session.get('user'))
+                         login=session.get('user'))
 
-@lab9.route('/open_gift', methods=['POST'])
+@lab9_bp.route('/open_gift', methods=['POST'])
 def open_gift():
-    gift_id = request.json.get('gift_id')
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No JSON data provided'}), 400
+    
+    gift_id = data.get('gift_id')
     
     # Проверяем существование подарка
     gift = gift_model.get_gift(gift_id)
@@ -132,7 +132,7 @@ def open_gift():
         'available_gifts': available_gifts
     })
 
-@lab9.route('/reset_gifts', methods=['POST'])
+@lab9_bp.route('/reset_gifts', methods=['POST'])
 def reset_gifts():
     if 'user_id' not in session:
         return jsonify({'error': 'Требуется авторизация'}), 403
@@ -146,40 +146,48 @@ def reset_gifts():
     
     return jsonify({'success': True})
 
-@lab9.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        if user_model.create_user(username, password):
-            return redirect(url_for('login'))
-        else:
-            return render_template('register.html', error='Пользователь уже существует')
-    
-    return render_template('register.html')
-
-@lab9.route('/login', methods=['GET', 'POST'])
+@lab9_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        login = request.form.get('login')
+        password = request.form.get('password')
         
-        user = user_model.get_user_by_username(username)
+        if not login or not password:
+            return render_template('lab9/login.html', error='Заполните все поля')
+        
+        user = user_model.get_user_by_username(login)
         if user and user_model.check_password(user, password):
             session['user_id'] = user['id']
-            session['user'] = username
-            return redirect(url_for('index'))
+            session['user'] = login
+            return redirect(url_for('lab9.main'))
         else:
-            return render_template('login.html', error='Неверные данные')
+            return render_template('lab9/login.html', error='Неверный логин или пароль')
     
-    return render_template('login.html')
+    return render_template('lab9/login.html')
 
-@lab9.route('/logout')
+@lab9_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        login = request.form.get('login')
+        password = request.form.get('password')
+        
+        if not login or not password:
+            return render_template('lab9/register.html', error='Заполните все поля')
+        
+        if user_model.create_user(login, password):
+            return redirect(url_for('lab9.login'))
+        else:
+            return render_template('lab9/register.html', error='Пользователь уже существует')
+    
+    return render_template('lab9/register.html')
+
+@lab9_bp.route('/logout')
 def logout():
     session.pop('user_id', None)
     session.pop('user', None)
-    return redirect(url_for('index'))
+    return redirect(url_for('lab9.main'))
 
-if __name__ == '__main__':
-    lab9.run(debug=True, port=5000)
+# Инициализация при первом запросе
+@lab9_bp.before_app_first_request
+def initialize():
+    init_app()
