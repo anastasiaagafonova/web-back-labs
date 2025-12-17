@@ -44,7 +44,6 @@ def login():
     
     login_form = request.form.get('login')
     password_form = request.form.get('password')
-    remember = request.form.get('remember') == 'on'
 
     if not login_form:
         return render_template('lab8/login.html', error='Введите логин')
@@ -55,7 +54,7 @@ def login():
     if not user or not check_password_hash(user.password, password_form):
         return render_template('lab8/login.html', error='Неверный логин или пароль')
 
-    login_user(user, remember=remember)
+    login_user(user, remember=False)
     return redirect('/lab8/')
 
 @lab8.route('/lab8/logout')
