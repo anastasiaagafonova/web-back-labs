@@ -34,7 +34,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    login_user(user, remember=False) 
+    login_user(users, remember=False) 
     return redirect('/lab8/')
 
 @lab8.route('/lab8/login', methods=['GET', 'POST'])

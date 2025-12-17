@@ -20,7 +20,6 @@ if DB_TYPE == 'postgres':
 else:
     DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'anastasia_agafonova_knowledge_base.db')
 
-# Классы моделей
 class Database:
     def __init__(self):
         self.db_type = DB_TYPE
@@ -98,7 +97,6 @@ class GiftModel:
         
         try:
             if self.db.db_type == 'postgres':
-                # PostgreSQL
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS snow_users (
                         id SERIAL PRIMARY KEY,
@@ -130,7 +128,6 @@ class GiftModel:
                     );
                 """)
             else:
-                # SQLite
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS snow_users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -233,7 +230,6 @@ class GiftModel:
                 gifts = []
                 for row in cursor.fetchall():
                     gift = dict(zip(columns, row))
-                    # Преобразование boolean для PostgreSQL
                     if 'requires_auth' in gift:
                         gift['requires_auth'] = bool(gift['requires_auth'])
                     gifts.append(gift)
@@ -258,7 +254,6 @@ class GiftModel:
                 row = cursor.fetchone()
                 if row:
                     gift = dict(zip(columns, row))
-                    # Преобразование boolean
                     if 'requires_auth' in gift:
                         gift['requires_auth'] = bool(gift['requires_auth'])
                 else:
@@ -458,19 +453,19 @@ def initialize_database():
 
 def generate_positions(count=10):
     fixed_positions = [
-        {'left': '5%', 'top': '5%', 'width': '20%', 'height': '20%'},      # 1
-        {'left': '27%', 'top': '5%', 'width': '20%', 'height': '20%'},     # 2
-        {'left': '53%', 'top': '5%', 'width': '20%', 'height': '20%'},     # 3
-        {'left': '75%', 'top': '5%', 'width': '20%', 'height': '20%'},     # 4
+        {'left': '5%', 'top': '5%', 'width': '20%', 'height': '20%'},      
+        {'left': '27%', 'top': '5%', 'width': '20%', 'height': '20%'},     
+        {'left': '53%', 'top': '5%', 'width': '20%', 'height': '20%'},     
+        {'left': '75%', 'top': '5%', 'width': '20%', 'height': '20%'},    
         
-        {'left': '15%', 'top': '35%', 'width': '20%', 'height': '20%'},    # 5
-        {'left': '40%', 'top': '35%', 'width': '20%', 'height': '20%'},    # 6
-        {'left': '65%', 'top': '35%', 'width': '20%', 'height': '20%'},    # 7
+        {'left': '15%', 'top': '35%', 'width': '20%', 'height': '20%'},    
+        {'left': '40%', 'top': '35%', 'width': '20%', 'height': '20%'},    
+        {'left': '65%', 'top': '35%', 'width': '20%', 'height': '20%'},    
         
-        {'left': '5%', 'top': '65%', 'width': '20%', 'height': '20%'},     # 8
-        {'left': '27%', 'top': '65%', 'width': '20%', 'height': '20%'},    # 9
-        {'left': '53%', 'top': '65%', 'width': '20%', 'height': '20%'},    # 10
-        {'left': '75%', 'top': '65%', 'width': '20%', 'height': '20%'},    # 11
+        {'left': '5%', 'top': '65%', 'width': '20%', 'height': '20%'},     
+        {'left': '27%', 'top': '65%', 'width': '20%', 'height': '20%'},   
+        {'left': '53%', 'top': '65%', 'width': '20%', 'height': '20%'},   
+        {'left': '75%', 'top': '65%', 'width': '20%', 'height': '20%'},    
     ]
     
     return fixed_positions[:count]
