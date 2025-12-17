@@ -20,7 +20,7 @@ import secrets
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+app.config['SECRET_KEY'] = 'ваш-секретный-ключ-только-латинские-символы'
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'sqlite')
 
 
