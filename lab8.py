@@ -18,6 +18,7 @@ def register():
     
     login_form = request.form.get('login')
     password_form = request.form.get('password')
+    remember = request.form.get('remember') == 'on'  
 
     if not login_form:
         return render_template('lab8/register.html', error='Логин не может быть пустым')
@@ -34,7 +35,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    login_user(new_user, remember=False)
+    login_user(new_user, remember=remember)  
     return redirect('/lab8/')
 
 @lab8.route('/lab8/login', methods=['GET', 'POST'])
